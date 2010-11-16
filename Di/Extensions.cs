@@ -27,7 +27,8 @@ namespace Di
         public static int Count<T>(this IEnumerable<T> elems)
         {
             int count = 0;
-            foreach (T elem in elems)
+            var e = elems.GetEnumerator();
+            while (e.MoveNext())
             {
                 ++count;
             }
@@ -45,6 +46,16 @@ namespace Di
                 --index;
             }
             throw new IndexOutOfRangeException();
+        }
+
+        public delegate void Action<T>(T arg);
+
+        public static void ForEach<T>(this IEnumerable<T> elems, Action<T> a)
+        {
+            foreach (T elem in elems)
+            {
+                a(elem);
+            }
         }
     }
 }

@@ -1,0 +1,27 @@
+
+TODO
+====
+
+Create a proper command parser
+
+    This class will have four static equivalence classes of command atoms:
+
+    1. Lone atoms
+    2. Movement atoms
+    3. Action atoms
+    4. Numeric atoms
+
+    Each lone, action, and movement atom will be associated with a function of
+    an appropriate type.
+
+    Each numeric atom will be associated with its numeric value.
+
+    When the parser determines that the input is incomplete, it should somehow cause
+    this to be visually indicated. For example, it would be nice to add a light red
+    tint to the background after an action atom has been entered which deletes text.
+
+Use a block cursor in command mode. Accomplish this by two steps:
+
+    1. Change the color of the normal cursor to match the background
+    2. Change the foreground and background colors of the character after the cursor
+       so it appears that the block cursor is there.

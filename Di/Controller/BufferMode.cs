@@ -1,5 +1,5 @@
 //  
-//  Buffer.cs
+//  BufferMode.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -19,23 +19,25 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Gtk;
-namespace Di.Model
+namespace Di.Controller
 {
-    public class Buffer : TextBuffer
+    public class BufferMode
     {
-        private static TextTagTable tags = new TextTagTable();
-
-        private string fileName;
-
-        public Buffer() : base(tags)
+        public string Name
         {
-            fileName = null;
+            get;
+            set;
         }
 
-        public void InsertAtCursor(char c)
+        public Model.KeyMap KeyMap
         {
-            InsertAtCursor(string.Format("{0}", c));
+            get;
+            set;
+        }
+
+        public BufferMode()
+        {
+
         }
     }
 }

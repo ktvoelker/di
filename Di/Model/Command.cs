@@ -1,5 +1,5 @@
 //  
-//  Model.cs
+//  Command.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -20,37 +20,51 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using Gdk;
 namespace Di.Model
 {
-    public class Main
+    public interface ICommandAtomSeq
     {
-        private IList<Buffer> buffers;
-        public IEnumerable<Buffer> Buffers
+        IEnumerable<CommandAtom> Atoms { get; }
+    }
+
+    public class CommandAtom : ICommandAtomSeq
+    {
+        public static readonly CommandAtom
+            Ignore = new CommandAtom(),
+            InsertKey = new CommandAtom(),
+            InsertMode = new CommandAtom(),
+            CommandMode = new CommandAtom();
+
+        private IEnumerable<CommandAtom> _atoms = null;
+
+        public IEnumerable<CommandAtom> Atoms
         {
-            get { return buffers; }
+            get
+            {
+                if (_atoms == null)
+                {
+                    _atoms = new CommandAtom[] { this };
+                }
+                return _atoms;
+            }
         }
 
-        public KeyMap CommandMode
+        private CommandAtom()
+        {
+        }
+    }
+
+    public class CommandAtomSeq : ICommandAtomSeq
+    {
+        public IEnumerable<CommandAtom> Atoms
         {
             get;
-            set;
+            private set;
         }
 
-        public KeyMap InsertMode
+        public CommandAtomSeq(params CommandAtom[] atoms)
         {
-            get;
-            set;
-        }
-
-        public Main()
-        {
-            buffers = new List<Buffer>();
-            buffers.Add(new Buffer());
-            CommandMode = new KeyMap();
-            CommandMode[Key.i, ModifierType.None] = CommandAtom.InsertMode;
-            InsertMode = new KeyMap() { Default = CommandAtom.InsertKey };
-            InsertMode[Key.Escape, ModifierType.None] = CommandAtom.CommandMode;
+            Atoms = atoms;
         }
     }
 }

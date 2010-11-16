@@ -39,7 +39,7 @@ namespace Di.Controller
             visibleBuffers = new List<Buffer>();
             if (model.Buffers.Count() > 0)
             {
-                visibleBuffers.Add(new Buffer(model.Buffers.Item(0)));
+                visibleBuffers.Add(new Buffer(model, model.Buffers.Item(0)));
             }
         }
     }
