@@ -19,7 +19,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Text;
 using Gtk;
+using Gdk;
 namespace Di.Controller
 {
     public class Buffer
@@ -33,6 +35,15 @@ namespace Di.Controller
         public Buffer(Model.Buffer _model)
         {
             model = _model;
+        }
+
+        public void KeyPressedHandler(EventKey e)
+        {
+            char c = (char) e.KeyValue;
+            if (c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z')
+            {
+                model.InsertAtCursor(new string(new char[] { c }));
+            }
         }
     }
 }

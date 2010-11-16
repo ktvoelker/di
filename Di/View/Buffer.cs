@@ -33,12 +33,28 @@ namespace Di.View
             Homogeneous = true;
             Spacing = 20;
             BorderWidth = 20;
-            var textView = new TextView(ctl.GtkTextBuffer);
-            textView.ModifyFont(new FontDescription {
-                Family = "monospace",
-                Size = (int) (14 * Pango.Scale.PangoScale)
-            });
+            var textView = new BufferTextView(ctl);
             Add(textView);
+        }
+
+        private class BufferTextView : TextView
+        {
+            private Controller.Buffer ctl;
+
+            public BufferTextView(Controller.Buffer _ctl) : base(_ctl.GtkTextBuffer)
+            {
+                ctl = _ctl;
+                ModifyFont(new FontDescription {
+                    Family = "monospace",
+                    Size = (int) (14 * Pango.Scale.PangoScale)
+                });
+            }
+
+            protected override bool OnKeyPressEvent(Gdk.EventKey e)
+            {
+                ctl.KeyPressedHandler(e);
+                return true;
+            }
         }
     }
 }

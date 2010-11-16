@@ -29,7 +29,7 @@ namespace Di.Controller
 
         public VisibleBuffersChangedHandler visibleBuffersChanged;
 
-        public event VisibleBuffersChangedHandler VisibleBuffersChanged
+        public event VisibleBuffersChangedHandler VisibleBuffersChangedEvent
         {
             add { visibleBuffersChanged += value; }
             remove { visibleBuffersChanged -= value; }
