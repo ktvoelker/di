@@ -1,13 +1,38 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
-  <MonoDevelop.Ide.Workbench ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Di/TODO.txt" ctype="Workbench">
+    <Files>
+      <File FileName="Di/View/Buffer.cs" Line="50" Column="20" />
+      <File FileName="Di/Controller/Buffer.cs" Line="52" Column="1" />
+      <File FileName="Di/Controller/BufferMode.cs" Line="37" Column="1" />
+      <File FileName="Di/Model/Main.cs" Line="51" Column="51" />
+      <File FileName="Di/Model/KeyMap.cs" Line="87" Column="51" />
+      <File FileName="Di/Model/Command.cs" Line="57" Column="50" />
+      <File FileName="Di/Controller/Main.cs" Line="48" Column="1" />
+      <File FileName="Di/Extensions.cs" Line="22" Column="34" />
+      <File FileName="Di/Model/Buffer.cs" Line="35" Column="1" />
+      <File FileName="Di/TODO.txt" Line="21" Column="85" />
+    </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True" selected="True" />
+        <State expanded="True">
+          <Node name="Di" expanded="True">
+            <Node name="Controller" expanded="True" />
+            <Node name="Model" expanded="True" />
+            <Node name="View" expanded="True" />
+            <Node name="TODO.txt" selected="True" />
+          </Node>
+        </State>
       </Pad>
       <Pad Id="ClassPad">
         <State expanded="True">
-          <Node name="Di" expanded="True" selected="True" />
+          <Node name="Di" expanded="True">
+            <Node name="Di" expanded="True">
+              <Node name="Controller" expanded="True" />
+              <Node name="Model" expanded="True" />
+              <Node name="View" expanded="True" selected="True" />
+            </Node>
+          </Node>
         </State>
       </Pad>
     </Pads>

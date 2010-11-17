@@ -44,7 +44,10 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Controller\BufferMode.cs" />
     <Compile Include="Model\KeyMap.cs" />
-    <Compile Include="Model\Command.cs" />
+    <Compile Include="Model\CommandAtom.cs" />
+    <Compile Include="Model\CommandParser.cs" />
+    <Compile Include="Model\Extensions.cs" />
+    <Compile Include="Model\UnparsedCommandAtom.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
