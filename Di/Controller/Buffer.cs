@@ -37,8 +37,7 @@ namespace Di.Controller
         private BufferMode InsertMode;
 
         private BufferMode CurrentMode;
-        private IList<Model.CommandAtom> CurrentCommand;
-        private IList<char> CurrentCommandKeyValues;
+        private IList<Model.UnparsedCommand> CurrentCommand;
 
         public Buffer(Model.Main _mainModel, Model.Buffer _model)
         {
@@ -46,50 +45,16 @@ namespace Di.Controller
             CommandMode = new BufferMode() { Name = "Command", KeyMap = _mainModel.CommandMode };
             InsertMode = new BufferMode() { Name = "Insert", KeyMap = _mainModel.InsertMode };
             CurrentMode = CommandMode;
-            CurrentCommand = new List<Model.CommandAtom>();
-            CurrentCommandKeyValues = new List<char>();
+            CurrentCommand = new List<Model.UnparsedCommand>();
         }
 
         public void KeyPressedHandler(EventKey e)
         {
-            var ch = (char) e.KeyValue;
-            CurrentMode.KeyMap[e].Atoms.ForEach(a =>
+            CurrentMode.KeyMap.Lookup(e).ForEach(a =>
             {
-                CurrentCommand.Add(a);
-                CurrentCommandKeyValues.Add(ch);
+                CurrentCommand.Add(new Model.UnparsedCommand(a, e.KeyValue));
             });
-            ParseCommands();
-        }
-
-        private void ParseCommands()
-        {
-            while (CurrentCommand.Count > 0)
-            {
-                var a = CurrentCommand[0];
-                if (a == Model.CommandAtom.Ignore)
-                {
-                    CurrentCommand.RemoveAt(0);
-                    CurrentCommandKeyValues.RemoveAt(0);
-                }
-                else if (a == Model.CommandAtom.CommandMode)
-                {
-                    CurrentCommand.RemoveAt(0);
-                    CurrentCommandKeyValues.RemoveAt(0);
-                    CurrentMode = CommandMode;
-                }
-                else if (a == Model.CommandAtom.InsertMode)
-                {
-                    CurrentCommand.RemoveAt(0);
-                    CurrentCommandKeyValues.RemoveAt(0);
-                    CurrentMode = InsertMode;
-                }
-                else if (a == Model.CommandAtom.InsertKey)
-                {
-                    CurrentCommand.RemoveAt(0);
-                    model.InsertAtCursor(CurrentCommandKeyValues[0]);
-                    CurrentCommandKeyValues.RemoveAt(0);
-                }
-            }
+            // TODO parse the commands and execute the results
         }
     }
 }

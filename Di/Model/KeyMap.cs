@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using Gdk;
 namespace Di.Model
 {
+    using IEC = IEnumerable<ICommand>;
+
     public struct KeyInput
     {
         public Key Base
@@ -52,39 +54,34 @@ namespace Di.Model
 
     public class KeyMap
     {
-        public ICommandAtomSeq Default
+        public IEC Default
         {
             get;
             set;
         }
 
-        private IDictionary<KeyInput, ICommandAtomSeq> map;
+        private IDictionary<KeyInput, IEC> _map;
 
         public KeyMap()
         {
-            Default = CommandAtom.Ignore;
-            map = new Dictionary<KeyInput, ICommandAtomSeq>();
+            Default = new ICommand[] { new Command.Ignore() };
+            _map = new Dictionary<KeyInput, IEC>();
         }
 
-        public ICommandAtomSeq this[KeyInput input]
+        public void SetDefault(params ICommand[] commands)
         {
-            get { return map.ContainsKey(input) ? map[input] : Default; }
-
-            set { map[input] = value; }
+            Default = commands;
         }
 
-        public ICommandAtomSeq this[Key _base, ModifierType _modifiers]
+        public void Add(Key _base, ModifierType _modifiers, params ICommand[] commands)
         {
-            get { return this[new KeyInput(_base, _modifiers)]; }
-
-            set { this[new KeyInput(_base, _modifiers)] = value; }
+            _map[new KeyInput(_base, _modifiers)] = commands;
         }
 
-        public ICommandAtomSeq this[EventKey e]
+        public IEC Lookup(EventKey e)
         {
-            get { return this[new KeyInput(e)]; }
-
-            set { this[new KeyInput(e)] = value; }
+            var key = new KeyInput(e);
+            return _map.ContainsKey(key) ? _map[key] : Default;
         }
     }
 }

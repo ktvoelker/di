@@ -47,10 +47,15 @@ namespace Di.Model
         {
             buffers = new List<Buffer>();
             buffers.Add(new Buffer());
+
+            // Command mode bindings
             CommandMode = new KeyMap();
-            CommandMode[Key.i, ModifierType.None] = CommandAtom.InsertMode;
-            InsertMode = new KeyMap() { Default = CommandAtom.InsertKey };
-            InsertMode[Key.Escape, ModifierType.None] = CommandAtom.CommandMode;
+            CommandMode.Add(Key.i, ModifierType.None, new Command.InsertMode());
+
+            // Insert mode bindings
+            InsertMode = new KeyMap();
+            InsertMode.SetDefault(new Command.InsertKey());
+            InsertMode.Add(Key.Escape, ModifierType.None, new Command.CommandMode());
         }
     }
 }

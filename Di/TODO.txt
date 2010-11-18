@@ -2,23 +2,13 @@
 TODO
 ====
 
-Create a proper command parser
+Finish command parser.
 
-    This class will have four static equivalence classes of command atoms:
+Change the type of LoneCommand.Execute to also take a Controller.Main parameter.
 
-    1. Lone atoms
-    2. Movement atoms
-    3. Action atoms
-    4. Numeric atoms
+Make the controller parse and execute the input.
 
-    Each lone, action, and movement atom will be associated with a function of
-    an appropriate type.
-
-    Each numeric atom will be associated with its numeric value.
-
-    When the parser determines that the input is incomplete, it should somehow cause
-    this to be visually indicated. For example, it would be nice to add a light red
-    tint to the background after an action atom has been entered which deletes text.
+Implement existing commands.
 
 Use a block cursor in command mode. Accomplish this by two steps:
 

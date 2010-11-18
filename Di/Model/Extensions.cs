@@ -23,16 +23,6 @@ namespace Di.Model
 {
     public static class Extensions
     {
-        public static CommandAtom.Command Repeat(this CommandAtom.Command cmd, int count)
-        {
-            return model =>
-            {
-                for (; count > 0; --count)
-                {
-                    cmd(model);
-                }
-            };
-        }
     }
 }
 

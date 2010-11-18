@@ -57,6 +57,20 @@ namespace Di
                 a(elem);
             }
         }
+
+        public static Func<U> Apply<T, U>(this Func<T, U> f, T t)
+        {
+            return () => f(t);
+        }
+
+        public static Func<U, V> Apply<T, U, V>(this Func<T, U, V> f, T t)
+        {
+            return u => f(t, u);
+        }
+
+        public static Func<U, V, W> Apply<T, U, V, W>(this Func<T, U, V, W> f, T t)
+        {
+            return (u, v) => f(t, u, v);
+        }
     }
 }
-

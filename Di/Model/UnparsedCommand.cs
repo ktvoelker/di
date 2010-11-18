@@ -21,21 +21,21 @@
 using System;
 namespace Di.Model
 {
-    public class UnparsedCommandAtom
+    public class UnparsedCommand
     {
-        public CommandAtom Atom
+        public ICommand Atom
         {
             get;
             private set;
         }
 
-        public KeyInput Input
+        public uint Input
         {
             get;
             private set;
         }
 
-        public UnparsedCommandAtom(CommandAtom atom, KeyInput input)
+        public UnparsedCommand(ICommand atom, uint input)
         {
             Atom = atom;
             Input = input;
