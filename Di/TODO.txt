@@ -2,8 +2,6 @@
 TODO
 ====
 
-Finish command parser.
-
 Change the type of LoneCommand.Execute to also take a Controller.Main parameter.
 
 Make the controller parse and execute the input.
@@ -15,3 +13,17 @@ Use a block cursor in command mode. Accomplish this by two steps:
     1. Change the color of the normal cursor to match the background
     2. Change the foreground and background colors of the character after the cursor
        so it appears that the block cursor is there.
+
+Commands are currently implemented in the model, but they can manipulate the view.
+
+    Move the command implementations into the controller.
+
+    In the model, map keybindings to command names as strings.
+
+    Add an attribute to each command class that specifies its name as a string.
+
+    At startup, use reflection on our assembly to find all implementors of
+    ICommand which have the name attribute, and add them to a lookup table.
+
+    Eventually, there will be a configuration option allowing other assemblies
+    containing commands to be loaded dynamically and searched for commands.
