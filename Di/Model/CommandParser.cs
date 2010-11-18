@@ -85,6 +85,7 @@ namespace Di.Model
             {
                 var atom = atoms[0].Atom;
                 var input = atoms[0].Input;
+                MoveCommand moveCmd;
                 switch (State)
                 {
                     // Initial state
@@ -106,17 +107,70 @@ namespace Di.Model
                             continue;
                         }
                         // Num command
-                        TryNumCommand(atom, input);
+                        ParseNumCommand(atom, input);
                         break;
 
                     // After a range command
                     case ParserExpectation.AfterRange:
                         // Same range command
                         var sameRangeCmd = atom as RangeCommand;
-                        if (sameRangeCmd == rangeCmd)
+                        if (sameRangeCmd != null && sameRangeCmd.GetType() == rangeCmd.GetType())
                         {
-
+                            commands.Add(rangeCmd.Complete(new Command.Down()));
+                            ++i;
+                            Reset();
                         }
+                        // Move command
+                        moveCmd = atom as MoveCommand;
+                        if (moveCmd != null)
+                        {
+                            commands.Add(rangeCmd.Complete(moveCmd));
+                            ++i;
+                            Reset();
+                        }
+                        // Num command
+                        ParseNumCommand(atom, input);
+                        break;
+
+                    // After a num that was after a range
+                    case ParserExpectation.AfterRangeNum:
+                        // Move command
+                        moveCmd = atom as MoveCommand;
+                        if (moveCmd != null)
+                        {
+                            commands.Add(rangeCmd.Complete(moveCmd.Repeat(count)));
+                            ++i;
+                            Reset();
+                        }
+                        // Num command
+                        ParseNumCommand(atom, input);
+                        break;
+
+                    // After a num command
+                    case ParserExpectation.AfterNum:
+                        // Move command
+                        moveCmd = atom as MoveCommand;
+                        if (moveCmd != null)
+                        {
+                            commands.Add(moveCmd.Repeat(count));
+                            ++i;
+                            Reset();
+                        }
+                        // Repeat command
+                        var repCmd = atom as RepeatCommand;
+                        if (repCmd != null)
+                        {
+                            commands.Add(repCmd.Repeat(count));
+                            ++i;
+                            Reset();
+                        }
+                        // Num command
+                        ParseNumCommand(atom, input);
+                        break;
+
+                    default:
+                        Skip();
+                        Reset();
                         break;
                 }
             }
@@ -125,7 +179,7 @@ namespace Di.Model
             Skipped = skipped;
         }
 
-        private void TryNumCommand(ICommand cmd, uint input)
+        private void ParseNumCommand(ICommand cmd, uint input)
         {
             var num = cmd as NumCommand;
             if (num != null)
@@ -137,13 +191,11 @@ namespace Di.Model
                     count *= 10;
                     count += val;
                     State = ParserExpectation.AfterNum;
-                }
-                else
-                {
-                    Skip();
-                    Reset();
+                    return;
                 }
             }
+            Skip();
+            Reset();
         }
 
         /// <summary>
@@ -162,6 +214,7 @@ namespace Di.Model
         {
             atoms = atoms.Skip(i).ToList();
             i = 0;
+            count = 0;
             State = ParserExpectation.Any;
         }
     }

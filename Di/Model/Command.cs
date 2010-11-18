@@ -42,17 +42,17 @@ namespace Di.Model
     /// </summary>
     public abstract class RepeatCommand : LoneCommand
     {
-        public RepeatCommand Repeat(int count)
+        public virtual RepeatCommand Repeat(uint count)
         {
             return new RepeatedCommand(this, count);
         }
 
         private class RepeatedCommand : RepeatCommand
         {
-            private LoneCommand _cmd;
-            private int _count;
+            private RepeatCommand _cmd;
+            private uint _count;
 
-            public RepeatedCommand(RepeatCommand cmd, int count)
+            public RepeatedCommand(RepeatCommand cmd, uint count)
             {
                 _cmd = cmd;
                 _count = count;
@@ -60,7 +60,7 @@ namespace Di.Model
 
             public override void Execute(Main m)
             {
-                for (int i = 0; i < _count; ++i)
+                for (uint i = 0; i < _count; ++i)
                 {
                     _cmd.Execute(m);
                 }
@@ -79,6 +79,40 @@ namespace Di.Model
         }
 
         public abstract Movement Evaluate(Main m);
+
+        public new MoveCommand Repeat(uint count)
+        {
+            return new RepeatedCommand(this, count);
+        }
+
+        private class RepeatedCommand : MoveCommand
+        {
+            private MoveCommand _cmd;
+            private uint _count;
+
+            public RepeatedCommand(MoveCommand cmd, uint count)
+            {
+                _cmd = cmd;
+                _count = count;
+            }
+
+            public override Movement Evaluate(Main m)
+            {
+                // TODO handle zero repetitions case
+                var movement = _cmd.Evaluate(m);
+                for (uint i = 1; i < _count - 1; ++i)
+                {
+                    _cmd.Evaluate(m);
+                }
+                if (_count >= 1)
+                {
+                    var lastMovement = _cmd.Evaluate(m);
+                    movement.CursorEnd = lastMovement.CursorEnd;
+                    movement.RangeEnd = lastMovement.RangeEnd;
+                }
+                return movement;
+            }
+        }
     }
 
     public abstract class RangeCommand : ICommand

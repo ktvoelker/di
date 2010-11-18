@@ -1,22 +1,22 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Di/Model/CommandParser.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Di/TODO.txt" ctype="Workbench">
     <Files>
-      <File FileName="Di/Model/CommandParser.cs" Line="70" Column="1" />
-      <File FileName="Di/Model/CommandAtom.cs" Line="108" Column="6" />
-      <File FileName="Di/TODO.txt" Line="1" Column="1" />
-      <File FileName="Di/Model/Extensions.cs" Line="23" Column="2" />
-      <File FileName="Di/Model/Buffer.cs" Line="35" Column="1" />
+      <File FileName="Di/TODO.txt" Line="4" Column="1" />
+      <File FileName="Di/Model/Command.cs" Line="39" Column="1" />
+      <File FileName="Di/Model/KeyMap.cs" Line="70" Column="1" />
+      <File FileName="Di/Model/Main.cs" Line="51" Column="37" />
+      <File FileName="Di/Controller/Buffer.cs" Line="35" Column="1" />
+      <File FileName="Di/Extensions.cs" Line="74" Column="10" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Di" expanded="True">
             <Node name="Controller" expanded="True" />
-            <Node name="Model" expanded="True">
-              <Node name="CommandParser.cs" selected="True" />
-            </Node>
+            <Node name="Model" expanded="True" />
             <Node name="View" expanded="True" />
+            <Node name="TODO.txt" selected="True" />
           </Node>
         </State>
       </Pad>
