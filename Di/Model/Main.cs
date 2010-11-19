@@ -31,31 +31,10 @@ namespace Di.Model
             get { return buffers; }
         }
 
-        public KeyMap CommandMode
-        {
-            get;
-            set;
-        }
-
-        public KeyMap InsertMode
-        {
-            get;
-            set;
-        }
-
         public Main()
         {
             buffers = new List<Buffer>();
             buffers.Add(new Buffer());
-
-            // Command mode bindings
-            CommandMode = new KeyMap();
-            CommandMode.Add(Key.i, ModifierType.None, new Command.InsertMode());
-
-            // Insert mode bindings
-            InsertMode = new KeyMap();
-            InsertMode.SetDefault(new Command.InsertKey());
-            InsertMode.Add(Key.Escape, ModifierType.None, new Command.CommandMode());
         }
     }
 }

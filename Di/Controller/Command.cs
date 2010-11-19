@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using Gtk;
-namespace Di.Model
+namespace Di.Controller
 {
     public struct Movement
     {
@@ -34,7 +34,7 @@ namespace Di.Model
 
     public abstract class LoneCommand : ICommand
     {
-        public abstract void Execute(Main m);
+        public abstract void Execute(Buffer b);
     }
 
     /// <summary>
@@ -58,11 +58,11 @@ namespace Di.Model
                 _count = count;
             }
 
-            public override void Execute(Main m)
+            public override void Execute(Buffer b)
             {
                 for (uint i = 0; i < _count; ++i)
                 {
-                    _cmd.Execute(m);
+                    _cmd.Execute(b);
                 }
             }
         }
@@ -73,12 +73,12 @@ namespace Di.Model
     /// </summary>
     public abstract class MoveCommand : RepeatCommand
     {
-        public override void Execute(Main m)
+        public override void Execute(Buffer b)
         {
-            throw new NotImplementedException();
+            b.GtkTextBuffer.PlaceCursor(Evaluate(b).CursorEnd);
         }
 
-        public abstract Movement Evaluate(Main m);
+        public abstract Movement Evaluate(Buffer b);
 
         public new MoveCommand Repeat(uint count)
         {
@@ -96,17 +96,17 @@ namespace Di.Model
                 _count = count;
             }
 
-            public override Movement Evaluate(Main m)
+            public override Movement Evaluate(Buffer b)
             {
                 // TODO handle zero repetitions case
-                var movement = _cmd.Evaluate(m);
+                var movement = _cmd.Evaluate(b);
                 for (uint i = 1; i < _count - 1; ++i)
                 {
-                    _cmd.Evaluate(m);
+                    _cmd.Evaluate(b);
                 }
                 if (_count >= 1)
                 {
-                    var lastMovement = _cmd.Evaluate(m);
+                    var lastMovement = _cmd.Evaluate(b);
                     movement.CursorEnd = lastMovement.CursorEnd;
                     movement.RangeEnd = lastMovement.RangeEnd;
                 }
@@ -128,9 +128,9 @@ namespace Di.Model
                 _move = move;
             }
 
-            public override void Execute(Main m)
+            public override void Execute(Buffer b)
             {
-                _range.Execute(m, _move);
+                _range.Execute(b, _move);
             }
         }
 
@@ -139,13 +139,13 @@ namespace Di.Model
             return new CompleteRangeCommand(this, move);
         }
 
-        public void Execute(Main m, MoveCommand move)
+        public void Execute(Buffer b, MoveCommand move)
         {
-            var movement = move.Evaluate(m);
-            Execute(m, movement.RangeStart, movement.RangeEnd);
+            var movement = move.Evaluate(b);
+            Execute(b, movement.RangeStart, movement.RangeEnd);
         }
 
-        public abstract void Execute(Main m, TextIter start, TextIter end);
+        public abstract void Execute(Buffer b, TextIter start, TextIter end);
     }
 
     /// <summary>

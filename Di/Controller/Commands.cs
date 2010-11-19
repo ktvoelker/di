@@ -19,44 +19,35 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-namespace Di.Model.Command
+namespace Di.Controller.Command
 {
     public class CommandMode : LoneCommand
     {
-        #region implemented abstract members of Di.Model.LoneCommand
-        public override void Execute(Main m)
+        public override void Execute(Buffer b)
         {
-            throw new System.NotImplementedException();
+            b.EnterCommandMode();
         }
-        
-        #endregion
     }
 
     public class Down : MoveCommand
     {
-        #region implemented abstract members of Di.Model.MoveCommand
-        public override Movement Evaluate(Main m)
+        public override Movement Evaluate(Buffer b)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-        
-        #endregion
     }
 
     public class Ignore : LoneCommand
     {
-        #region implemented abstract members of Di.Model.LoneCommand
-        public override void Execute(Main m)
+        public override void Execute(Buffer b)
         {
-            throw new System.NotImplementedException();
+            // Empty
         }
-        
-        #endregion
     }
 
     public class InsertKey : RepeatCommand
     {
-        public override void Execute(Main m)
+        public override void Execute(Buffer b)
         {
             throw new NotImplementedException();
         }
@@ -64,13 +55,10 @@ namespace Di.Model.Command
 
     public class InsertMode : LoneCommand
     {
-        #region implemented abstract members of Di.Model.LoneCommand
-        public override void Execute(Main m)
+        public override void Execute(Buffer b)
         {
-            throw new System.NotImplementedException();
+            b.EnterInsertMode();
         }
-        
-        #endregion
     }
 }
 

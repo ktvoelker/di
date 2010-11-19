@@ -37,24 +37,42 @@ namespace Di.Controller
         private BufferMode InsertMode;
 
         private BufferMode CurrentMode;
-        private IList<Model.UnparsedCommand> CurrentCommand;
+        private IList<UnparsedCommand> CurrentCommand;
 
-        public Buffer(Model.Main _mainModel, Model.Buffer _model)
+        public Buffer(KeyMap commandModeMap, KeyMap insertModeMap, Model.Buffer _model)
         {
             model = _model;
-            CommandMode = new BufferMode() { Name = "Command", KeyMap = _mainModel.CommandMode };
-            InsertMode = new BufferMode() { Name = "Insert", KeyMap = _mainModel.InsertMode };
+            CommandMode = new BufferMode() { Name = "Command", KeyMap = commandModeMap };
+            InsertMode = new BufferMode() { Name = "Insert", KeyMap = insertModeMap };
             CurrentMode = CommandMode;
-            CurrentCommand = new List<Model.UnparsedCommand>();
+            CurrentCommand = new List<UnparsedCommand>();
         }
 
         public void KeyPressedHandler(EventKey e)
         {
             CurrentMode.KeyMap.Lookup(e).ForEach(a =>
             {
-                CurrentCommand.Add(new Model.UnparsedCommand(a, e.KeyValue));
+                CurrentCommand.Add(new UnparsedCommand(a, e.KeyValue));
             });
-            // TODO parse the commands and execute the results
+            var result = new ParseResult(CurrentCommand);
+            // TODO alert the user if there were any invalid sequences
+            // TODO indicate the current state somewhere
+            result.Commands.ForEach(c => c.Execute(this));
+        }
+
+        private void EnterMode(BufferMode b)
+        {
+            CurrentMode = b;
+        }
+
+        public void EnterCommandMode()
+        {
+            EnterMode(CommandMode);
+        }
+
+        public void EnterInsertMode()
+        {
+            EnterMode(InsertMode);
         }
     }
 }

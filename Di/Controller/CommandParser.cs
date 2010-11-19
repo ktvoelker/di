@@ -22,9 +22,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Di.Model
+namespace Di.Controller
 {
-    using IEC = System.Collections.Generic.IEnumerable<ICommand>;
+    using IEC = System.Collections.Generic.IEnumerable<LoneCommand>;
     using IEU = System.Collections.Generic.IEnumerable<UnparsedCommand>;
 
     [Flags]
@@ -74,7 +74,7 @@ namespace Di.Model
         public ParseResult(IList<UnparsedCommand> _atoms)
         {
             atoms = _atoms;
-            var commands = new List<ICommand>();
+            var commands = new List<LoneCommand>();
             var skipped = new List<IEU>();
             State = ParserExpectation.Any;
             i = 0;

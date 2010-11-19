@@ -29,7 +29,7 @@ namespace Di.Controller
             set;
         }
 
-        public Model.KeyMap KeyMap
+        public KeyMap KeyMap
         {
             get;
             set;

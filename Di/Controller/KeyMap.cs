@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using Gdk;
-namespace Di.Model
+namespace Di.Controller
 {
     using IEC = IEnumerable<ICommand>;
 

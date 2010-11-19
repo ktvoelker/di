@@ -1,5 +1,5 @@
 //  
-//  Command.cs
+//  UnparsedCommandAtom.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -19,10 +19,27 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-namespace Di.Model
+namespace Di.Controller
 {
-    public static class Extensions
+    public class UnparsedCommand
     {
+        public ICommand Atom
+        {
+            get;
+            private set;
+        }
+
+        public uint Input
+        {
+            get;
+            private set;
+        }
+
+        public UnparsedCommand(ICommand atom, uint input)
+        {
+            Atom = atom;
+            Input = input;
+        }
     }
 }
 
