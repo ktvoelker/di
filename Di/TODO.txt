@@ -2,7 +2,21 @@
 TODO
 ====
 
-Implement existing commands.
+Implement the InsertKey command.
+
+    The problem is figuring out which key was pressed in order to generate the command.
+
+    The correct key can be found in the parser: whatever the current key in the current
+    unparsed command is (based on index i) (at the time when the command object is created),
+    that is the right key to insert.
+
+    We can't make the parser static because it exists for a particular buffer.
+
+    Aha!
+
+    The InsertKey command, like all commands, has its own unique class. So this can be
+    implemented as a special case in the key input handler: check if the bound command
+    is InsertKey, in which case cast it and give it the current key.
 
 Use a block cursor in command mode. Accomplish this by two steps:
 

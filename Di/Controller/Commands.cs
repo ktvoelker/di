@@ -33,7 +33,20 @@ namespace Di.Controller.Command
     {
         public override Movement Evaluate(Buffer b)
         {
-            throw new NotImplementedException();
+            // TODO does CursorPosition return a char offset or a byte index?
+            // The rest of the logic uses char offsets because we only want to work in whole chars.
+            var pos = b.GtkTextBuffer.CursorPosition;
+            var cursorStart = b.GtkTextBuffer.GetIterAtOffset(pos);
+            var rangeStart = b.GtkTextBuffer.GetIterAtOffset(pos - cursorStart.LineOffset);
+            var rangeEnd = b.GtkTextBuffer.GetIterAtLine(cursorStart.Line + 1);
+            var cursorEnd = b.GtkTextBuffer.GetIterAtLineOffset(rangeEnd.Line, cursorStart.LineOffset);
+            return new Movement()
+            {
+                CursorStart = cursorStart,
+                CursorEnd = cursorEnd,
+                RangeStart = rangeStart,
+                RangeEnd = rangeEnd
+            };
         }
     }
 
