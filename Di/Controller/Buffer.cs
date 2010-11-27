@@ -50,7 +50,7 @@ namespace Di.Controller
 
         public void KeyPressedHandler(EventKey e)
         {
-            CurrentMode.KeyMap.Lookup(e).ForEach(a =>
+			CurrentMode.KeyMap.Lookup(e).ForEach(a =>
             {
                 CurrentCommand.Add(new UnparsedCommand(a, e.KeyValue));
             });

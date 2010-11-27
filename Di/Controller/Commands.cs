@@ -58,30 +58,44 @@ namespace Di.Controller.Command
             // Empty
         }
     }
+	
+	public class InsertChar : RepeatCommand
+	{
+		private StringBuilder _buffer;
+		
+		public InsertChar(char val)
+		{
+			_buffer = new StringBuilder(1);
+			_buffer.Append(val);
+		}
+		
+		public override void Execute(Buffer b)
+		{
+			if (_buffer != null)
+			{
+            	b.GtkTextBuffer.InsertAtCursor(_buffer.ToString());
+			}
+		}
+	}
 
     public class InsertKey : RepeatCommand
     {
-		private StringBuilder _buffer = null;
+		public const char MinInsertableChar = ' ';
+		public const char MaxInsertableChar = '~';
 		
-		public InsertKey SetKey(uint val)
+		public RepeatCommand SetKey(uint val)
 		{
-			if (val <= char.MaxValue)
+			if (val >= MinInsertableChar && val <= MaxInsertableChar)
 			{
-				var cmd = new InsertKey();
-				cmd._buffer = new StringBuilder(1);
-				cmd._buffer.Append((char)val);
-				return cmd;
+				return new InsertChar((char) val);
 			}
 			return this;
 		}
 		
         public override void Execute(Buffer b)
-        {
-			if (_buffer != null)
-			{
-            	b.GtkTextBuffer.InsertAtCursor(_buffer.ToString());
-			}
-        }
+		{
+			throw new NotSupportedException();
+		}
     }
 
     public class InsertMode : LoneCommand
