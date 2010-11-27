@@ -1,14 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Di/TODO.txt" ctype="Workbench">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Di\TODO.txt">
     <Files>
-      <File FileName="Di/TODO.txt" Line="4" Column="1" />
-      <File FileName="Di/Model/Command.cs" Line="37" Column="44" />
-      <File FileName="Di/Model/KeyMap.cs" Line="70" Column="1" />
-      <File FileName="Di/Model/Main.cs" Line="51" Column="37" />
-      <File FileName="Di/Controller/Buffer.cs" Line="35" Column="1" />
-      <File FileName="Di/Extensions.cs" Line="74" Column="10" />
-      <File FileName="Di/Model/CommandParser.cs" Line="181" Column="1" />
+      <File FileName="Di\TODO.txt" Line="11" Column="61" />
+      <File FileName="e:\Users\karl\Documents\Projects\Di\Di\View\Main.cs" Line="44" Column="52" />
+      <File FileName="Di\Controller\Main.cs" Line="56" Column="13" />
+      <File FileName="Di\Controller\Commands.cs" Line="77" Column="3" />
+      <File FileName="Di\Controller\CommandParser.cs" Line="226" Column="13" />
+      <File FileName="Di\Controller\Command.cs" Line="37" Column="3" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -37,5 +36,5 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches ctype="PinnedWatchStore" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

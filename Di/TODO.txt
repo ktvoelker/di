@@ -2,10 +2,13 @@
 TODO
 ====
 
-Fix the InsertKey command.
+Prevent modifier keys from being processed as complete keypresses.
 
-	Somehow, the StringBuilder used for converting the char into a string seems to be
-	shared across all the InsertKey commands that get created.
+	This is known to occur with Left Shift, but probably others as well.
+
+Add an insert mode binding that implements Backspace.
+
+Wrap the text inputs in horizontal and vertical scrollpanes.
 
 Use a block cursor in command mode. Accomplish this by two steps:
 
