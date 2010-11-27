@@ -2,11 +2,14 @@
 TODO
 ====
 
-Prevent modifier keys from being processed as complete keypresses.
-
-	This is known to occur with Left Shift, but probably others as well.
-
 Add an insert mode binding that implements Backspace.
+
+	Add a Delete RangeCommand and a Backspace MoveCommand.
+	
+	That MoveCommand goes back one character, unless backing up into leading
+	whitespace, in which case it goes by tabs.
+	
+	Bind the Backspace key to Backspace applied to Delete.
 
 Wrap the text inputs in horizontal and vertical scrollpanes.
 
