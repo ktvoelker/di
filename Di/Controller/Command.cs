@@ -34,7 +34,7 @@ namespace Di.Controller
 
     public abstract class LoneCommand : ICommand
     {
-        public abstract void Execute(Buffer b);
+		public abstract void Execute(Buffer b);
     }
 
     /// <summary>

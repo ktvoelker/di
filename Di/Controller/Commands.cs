@@ -19,6 +19,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Text;
 namespace Di.Controller.Command
 {
     public class CommandMode : LoneCommand
@@ -60,9 +61,26 @@ namespace Di.Controller.Command
 
     public class InsertKey : RepeatCommand
     {
+		private StringBuilder _buffer = null;
+		
+		public InsertKey SetKey(uint val)
+		{
+			if (val <= char.MaxValue)
+			{
+				var cmd = new InsertKey();
+				cmd._buffer = new StringBuilder(1);
+				cmd._buffer.Append((char)val);
+				return cmd;
+			}
+			return this;
+		}
+		
         public override void Execute(Buffer b)
         {
-            throw new NotImplementedException();
+			if (_buffer != null)
+			{
+            	b.GtkTextBuffer.InsertAtCursor(_buffer.ToString());
+			}
         }
     }
 

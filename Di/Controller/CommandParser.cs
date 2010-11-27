@@ -94,7 +94,7 @@ namespace Di.Controller
                         var loneCmd = atom as LoneCommand;
                         if (loneCmd != null)
                         {
-                            commands.Add(loneCmd);
+                            commands.Add(SetKey(loneCmd, input));
                             ++i;
                             Reset();
                         }
@@ -160,7 +160,7 @@ namespace Di.Controller
                         var repCmd = atom as RepeatCommand;
                         if (repCmd != null)
                         {
-                            commands.Add(repCmd.Repeat(count));
+                            commands.Add(SetKey(repCmd, input).Repeat(count));
                             ++i;
                             Reset();
                         }
@@ -178,6 +178,16 @@ namespace Di.Controller
             Commands = commands;
             Skipped = skipped;
         }
+		
+		private T SetKey<T>(T cmd, uint input) where T : class
+		{
+			var insKeyCmd = cmd as Command.InsertKey;
+			if (insKeyCmd != null)
+			{
+				return insKeyCmd.SetKey(input) as T;
+			}
+			return cmd;
+		}
 
         private void ParseNumCommand(ICommand cmd, uint input)
         {
