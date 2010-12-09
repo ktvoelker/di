@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		View.cs = View.cs
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ini", "Ini\Ini.csproj", "{8619C6C2-C719-4371-9F61-10A735FB8B99}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -22,6 +24,10 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1210A0FA-12B2-4B45-9140-922A9B15686D}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{1210A0FA-12B2-4B45-9140-922A9B15686D}.Release|x86.ActiveCfg = Release|Any CPU
+		{8619C6C2-C719-4371-9F61-10A735FB8B99}.Debug|x86.ActiveCfg = Debug|x86
+		{8619C6C2-C719-4371-9F61-10A735FB8B99}.Debug|x86.Build.0 = Debug|x86
+		{8619C6C2-C719-4371-9F61-10A735FB8B99}.Release|x86.ActiveCfg = Release|x86
+		{8619C6C2-C719-4371-9F61-10A735FB8B99}.Release|x86.Build.0 = Release|x86
 		{B7E42D49-B878-4E02-A30A-D4653BC3A847}.Debug|x86.ActiveCfg = Debug|x86
 		{B7E42D49-B878-4E02-A30A-D4653BC3A847}.Debug|x86.Build.0 = Debug|x86
 		{B7E42D49-B878-4E02-A30A-D4653BC3A847}.Release|x86.ActiveCfg = Release|x86

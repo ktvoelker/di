@@ -63,4 +63,10 @@
   <ItemGroup>
     <None Include="TODO.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ini\Ini.csproj">
+      <Project>{8619C6C2-C719-4371-9F61-10A735FB8B99}</Project>
+      <Name>Ini</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
