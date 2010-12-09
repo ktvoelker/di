@@ -49,11 +49,6 @@ namespace Di.Controller
         public Main(Model.Main m)
         {
             model = m;
-            visibleBuffers = new List<Buffer>();
-            if (model.Buffers.Count() > 0)
-            {
-                visibleBuffers.Add(new Buffer(CommandMode, InsertMode, model.Buffers.Item(0)));
-            }
             
             // Command mode bindings
             CommandMode = new KeyMap();
@@ -62,7 +57,14 @@ namespace Di.Controller
             // Insert mode bindings
             InsertMode = new KeyMap();
             InsertMode.SetDefault(new Command.InsertKey());
+			InsertMode.Add(Key.Return, ModifierType.None, new Command.InsertChar('\n'));
             InsertMode.Add(Key.Escape, ModifierType.None, new Command.CommandMode());
+			
+            visibleBuffers = new List<Buffer>();
+            if (model.Buffers.Count() > 0)
+            {
+                visibleBuffers.Add(new Buffer(CommandMode, InsertMode, model.Buffers.Item(0)));
+            }
         }
     }
 }

@@ -1,22 +1,22 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" ctype="Workspace" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Ini/IniFile.cs" ctype="Workbench">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Di/TODO.txt" ctype="Workbench">
     <Files>
       <File FileName="Di/Controller/Commands.cs" Line="60" Column="1" />
-      <File FileName="Di/TODO.txt" Line="12" Column="1" />
+      <File FileName="Di/TODO.txt" Line="4" Column="1" />
       <File FileName="Di/Controller/Command.cs" Line="1" Column="1" />
       <File FileName="Di/Controller/Buffer.cs" Line="62" Column="1" />
-      <File FileName="Ini/IniFile.cs" Line="43" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Di" expanded="True">
+            <Node name="References" selected="True" />
             <Node name="Controller" expanded="True" />
             <Node name="Model" expanded="True" />
             <Node name="View" expanded="True" />
           </Node>
-          <Node name="Ini" expanded="True" selected="True" />
+          <Node name="Ini" expanded="True" />
         </State>
       </Pad>
       <Pad Id="ClassPad">

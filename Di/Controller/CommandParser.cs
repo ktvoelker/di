@@ -66,14 +66,14 @@ namespace Di.Controller
             private set;
         }
 
-        private IList<UnparsedCommand> atoms;
+        private IList<UnparsedCommand> _atoms;
         private int i;
         private RangeCommand rangeCmd;
         private uint count;
 
-        public ParseResult(IList<UnparsedCommand> _atoms)
+        public ParseResult(IList<UnparsedCommand> atoms)
         {
-            atoms = _atoms;
+			_atoms = atoms;
             var commands = new List<LoneCommand>();
             var skipped = new List<IEU>();
             State = ParserExpectation.Any;
@@ -81,10 +81,10 @@ namespace Di.Controller
             rangeCmd = null;
             count = 0;
 
-            while (i < atoms.Count)
+            while (i < _atoms.Count)
             {
-                var atom = atoms[0].Atom;
-                var input = atoms[0].Input;
+                var atom = _atoms[0].Atom;
+                var input = _atoms[0].Input;
                 MoveCommand moveCmd;
                 switch (State)
                 {
@@ -94,7 +94,7 @@ namespace Di.Controller
                         var loneCmd = atom as LoneCommand;
                         if (loneCmd != null)
                         {
-                            commands.Add(loneCmd);
+                            commands.Add(SetKey(loneCmd, input));
                             ++i;
                             Reset();
                         }
@@ -160,7 +160,7 @@ namespace Di.Controller
                         var repCmd = atom as RepeatCommand;
                         if (repCmd != null)
                         {
-                            commands.Add(repCmd.Repeat(count));
+                            commands.Add(SetKey(repCmd, input).Repeat(count));
                             ++i;
                             Reset();
                         }
@@ -169,7 +169,7 @@ namespace Di.Controller
                         break;
 
                     default:
-                        Skip();
+                        skipped.Add(Skip());
                         Reset();
                         break;
                 }
@@ -178,6 +178,16 @@ namespace Di.Controller
             Commands = commands;
             Skipped = skipped;
         }
+		
+		private T SetKey<T>(T cmd, uint input) where T : class
+		{
+			var insKeyCmd = cmd as Command.InsertKey;
+			if (insKeyCmd != null)
+			{
+				return insKeyCmd.SetKey(input) as T;
+			}
+			return cmd;
+		}
 
         private void ParseNumCommand(ICommand cmd, uint input)
         {
@@ -201,10 +211,11 @@ namespace Di.Controller
         /// <summary>
         /// Add the processed input to the list failed input sequences.
         /// </summary>
-        private void Skip()
+        private IEnumerable<UnparsedCommand> Skip()
         {
             var skipped = new List<UnparsedCommand>();
-            skipped.AddRange(atoms.Take(i));
+            skipped.AddRange(_atoms.Take(i));
+			return skipped;
         }
 
         /// <summary>
@@ -212,7 +223,11 @@ namespace Di.Controller
         /// </summary>
         private void Reset()
         {
-            atoms = atoms.Skip(i).ToList();
+            while (i > 0)
+			{
+				_atoms.RemoveAt(0);
+				--i;
+			}
             i = 0;
             count = 0;
             State = ParserExpectation.Any;
