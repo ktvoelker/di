@@ -11,7 +11,39 @@ Add an insert mode binding that implements Backspace.
 	
 	Bind the Backspace key to Backspace applied to Delete.
 
+Implement remaining basic commands:
+    Up line
+    Left char
+    Right char
+
 Wrap the text inputs in horizontal and vertical scrollpanes.
+
+Replace the term "visible buffer" with something shorter and more distinct, perhaps "viewport".
+
+Add support for files projects
+
+    Search up from the current directory for di-project.ini
+        Globs for inclusion and exclusion of files into project
+        Project name (show it, and nothing else other than "Di", in the title bar)
+
+    Add commands:
+        Add a new visible buffer and switch to it
+        Hide the current visible buffer
+        Load a file in the current visible buffer
+
+    Keep a list of project files sorted by most-recently-visible
+        Prefer the most-recently-visible file over other matches
+        Already-visible files should be least-preferred
+            But allow a file to become visible in multiple places
+
+Store session state alongside the controlling di-project.ini file
+
+Add support for the pasting stack
+    Visual support
+    Delete-and-push command
+    Push command
+    Pop-and-paste command
+    Pop-and-discard command
 
 Use a block cursor in command mode. Accomplish this by two steps:
 
