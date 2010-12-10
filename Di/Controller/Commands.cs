@@ -36,17 +36,14 @@ namespace Di.Controller.Command
         {
             // TODO does CursorPosition return a char offset or a byte index?
             // The rest of the logic uses char offsets because we only want to work in whole chars.
-            var pos = b.GtkTextBuffer.CursorPosition;
-            var cursorStart = b.GtkTextBuffer.GetIterAtOffset(pos);
-            var rangeStart = b.GtkTextBuffer.GetIterAtOffset(pos - cursorStart.LineOffset);
-            var rangeEnd = b.GtkTextBuffer.GetIterAtLine(cursorStart.Line + 1);
-            var cursorEnd = b.GtkTextBuffer.GetIterAtLineOffset(rangeEnd.Line, cursorStart.LineOffset);
+            var cursorStart = b.GtkTextBuffer.GetCursorIter();
+            var actionStart = cursorStart.LineStart;
+            var actionEnd = actionStart.ForwardLines(1);
+            var cursorEnd = actionEnd + (cursorStart - actionStart);
             return new Movement()
             {
-                CursorStart = cursorStart,
-                CursorEnd = cursorEnd,
-                RangeStart = rangeStart,
-                RangeEnd = rangeEnd
+                CursorRange = new Range(cursorStart, cursorEnd),
+                ActionRange = new Range(actionStart, actionEnd)
             };
         }
     }
@@ -108,9 +105,9 @@ namespace Di.Controller.Command
 
     public class Delete : RangeCommand
     {
-        public override void Execute(Buffer b, Gtk.TextIter start, Gtk.TextIter end)
+        public override void Execute(Buffer b, Range r)
         {
-            b.GtkTextBuffer.DeleteInteractive(ref start, ref end, true);
+            b.GtkTextBuffer.Delete(r);
         }
     }
 
@@ -118,26 +115,23 @@ namespace Di.Controller.Command
     {
         public override Movement Evaluate(Buffer b)
         {
-            Gtk.TextIter start = b.GtkTextBuffer.GetIterAtOffset(b.GtkTextBuffer.CursorPosition);
-            Gtk.TextIter end = start;
-            Gtk.TextIter line = start;
-            line.BackwardChars(line.LineOffset);
-            if (start.LineOffset <= 1)
+            CharIter start = b.GtkTextBuffer.GetCursorIter();
+            CharIter end = start;
+            CharIter line = start.LineStart;
+            if (start - line <= 1)
             {
-                end.BackwardChar();
+                --end;
             }
             else
             {
-                string xs = new Model.Range(line, end).Chars.Trim();
+                string xs = new Range(line, end).Chars.Trim();
                 int n = xs == string.Empty ? 2 : 1;
-                end.BackwardChars(n);
+                end -= n;
             }
             return new Movement()
             {
-                CursorStart = start,
-                CursorEnd = end,
-                RangeStart = start,
-                RangeEnd = end
+                CursorRange = new Range(start, end),
+                ActionRange = new Range(start, end)
             };
         }
     }

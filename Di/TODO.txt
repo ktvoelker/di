@@ -2,12 +2,6 @@
 TODO
 ====
 
-Define a more functional class to replace TextIter
-
-    Use it instead of TextIter in Range
-
-    Create extension methods allowing it to be used with GtkTextBuffer
-
 Implement remaining basic commands:
     Up line
     Left char

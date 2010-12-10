@@ -19,41 +19,33 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Gtk;
-namespace Di.Model
+using System.Text;
+namespace Di
 {
-    public class Range
+    public struct Range
     {
-        private TextIter _start;
-        private TextIter _end;
+        public CharIter Start;
+        public CharIter End;
 
         public string Chars
         {
             get
             {
-                char[] chars = new char[_end.Offset - _start.Offset];
-                for (TextIter i = _start; i.Offset < _end.Offset; i.ForwardChar())
+                var sb = new StringBuilder(End - Start);
+                for (CharIter i = Start; i < End; ++i)
                 {
-                    foreach (char c in i.Char)
-                    {
-                        chars[i.Offset - _start.Offset] = c;
-                    }
+                    sb.Append(i.Char);
                 }
-                return new string(chars);
+                return sb.ToString();
             }
         }
 
-        public Range(TextIter i, int n)
-        {
-            _start = i;
-            _end = i;
-            _end.ForwardChars(n);
-        }
+        public Range(CharIter i, int n) : this(i, i + n) { }
 
-        public Range(TextIter s, TextIter e)
+        public Range(CharIter s, CharIter e)
         {
-            _start = s;
-            _end = e;
+            Start = s;
+            End = e;
         }
     }
 }

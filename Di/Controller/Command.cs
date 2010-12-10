@@ -20,12 +20,11 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using Gtk;
 namespace Di.Controller
 {
     public struct Movement
     {
-        public TextIter CursorStart, CursorEnd, RangeStart, RangeEnd;
+        public Range CursorRange, ActionRange;
     }
 
     public interface ICommand
@@ -75,7 +74,7 @@ namespace Di.Controller
     {
         public override void Execute(Buffer b)
         {
-            b.GtkTextBuffer.PlaceCursor(Evaluate(b).CursorEnd);
+            b.GtkTextBuffer.PlaceCursor(Evaluate(b).CursorRange.End.GtkIter);
         }
 
         public abstract Movement Evaluate(Buffer b);
@@ -107,8 +106,8 @@ namespace Di.Controller
                 if (_count >= 1)
                 {
                     var lastMovement = _cmd.Evaluate(b);
-                    movement.CursorEnd = lastMovement.CursorEnd;
-                    movement.RangeEnd = lastMovement.RangeEnd;
+                    movement.CursorRange.End = lastMovement.CursorRange.End;
+                    movement.ActionRange.End = lastMovement.ActionRange.End;
                 }
                 return movement;
             }
@@ -142,10 +141,10 @@ namespace Di.Controller
         public void Execute(Buffer b, MoveCommand move)
         {
             var movement = move.Evaluate(b);
-            Execute(b, movement.RangeStart, movement.RangeEnd);
+            Execute(b, movement.ActionRange);
         }
 
-        public abstract void Execute(Buffer b, TextIter start, TextIter end);
+        public abstract void Execute(Buffer b, Range r);
     }
 
     /// <summary>

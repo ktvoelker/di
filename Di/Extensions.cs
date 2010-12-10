@@ -72,5 +72,22 @@ namespace Di
         {
             return (u, v) => f(t, u, v);
         }
+
+        public static CharIter Item(this Gtk.TextBuffer buffer, int index)
+        {
+            return new CharIter(buffer.GetIterAtOffset(index));
+        }
+
+        public static CharIter GetCursorIter(this Gtk.TextBuffer buffer)
+        {
+            return buffer.Item(buffer.CursorPosition);
+        }
+
+        public static void Delete(this Gtk.TextBuffer buffer, Range r)
+        {
+            var start = r.Start.GtkIter;
+            var end = r.End.GtkIter;
+            buffer.DeleteInteractive(ref start, ref end, true);
+        }
     }
 }
