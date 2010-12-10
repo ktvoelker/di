@@ -57,8 +57,9 @@ namespace Di.Controller
             // Insert mode bindings
             InsertMode = new KeyMap();
             InsertMode.SetDefault(new Command.InsertKey());
-			InsertMode.Add(Key.Return, ModifierType.None, new Command.InsertChar('\n'));
+            InsertMode.Add(Key.Return, ModifierType.None, new Command.InsertChar('\n'));
             InsertMode.Add(Key.Escape, ModifierType.None, new Command.CommandMode());
+            InsertMode.Add(Key.BackSpace, ModifierType.None, new Command.Delete(), new Command.Backspace());
 			
             visibleBuffers = new List<Buffer>();
             if (model.Buffers.Count() > 0)

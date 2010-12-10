@@ -83,8 +83,8 @@ namespace Di.Controller
 
             while (i < _atoms.Count)
             {
-                var atom = _atoms[0].Atom;
-                var input = _atoms[0].Input;
+                var atom = _atoms[i].Atom;
+                var input = _atoms[i].Input;
                 MoveCommand moveCmd;
                 switch (State)
                 {

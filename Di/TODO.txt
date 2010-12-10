@@ -2,19 +2,17 @@
 TODO
 ====
 
-Add an insert mode binding that implements Backspace.
+Define a more functional class to replace TextIter
 
-	Add a Delete RangeCommand and a Backspace MoveCommand.
-	
-	That MoveCommand goes back one character, unless backing up into leading
-	whitespace, in which case it goes by tabs.
-	
-	Bind the Backspace key to Backspace applied to Delete.
+    Use it instead of TextIter in Range
+
+    Create extension methods allowing it to be used with GtkTextBuffer
 
 Implement remaining basic commands:
     Up line
     Left char
     Right char
+    Tab
 
 Wrap the text inputs in horizontal and vertical scrollpanes.
 

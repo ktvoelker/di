@@ -105,5 +105,41 @@ namespace Di.Controller.Command
             b.EnterInsertMode();
         }
     }
+
+    public class Delete : RangeCommand
+    {
+        public override void Execute(Buffer b, Gtk.TextIter start, Gtk.TextIter end)
+        {
+            b.GtkTextBuffer.DeleteInteractive(ref start, ref end, true);
+        }
+    }
+
+    public class Backspace : MoveCommand
+    {
+        public override Movement Evaluate(Buffer b)
+        {
+            Gtk.TextIter start = b.GtkTextBuffer.GetIterAtOffset(b.GtkTextBuffer.CursorPosition);
+            Gtk.TextIter end = start;
+            Gtk.TextIter line = start;
+            line.BackwardChars(line.LineOffset);
+            if (start.LineOffset <= 1)
+            {
+                end.BackwardChar();
+            }
+            else
+            {
+                string xs = new Model.Range(line, end).Chars.Trim();
+                int n = xs == string.Empty ? 2 : 1;
+                end.BackwardChars(n);
+            }
+            return new Movement()
+            {
+                CursorStart = start,
+                CursorEnd = end,
+                RangeStart = start,
+                RangeEnd = end
+            };
+        }
+    }
 }
 
