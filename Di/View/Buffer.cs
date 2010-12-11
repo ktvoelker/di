@@ -26,6 +26,7 @@ namespace Di.View
     public class Buffer : HBox
     {
         private Controller.Buffer ctl;
+        private Gtk.ScrolledWindow scroll;
 
         public Buffer(Controller.Buffer _ctl)
         {
@@ -34,7 +35,23 @@ namespace Di.View
             Spacing = 20;
             BorderWidth = 20;
             var textView = new BufferTextView(ctl);
-            Add(textView);
+            scroll = new Gtk.ScrolledWindow()
+            {
+                HscrollbarPolicy = Gtk.PolicyType.Never,
+                VscrollbarPolicy = Gtk.PolicyType.Automatic
+            };
+            scroll.Add(textView);
+            System.Action showCursor = delegate {
+                var cursor = ctl.GtkTextBuffer.GetCursorIter();
+                textView.ScrollToIter(cursor.GtkIter, 0, false, 0, 0);
+            };
+            ctl.GtkTextBuffer.MarkSet += delegate {
+                showCursor();
+            };
+            ctl.GtkTextBuffer.Changed += delegate {
+                showCursor();
+            };
+            Add(scroll);
         }
 
         private class BufferTextView : TextView

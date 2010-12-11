@@ -2,7 +2,7 @@
 TODO
 ====
 
-Wrap the text inputs in vertical scrollpanes.
+Using the shift key seems to cause a crash.
 
 Add a visual indication of the current mode.
 
@@ -58,3 +58,5 @@ Make keybindings configurable
 
     Eventually, there will be a configuration option allowing other assemblies
     containing commands to be loaded dynamically and searched for commands.
+
+Fix scrolling to show cursor even when it's at the start of the last, empty line of the file.
