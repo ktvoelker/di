@@ -116,7 +116,7 @@ namespace Di.Controller
                         var sameRangeCmd = atom as RangeCommand;
                         if (sameRangeCmd != null && sameRangeCmd.GetType() == rangeCmd.GetType())
                         {
-                            commands.Add(rangeCmd.Complete(new Command.Down()));
+                            commands.Add(rangeCmd.Complete(new Command.CurLine()));
                             ++i;
                             Reset();
                         }

@@ -30,21 +30,88 @@ namespace Di.Controller.Command
         }
     }
 
-    public class Down : MoveCommand
+    public class CurLine : MoveCommand
     {
         public override Movement Evaluate(Buffer b)
         {
-            // TODO does CursorPosition return a char offset or a byte index?
-            // The rest of the logic uses char offsets because we only want to work in whole chars.
             var cursorStart = b.GtkTextBuffer.GetCursorIter();
+            var cursorEnd = cursorStart;
             var actionStart = cursorStart.LineStart;
             var actionEnd = actionStart.ForwardLines(1);
-            var cursorEnd = actionEnd + (cursorStart - actionStart);
             return new Movement()
             {
                 CursorRange = new Range(cursorStart, cursorEnd),
                 ActionRange = new Range(actionStart, actionEnd)
             };
+        }
+    }
+
+    public class Down : MoveCommand
+    {
+        public override Movement Evaluate(Buffer b)
+        {
+            var cursorStart = b.GtkTextBuffer.GetCursorIter();
+            var actionStart = cursorStart.LineStart;
+            var actionEnd = actionStart.ForwardLines(2);
+            var cursorEnd = cursorStart.ForwardLines(1);
+            return new Movement()
+            {
+                CursorRange = new Range(cursorStart, cursorEnd),
+                ActionRange = new Range(actionStart, actionEnd)
+            };
+        }
+    }
+
+    public class Up : MoveCommand
+    {
+        public override Movement Evaluate(Buffer b)
+        {
+            var cursorStart = b.GtkTextBuffer.GetCursorIter();
+            var actionStart = cursorStart.LineStart.ForwardLines(1);
+            var actionEnd = actionStart.BackwardLines(2);
+            var cursorEnd = cursorStart.BackwardLines(1);
+            return new Movement()
+            {
+                CursorRange = new Range(cursorStart, cursorEnd),
+                ActionRange = new Range(actionStart, actionEnd)
+            };
+        }
+    }
+
+    public class Left : MoveCommand
+    {
+        public override Movement Evaluate(Buffer b)
+        {
+            var start = b.GtkTextBuffer.GetCursorIter();
+            var range = new Range(start, start - 1);
+            return new Movement()
+            {
+                CursorRange = range,
+                ActionRange = range
+            };
+        }
+    }
+
+    public class Right : MoveCommand
+    {
+        public override Movement Evaluate(Buffer b)
+        {
+            var start = b.GtkTextBuffer.GetCursorIter();
+            var range = new Range(start, start + 1);
+            return new Movement()
+            {
+                CursorRange = range,
+                ActionRange = range
+            };
+        }
+    }
+
+    public class Tab : RepeatCommand
+    {
+        public override void Execute(Buffer b)
+        {
+            var cursor = b.GtkTextBuffer.GetCursorIter();
+            b.GtkTextBuffer.InsertAtCursor((cursor - cursor.LineStart) % 2 == 0 ? "  " : " ");
         }
     }
 

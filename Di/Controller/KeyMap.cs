@@ -78,6 +78,11 @@ namespace Di.Controller
             _map[new KeyInput(_base, _modifiers)] = commands;
         }
 
+        public void Add(Key _base, params ICommand[] commands)
+        {
+            Add(_base, ModifierType.None, commands);
+        }
+
         public IEC Lookup(EventKey e)
         {
             var key = new KeyInput(e);

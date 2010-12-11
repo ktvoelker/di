@@ -52,14 +52,28 @@ namespace Di.Controller
             
             // Command mode bindings
             CommandMode = new KeyMap();
-            CommandMode.Add(Key.i, ModifierType.None, new Command.InsertMode());
+            CommandMode.Add(Key.i, new Command.InsertMode());
+            CommandMode.Add(Key.h, new Command.Down());
+            CommandMode.Add(Key.t, new Command.Up());
+            CommandMode.Add(Key.d, new Command.Left());
+            CommandMode.Add(Key.n, new Command.Right());
+            CommandMode.Add(Key.Down, new Command.Down());
+            CommandMode.Add(Key.Up, new Command.Up());
+            CommandMode.Add(Key.Left, new Command.Left());
+            CommandMode.Add(Key.Right, new Command.Right());
             
             // Insert mode bindings
             InsertMode = new KeyMap();
             InsertMode.SetDefault(new Command.InsertKey());
-            InsertMode.Add(Key.Return, ModifierType.None, new Command.InsertChar('\n'));
-            InsertMode.Add(Key.Escape, ModifierType.None, new Command.CommandMode());
-            InsertMode.Add(Key.BackSpace, ModifierType.None, new Command.Delete(), new Command.Backspace());
+            InsertMode.Add(Key.Return, new Command.InsertChar('\n'));
+            InsertMode.Add(Key.Escape, new Command.CommandMode());
+            InsertMode.Add(Key.BackSpace, new Command.Delete(), new Command.Backspace());
+            InsertMode.Add(Key.Tab, new Command.Tab());
+            InsertMode.Add(Key.Down, new Command.Down());
+            InsertMode.Add(Key.Up, new Command.Up());
+            InsertMode.Add(Key.Left, new Command.Left());
+            InsertMode.Add(Key.Right, new Command.Right());
+            InsertMode.Add(Key.Delete, new Command.Delete(), new Command.Right());
 			
             visibleBuffers = new List<Buffer>();
             if (model.Buffers.Count() > 0)
