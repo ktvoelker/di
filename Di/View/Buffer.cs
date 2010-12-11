@@ -44,6 +44,7 @@ namespace Di.View
             public BufferTextView(Controller.Buffer _ctl) : base(_ctl.GtkTextBuffer)
             {
                 ctl = _ctl;
+                WrapMode = WrapMode.WordChar;
                 ModifyFont(new FontDescription {
                     Family = "monospace",
                     Size = (int) (14 * Pango.Scale.PangoScale)
