@@ -115,7 +115,7 @@ namespace Di.Controller.Command
         }
     }
 
-    public class Ignore : LoneCommand
+    public class Ignore : RepeatCommand
     {
         public override void Execute(Buffer b)
         {
@@ -149,11 +149,11 @@ namespace Di.Controller.Command
 		
 		public RepeatCommand SetKey(uint val)
 		{
-			if (val >= MinInsertableChar && val <= MaxInsertableChar)
-			{
-				return new InsertChar((char) val);
-			}
-			return this;
+		    if (val >= MinInsertableChar && val <= MaxInsertableChar)
+		    {
+		        return new InsertChar((char) val);
+		    }
+		    return new Ignore();
 		}
 		
         public override void Execute(Buffer b)

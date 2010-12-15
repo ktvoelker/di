@@ -23,17 +23,20 @@ using Gtk;
 using Pango;
 namespace Di.View
 {
-    public class Buffer : HBox
+    public class Buffer : VBox
     {
+        private const uint StatusbarMode = 1;
+
         private Controller.Buffer ctl;
         private Gtk.ScrolledWindow scroll;
+        private Gtk.Statusbar status;
 
         public Buffer(Controller.Buffer _ctl)
         {
             ctl = _ctl;
-            Homogeneous = true;
-            Spacing = 20;
-            BorderWidth = 20;
+            Homogeneous = false;
+            Spacing = 0;
+            BorderWidth = 0;
             var textView = new BufferTextView(ctl);
             scroll = new Gtk.ScrolledWindow()
             {
@@ -51,7 +54,14 @@ namespace Di.View
             ctl.GtkTextBuffer.Changed += delegate {
                 showCursor();
             };
-            Add(scroll);
+            PackStart(scroll, true, true, 0);
+            status = new Gtk.Statusbar();
+            status.Push(StatusbarMode, ctl.CurrentMode.Value.Name);
+            ctl.CurrentMode.Changed += (b, m) => {
+                status.Pop(StatusbarMode);
+                status.Push(StatusbarMode, m.Name);
+            };
+            PackStart(status, false, false, 0);
         }
 
         private class BufferTextView : TextView

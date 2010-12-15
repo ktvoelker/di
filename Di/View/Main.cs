@@ -39,7 +39,7 @@ namespace Di.View
             DefaultHeight = 600;
             DeleteEvent += OnDeleteEvent;
             buffersBox = new HBox();
-            foreach (var buffer in ctl.VisibleBuffers)
+            foreach (var buffer in ctl.Windows)
             {
                 buffersBox.Add(new Buffer(buffer));
             }

@@ -28,10 +28,10 @@ namespace Di.Controller
     {
         private Model.Main model;
 
-        private IList<Buffer> visibleBuffers;
-        public IEnumerable<Buffer> VisibleBuffers
+        private IList<Buffer> windows;
+        public IEnumerable<Buffer> Windows
         {
-            get { return visibleBuffers; }
+            get { return windows; }
         }
 
         public KeyMap CommandMode
@@ -75,10 +75,10 @@ namespace Di.Controller
             InsertMode.Add(Key.Right, new Command.Right());
             InsertMode.Add(Key.Delete, new Command.Delete(), new Command.Right());
 			
-            visibleBuffers = new List<Buffer>();
+            windows = new List<Buffer>();
             if (model.Buffers.Count() > 0)
             {
-                visibleBuffers.Add(new Buffer(CommandMode, InsertMode, model.Buffers.Item(0)));
+                windows.Add(new Buffer(CommandMode, InsertMode, model.Buffers.Item(0)));
             }
         }
     }

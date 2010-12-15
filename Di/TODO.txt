@@ -2,22 +2,16 @@
 TODO
 ====
 
-Using the shift key seems to cause a crash.
-
-Add a visual indication of the current mode.
-
-Replace the term "visible buffer" with something shorter and more distinct, perhaps "viewport".
-
-Add support for files projects
+Add support for projects
 
     Search up from the current directory for di-project.ini
         Globs for inclusion and exclusion of files into project
         Project name (show it, and nothing else other than "Di", in the title bar)
 
     Add commands:
-        Add a new visible buffer and switch to it
-        Hide the current visible buffer
-        Load a file in the current visible buffer
+        Add a new window and switch to it
+        Hide the current window
+        Load a file in the current window
 
     Keep a list of project files sorted by most-recently-visible
         Prefer the most-recently-visible file over other matches
@@ -39,6 +33,7 @@ Add support for language plug-ins, which will ultimately provide:
         and should otherwise begin automatic completion.
     Logic for moving by words and by matching brackets
     Syntax coloring
+    Logic for dividing the buffer into subbuffers
 
 Configuration support
     $HOME/di-user.ini

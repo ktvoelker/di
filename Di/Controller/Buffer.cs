@@ -36,7 +36,7 @@ namespace Di.Controller
         private BufferMode CommandMode;
         private BufferMode InsertMode;
 
-        private BufferMode CurrentMode;
+        public Bind<Buffer, BufferMode> CurrentMode { get; private set; }
         private IList<UnparsedCommand> CurrentCommand;
 
         public Buffer(KeyMap commandModeMap, KeyMap insertModeMap, Model.Buffer _model)
@@ -44,13 +44,13 @@ namespace Di.Controller
             model = _model;
             CommandMode = new BufferMode() { Name = "Command", KeyMap = commandModeMap };
             InsertMode = new BufferMode() { Name = "Insert", KeyMap = insertModeMap };
-            CurrentMode = CommandMode;
+            CurrentMode = new Bind<Buffer, BufferMode>(this, CommandMode);
             CurrentCommand = new List<UnparsedCommand>();
         }
 
         public void KeyPressedHandler(EventKey e)
         {
-			CurrentMode.KeyMap.Lookup(e).ForEach(a =>
+			CurrentMode.Value.KeyMap.Lookup(e).ForEach(a =>
             {
                 CurrentCommand.Add(new UnparsedCommand(a, e.KeyValue));
             });
@@ -62,7 +62,7 @@ namespace Di.Controller
 
         private void EnterMode(BufferMode b)
         {
-            CurrentMode = b;
+            CurrentMode.Value = b;
         }
 
         public void EnterCommandMode()

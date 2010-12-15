@@ -25,14 +25,14 @@ namespace Di.Controller
     public partial class Main
     {
 
-        public delegate void VisibleBuffersChangedHandler(int n);
+        public delegate void WindowsChangedHandler(int n);
 
-        public VisibleBuffersChangedHandler visibleBuffersChanged;
+        public WindowsChangedHandler windowsChanged;
 
-        public event VisibleBuffersChangedHandler VisibleBuffersChangedEvent
+        public event WindowsChangedHandler WindowsChangedEvent
         {
-            add { visibleBuffersChanged += value; }
-            remove { visibleBuffersChanged -= value; }
+            add { windowsChanged += value; }
+            remove { windowsChanged -= value; }
         }
 
     }
