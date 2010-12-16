@@ -58,6 +58,22 @@ namespace Di
             }
         }
 
+        public static IEnumerable<T> Filter<T>(this IEnumerable<T> elems, Func<T, bool> pred)
+        {
+            foreach (T elem in elems)
+            {
+                if (pred(elem))
+                {
+                    yield return elem;
+                }
+            }
+        }
+
+        public static bool HasAny<T>(this IEnumerable<T> elems)
+        {
+            return elems.GetEnumerator().Current != null;
+        }
+
         public static Func<U> Apply<T, U>(this Func<T, U> f, T t)
         {
             return () => f(t);

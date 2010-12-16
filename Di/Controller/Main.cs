@@ -76,7 +76,7 @@ namespace Di.Controller
             InsertMode.Add(Key.Delete, new Command.Delete(), new Command.Right());
 			
             windows = new List<Buffer>();
-            if (model.Buffers.Count() > 0)
+            if (model.Buffers.HasAny())
             {
                 windows.Add(new Buffer(CommandMode, InsertMode, model.Buffers.Item(0)));
             }

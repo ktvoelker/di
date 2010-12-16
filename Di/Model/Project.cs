@@ -24,18 +24,32 @@ namespace Di.Model
 {
     public class Project
     {
-        public Project() : this(Environment.CurrentDirectory)
+        public const string ConfigFileName = "di-project.ini";
+
+        private DirectoryInfo dir = null;
+
+        public Project() : this(new DirectoryInfo(Environment.CurrentDirectory)) { }
+
+        public Project(DirectoryInfo _dir)
         {
+            while (!DirIsProjectRoot(_dir))
+            {
+                _dir = _dir.Parent;
+                if (_dir == null)
+                {
+                    // TODO
+                    // Create an exception class to throw here.
+                    // It'll get caught somewhere and result in a special interaction with the user
+                    // to determine which directory to create the project file in.
+                    throw new InvalidOperationException();
+                }
+            }
+            dir = _dir;
         }
 
-        public Project(string dir)
+        public static bool DirIsProjectRoot(DirectoryInfo dir)
         {
-
-        }
-
-        public static bool DirIsProjectRoot(string dir)
-        {
-
+            return dir.GetFiles().Filter(file => file.Name == ConfigFileName).HasAny();
         }
     }
 }
