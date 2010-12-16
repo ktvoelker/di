@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ini", "Ini\Ini.csproj", "{8619C6C2-C719-4371-9F61-10A735FB8B99}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filesystem", "Filesystem\Filesystem.csproj", "{676C34D2-013B-4204-87AE-771FA25918D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -24,6 +26,10 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1210A0FA-12B2-4B45-9140-922A9B15686D}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{1210A0FA-12B2-4B45-9140-922A9B15686D}.Release|x86.ActiveCfg = Release|Any CPU
+		{676C34D2-013B-4204-87AE-771FA25918D5}.Debug|x86.ActiveCfg = Debug|x86
+		{676C34D2-013B-4204-87AE-771FA25918D5}.Debug|x86.Build.0 = Debug|x86
+		{676C34D2-013B-4204-87AE-771FA25918D5}.Release|x86.ActiveCfg = Release|x86
+		{676C34D2-013B-4204-87AE-771FA25918D5}.Release|x86.Build.0 = Release|x86
 		{8619C6C2-C719-4371-9F61-10A735FB8B99}.Debug|x86.ActiveCfg = Debug|x86
 		{8619C6C2-C719-4371-9F61-10A735FB8B99}.Debug|x86.Build.0 = Debug|x86
 		{8619C6C2-C719-4371-9F61-10A735FB8B99}.Release|x86.ActiveCfg = Release|x86

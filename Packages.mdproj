@@ -71,6 +71,38 @@
             <RootEntry path="Di.sln" id=":root:" />
           </Builder>
         </Package>
+        <Package name="Mono Makefile Sources">
+          <Builder targetFile="Di-.tar.gz" format="MonoDevelop.Projects.FileFormat" ctype="SourcesZipPackageBuilder">
+            <ChildEntries>
+              <SolutionItemReference path="Filesystem\Filesystem.csproj" />
+            </ChildEntries>
+            <RootEntry path="Di.sln" id=":root:" />
+          </Builder>
+        </Package>
+        <Package name="Linux Binaries">
+          <Builder targetFile="Di-linux.tar.gz" platform="Linux" configuration="Debug|x86" ctype="BinariesZipPackageBuilder">
+            <ChildEntries>
+              <SolutionItemReference path="Filesystem\Filesystem.csproj" />
+            </ChildEntries>
+            <RootEntry path="Di.sln" id=":root:" />
+          </Builder>
+        </Package>
+        <Package name="Microsoft Windows Binaries">
+          <Builder targetFile="Di-windows.tar.gz" platform="Windows" configuration="Debug|x86" ctype="BinariesZipPackageBuilder">
+            <ChildEntries>
+              <SolutionItemReference path="Filesystem\Filesystem.csproj" />
+            </ChildEntries>
+            <RootEntry path="Di.sln" id=":root:" />
+          </Builder>
+        </Package>
+        <Package name="Tarball">
+          <Builder TargetDirectory="Filesystem" DefaultConfiguration="Debug|x86" ctype="TarballDeployTarget">
+            <ChildEntries>
+              <SolutionItemReference path="Filesystem\Filesystem.csproj" />
+            </ChildEntries>
+            <RootEntry path="Di.sln" id=":root:" />
+          </Builder>
+        </Package>
       </Packages>
     </Packages>
   </PropertyGroup>
