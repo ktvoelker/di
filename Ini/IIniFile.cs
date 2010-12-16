@@ -24,6 +24,10 @@ using System.IO;
 
 namespace Ini
 {
+    public interface IIniFile : IDictionary<string, IIniSection> { }
+
+    public interface IIniSection : IDictionary<string, string> { }
+
     public class ParseException : Exception
     {
         public uint LineNumber
@@ -41,25 +45,33 @@ namespace Ini
         public ParseException(string message) : base(message) { }
     }
 
-    public class IniFile
+    public static class IniParser
     {
+        private class IniFile : Dictionary<string, IIniSection>, IIniFile { }
+
+        private class IniSection : Dictionary<string, string>, IIniSection { }
+
         private delegate void AddProblem(string message);
 
-        public static IList<Exception> Parse(string fileName, ref IDictionary<string, IDictionary<string, string>> dict)
+        public static IList<Exception> Parse(string fileName, ref IIniFile dict)
+        {
+            return Parse(File.OpenText(fileName), fileName, ref dict);
+        }
+
+        public static IList<Exception> Parse(TextReader input, string name, ref IIniFile dict)
         {
             if (dict == null)
             {
-                dict = new Dictionary<string, IDictionary<string, string>>();
+                dict = new IniFile();
             }
-            var input = File.OpenText(fileName);
             string line = null;
-            IDictionary<string, string> curSection = new Dictionary<string, string>();
-            dict[null] = curSection;
+            var curSection = new IniSection();
+            dict[""] = curSection;
             var problems = new List<Exception>();
             uint lineNumber = 1;
             AddProblem addProblem = message =>
             {
-                problems.Add(new ParseException(message) {LineNumber = lineNumber,FileName = fileName});
+                problems.Add(new ParseException(message) {LineNumber = lineNumber,FileName = name});
             };
             while ((line = input.ReadLine()) != null)
             {
@@ -75,7 +87,7 @@ namespace Ini
                         addProblem("Missing right bracket");
                         line = line.Substring(1, line.Length - 1);
                     }
-                    curSection = new Dictionary<string, string>();
+                    curSection = new IniSection();
                     dict[line] = curSection;
                 }
                 else if (line.Length > 0)

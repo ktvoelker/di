@@ -2,3 +2,4 @@
 *.pidb
 bin
 *.userprefs
+test-results
