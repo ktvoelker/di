@@ -20,17 +20,16 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using Gtk;
 
 namespace Di.View
 {
-    public class Main : Window
+    public class Main : Gtk.Window
     {
         private Controller.Main ctl;
 
-        private HBox buffersBox;
+        private Gtk.HBox windowsBox;
 
-        public Main(Controller.Main c) : base(WindowType.Toplevel)
+        public Main(Controller.Main c) : base(Gtk.WindowType.Toplevel)
         {
             ctl = c;
             Name = "di";
@@ -38,17 +37,47 @@ namespace Di.View
             DefaultWidth = 800;
             DefaultHeight = 600;
             DeleteEvent += OnDeleteEvent;
-            buffersBox = new HBox();
-            foreach (var buffer in ctl.Windows)
+            windowsBox = new Gtk.HBox();
+            var windowViews = new List<WindowView>();
+            foreach (var window in ctl.Windows)
             {
-                buffersBox.Add(new Buffer(buffer));
+                var view = new WindowView(window);
+                windowsBox.Add(view);
+                windowViews.Add(view);
             }
-            Add(buffersBox);
+            Add(windowsBox);
+            ctl.WindowsEvents.Added += (list, index, window) =>
+            {
+                windowsBox.Add(new WindowView(window));
+            };
+            ctl.WindowsEvents.Removed += (list, index, window) =>
+            {
+                windowsBox.Remove(windowViews[index]);
+                windowViews.RemoveAt(index);
+            };
+            ctl.WindowsEvents.Cleared += (list) =>
+            {
+                foreach (var view in windowViews)
+                {
+                    windowsBox.Remove(view);
+                }
+                windowViews.Clear();
+            };
+            ctl.FocusedWindow.Changed += (main, window) =>
+            {
+                foreach (var view in windowViews)
+                {
+                    if (view.Window == window)
+                    {
+                        view.GrabFocus();
+                    }
+                }
+            };
         }
 
-        protected void OnDeleteEvent(object sender, DeleteEventArgs a)
+        protected void OnDeleteEvent(object sender, Gtk.DeleteEventArgs a)
         {
-            Application.Quit();
+            Gtk.Application.Quit();
             a.RetVal = true;
         }
     }

@@ -2,6 +2,8 @@
 TODO
 ====
 
+Test the CreateAndFocusWindow command
+
 Add support for projects
 
     Search up from the current directory for di-project.ini
@@ -9,8 +11,7 @@ Add support for projects
         Project name (show it, and nothing else other than "Di", in the title bar)
 
     Add commands:
-        Add a new window and switch to it
-        Hide the current window
+        Close the current window
         Load a file in the current window
 
     Keep a list of project files sorted by most-recently-visible
@@ -34,6 +35,16 @@ Add support for language plug-ins, which will ultimately provide:
     Logic for moving by words and by matching brackets
     Syntax coloring
     Logic for dividing the buffer into subbuffers
+
+Add intelligent window layout
+
+    Allow multiple windows in a column
+        By default, group functions from the same file in a column
+            If the whole file is open, put it at the top of the column
+
+    Group columns by directory
+        Shade the background behind each group in a unique color
+        Highlight name references in the source code in the same color as the directory containing the referent
 
 Configuration support
     $HOME/di-user.ini

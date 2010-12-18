@@ -24,7 +24,7 @@ namespace Di.Controller.Command
 {
     public class CommandMode : LoneCommand
     {
-        public override void Execute(Buffer b)
+        public override void Execute(Window b)
         {
             b.EnterCommandMode();
         }
@@ -32,7 +32,7 @@ namespace Di.Controller.Command
 
     public class CurLine : MoveCommand
     {
-        public override Movement Evaluate(Buffer b)
+        public override Movement Evaluate(Window b)
         {
             var cursorStart = b.GtkTextBuffer.GetCursorIter();
             var cursorEnd = cursorStart;
@@ -48,7 +48,7 @@ namespace Di.Controller.Command
 
     public class Down : MoveCommand
     {
-        public override Movement Evaluate(Buffer b)
+        public override Movement Evaluate(Window b)
         {
             var cursorStart = b.GtkTextBuffer.GetCursorIter();
             var actionStart = cursorStart.LineStart;
@@ -64,7 +64,7 @@ namespace Di.Controller.Command
 
     public class Up : MoveCommand
     {
-        public override Movement Evaluate(Buffer b)
+        public override Movement Evaluate(Window b)
         {
             var cursorStart = b.GtkTextBuffer.GetCursorIter();
             var actionStart = cursorStart.LineStart.ForwardLines(1);
@@ -80,7 +80,7 @@ namespace Di.Controller.Command
 
     public class Left : MoveCommand
     {
-        public override Movement Evaluate(Buffer b)
+        public override Movement Evaluate(Window b)
         {
             var start = b.GtkTextBuffer.GetCursorIter();
             var range = new Range(start, start - 1);
@@ -94,7 +94,7 @@ namespace Di.Controller.Command
 
     public class Right : MoveCommand
     {
-        public override Movement Evaluate(Buffer b)
+        public override Movement Evaluate(Window b)
         {
             var start = b.GtkTextBuffer.GetCursorIter();
             var range = new Range(start, start + 1);
@@ -108,7 +108,7 @@ namespace Di.Controller.Command
 
     public class Tab : RepeatCommand
     {
-        public override void Execute(Buffer b)
+        public override void Execute(Window b)
         {
             var cursor = b.GtkTextBuffer.GetCursorIter();
             b.GtkTextBuffer.InsertAtCursor((cursor - cursor.LineStart) % 2 == 0 ? "  " : " ");
@@ -117,7 +117,7 @@ namespace Di.Controller.Command
 
     public class Ignore : RepeatCommand
     {
-        public override void Execute(Buffer b)
+        public override void Execute(Window b)
         {
             // Empty
         }
@@ -133,7 +133,7 @@ namespace Di.Controller.Command
 			_buffer.Append(val);
 		}
 		
-		public override void Execute(Buffer b)
+		public override void Execute(Window b)
 		{
 			if (_buffer != null)
 			{
@@ -156,7 +156,7 @@ namespace Di.Controller.Command
 		    return new Ignore();
 		}
 		
-        public override void Execute(Buffer b)
+        public override void Execute(Window b)
 		{
 			throw new NotSupportedException();
 		}
@@ -164,7 +164,7 @@ namespace Di.Controller.Command
 
     public class InsertMode : LoneCommand
     {
-        public override void Execute(Buffer b)
+        public override void Execute(Window b)
         {
             b.EnterInsertMode();
         }
@@ -172,7 +172,7 @@ namespace Di.Controller.Command
 
     public class Delete : RangeCommand
     {
-        public override void Execute(Buffer b, Range r)
+        public override void Execute(Window b, Range r)
         {
             b.GtkTextBuffer.Delete(r);
         }
@@ -180,7 +180,7 @@ namespace Di.Controller.Command
 
     public class Backspace : MoveCommand
     {
-        public override Movement Evaluate(Buffer b)
+        public override Movement Evaluate(Window b)
         {
             CharIter start = b.GtkTextBuffer.GetCursorIter();
             CharIter end = start;
@@ -200,6 +200,14 @@ namespace Di.Controller.Command
                 CursorRange = new Range(start, end),
                 ActionRange = new Range(start, end)
             };
+        }
+    }
+
+    public class CreateAndFocusWindow : LoneCommand
+    {
+        public override void Execute(Window b)
+        {
+            b.Controller.FocusedWindow.Value = b.Controller.CreateWindow();
         }
     }
 }

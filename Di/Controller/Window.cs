@@ -25,26 +25,29 @@ using Gtk;
 using Gdk;
 namespace Di.Controller
 {
-    public class Buffer
+    public class Window
     {
+        public readonly Main Controller;
+
         private Model.Buffer model;
         public TextBuffer GtkTextBuffer
         {
             get { return model; }
         }
 
-        private BufferMode CommandMode;
-        private BufferMode InsertMode;
+        private WindowMode CommandMode;
+        private WindowMode InsertMode;
 
-        public Bind<Buffer, BufferMode> CurrentMode { get; private set; }
+        public Bind<Window, WindowMode> CurrentMode { get; private set; }
         private IList<UnparsedCommand> CurrentCommand;
 
-        public Buffer(KeyMap commandModeMap, KeyMap insertModeMap, Model.Buffer _model)
+        public Window(Main _controller, KeyMap _commandModeMap, KeyMap _insertModeMap, Model.Buffer _model)
         {
+            Controller = _controller;
             model = _model;
-            CommandMode = new BufferMode() { Name = "Command", KeyMap = commandModeMap };
-            InsertMode = new BufferMode() { Name = "Insert", KeyMap = insertModeMap };
-            CurrentMode = new Bind<Buffer, BufferMode>(this, CommandMode);
+            CommandMode = new WindowMode() { Name = "Command", KeyMap = _commandModeMap };
+            InsertMode = new WindowMode() { Name = "Insert", KeyMap = _insertModeMap };
+            CurrentMode = new Bind<Window, WindowMode>(this, CommandMode);
             CurrentCommand = new List<UnparsedCommand>();
         }
 
@@ -60,7 +63,7 @@ namespace Di.Controller
             result.Commands.ForEach(c => c.Execute(this));
         }
 
-        private void EnterMode(BufferMode b)
+        private void EnterMode(WindowMode b)
         {
             CurrentMode.Value = b;
         }

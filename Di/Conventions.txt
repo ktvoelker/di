@@ -1,0 +1,9 @@
+
+Coding Conventions
+==================
+
+Don't have two classes with the same name, even in different namespaces.
+
+Don't use "using Gtk" or "using Gdk".
+
+Don't use "using Controller" or "using Model" or "using View".

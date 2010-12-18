@@ -40,7 +40,7 @@ namespace Di
     {
         public delegate void ValueChanged(P p, V v);
 
-        private ValueChanged _changed;
+        private ValueChanged _changed = (p, v) => { return; };
 
         public event ValueChanged Changed
         {

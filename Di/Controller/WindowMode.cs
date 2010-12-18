@@ -21,7 +21,7 @@
 using System;
 namespace Di.Controller
 {
-    public class BufferMode
+    public class WindowMode
     {
         public string Name
         {
@@ -35,7 +35,7 @@ namespace Di.Controller
             set;
         }
 
-        public BufferMode()
+        public WindowMode()
         {
 
         }

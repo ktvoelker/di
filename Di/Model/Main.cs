@@ -20,21 +20,30 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using Gdk;
+using System.Collections.ObjectModel;
 namespace Di.Model
 {
     public class Main
     {
-        private IList<Buffer> buffers;
-        public IEnumerable<Buffer> Buffers
-        {
-            get { return buffers; }
-        }
+        private readonly BindList<Buffer> buffers;
+        public readonly ReadOnlyCollection<Buffer> Buffers;
+
+        public Project CurrentProject { get; private set; }
 
         public Main()
         {
-            buffers = new List<Buffer>();
+            CurrentProject = new Project();
+
+            buffers = new BindList<Buffer>();
             buffers.Add(new Buffer());
+            Buffers = new ReadOnlyCollection<Buffer>(buffers);
+        }
+
+        public Buffer CreateBuffer()
+        {
+            var buffer = new Buffer();
+            buffers.Add(buffer);
+            return buffer;
         }
     }
 }

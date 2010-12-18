@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Gdk;
 
 namespace Di.Controller
@@ -28,11 +29,11 @@ namespace Di.Controller
     {
         private Model.Main model;
 
-        private IList<Buffer> windows;
-        public IEnumerable<Buffer> Windows
-        {
-            get { return windows; }
-        }
+        private readonly BindList<Window> windows;
+        public readonly ReadOnlyCollection<Window> Windows;
+        public readonly BindList<Window>.Events WindowsEvents;
+
+        public readonly Bind<Main, Window> FocusedWindow;
 
         public KeyMap CommandMode
         {
@@ -74,12 +75,23 @@ namespace Di.Controller
             InsertMode.Add(Key.Left, new Command.Left());
             InsertMode.Add(Key.Right, new Command.Right());
             InsertMode.Add(Key.Delete, new Command.Delete(), new Command.Right());
-			
-            windows = new List<Buffer>();
+   
+            windows = new BindList<Window>();
             if (model.Buffers.HasAny())
             {
-                windows.Add(new Buffer(CommandMode, InsertMode, model.Buffers.Item(0)));
+                var window = new Window(this, CommandMode, InsertMode, model.Buffers.Item(0));
+                windows.Add(window);
+                FocusedWindow.Value = window;
             }
+            Windows = new ReadOnlyCollection<Window>(windows);
+            WindowsEvents = windows.Event;
+        }
+
+        public Window CreateWindow()
+        {
+            var window = new Window(this, CommandMode, InsertMode, model.CreateBuffer());
+            windows.Add(window);
+            return window;
         }
     }
 }

@@ -33,7 +33,7 @@ namespace Di.Controller
 
     public abstract class LoneCommand : ICommand
     {
-		public abstract void Execute(Buffer b);
+		public abstract void Execute(Window b);
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ namespace Di.Controller
                 _count = count;
             }
 
-            public override void Execute(Buffer b)
+            public override void Execute(Window b)
             {
                 for (uint i = 0; i < _count; ++i)
                 {
@@ -72,12 +72,12 @@ namespace Di.Controller
     /// </summary>
     public abstract class MoveCommand : RepeatCommand
     {
-        public override void Execute(Buffer b)
+        public override void Execute(Window b)
         {
             b.GtkTextBuffer.PlaceCursor(Evaluate(b).CursorRange.End.GtkIter);
         }
 
-        public abstract Movement Evaluate(Buffer b);
+        public abstract Movement Evaluate(Window b);
 
         public new MoveCommand Repeat(uint count)
         {
@@ -95,7 +95,7 @@ namespace Di.Controller
                 _count = count;
             }
 
-            public override Movement Evaluate(Buffer b)
+            public override Movement Evaluate(Window b)
             {
                 // TODO handle zero repetitions case
                 var movement = _cmd.Evaluate(b);
@@ -127,7 +127,7 @@ namespace Di.Controller
                 _move = move;
             }
 
-            public override void Execute(Buffer b)
+            public override void Execute(Window b)
             {
                 _range.Execute(b, _move);
             }
@@ -138,13 +138,13 @@ namespace Di.Controller
             return new CompleteRangeCommand(this, move);
         }
 
-        public void Execute(Buffer b, MoveCommand move)
+        public void Execute(Window b, MoveCommand move)
         {
             var movement = move.Evaluate(b);
             Execute(b, movement.ActionRange);
         }
 
-        public abstract void Execute(Buffer b, Range r);
+        public abstract void Execute(Window b, Range r);
     }
 
     /// <summary>

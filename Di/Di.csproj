@@ -38,11 +38,8 @@
     <Compile Include="View\Main.cs" />
     <Compile Include="Model\Main.cs" />
     <Compile Include="Controller\Main.cs" />
-    <Compile Include="View\Buffer.cs" />
     <Compile Include="Model\Buffer.cs" />
-    <Compile Include="Controller\Buffer.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="Controller\BufferMode.cs" />
     <Compile Include="Controller\CommandParser.cs" />
     <Compile Include="Controller\Commands.cs" />
     <Compile Include="Controller\KeyMap.cs" />
@@ -52,6 +49,10 @@
     <Compile Include="CharIter.cs" />
     <Compile Include="Bind.cs" />
     <Compile Include="Model\Project.cs" />
+    <Compile Include="Controller\Window.cs" />
+    <Compile Include="View\WindowView.cs" />
+    <Compile Include="Controller\WindowMode.cs" />
+    <Compile Include="BindList.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
@@ -69,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="TODO.txt" />
+    <None Include="Conventions.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ini\Ini.csproj">
