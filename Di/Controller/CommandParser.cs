@@ -20,13 +20,11 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Di.Controller
 {
-    using IEC = System.Collections.Generic.IEnumerable<LoneCommand>;
-    using IEU = System.Collections.Generic.IEnumerable<UnparsedCommand>;
-
     [Flags]
     public enum ParserExpectation : byte
     {
@@ -46,13 +44,9 @@ namespace Di.Controller
         AfterSameRange = Any
     }
 
-    public class ParseResult
+    public class CommandParser
     {
-        public IEC Commands
-        {
-            get;
-            private set;
-        }
+        public readonly IList<LoneCommand> Commands;
 
         public ParserExpectation State
         {
@@ -60,31 +54,34 @@ namespace Di.Controller
             private set;
         }
 
-        public IEnumerable<IEU> Skipped
-        {
-            get;
-            private set;
-        }
+        private readonly IList<ReadOnlyCollection<UnparsedCommand>> skipped;
+        public readonly ReadOnlyCollection<ReadOnlyCollection<UnparsedCommand>> Skipped;
 
-        private IList<UnparsedCommand> _atoms;
+        private readonly IList<UnparsedCommand> atoms;
         private int i;
         private RangeCommand rangeCmd;
         private uint count;
 
-        public ParseResult(IList<UnparsedCommand> atoms)
+        public CommandParser()
         {
-			_atoms = atoms;
-            var commands = new List<LoneCommand>();
-            var skipped = new List<IEU>();
+            Commands = new List<LoneCommand>();
             State = ParserExpectation.Any;
+            skipped = new List<ReadOnlyCollection<UnparsedCommand>>();
+            Skipped = new ReadOnlyCollection<ReadOnlyCollection<UnparsedCommand>>(skipped);
+            atoms = new List<UnparsedCommand>();
             i = 0;
             rangeCmd = null;
             count = 0;
+        }
 
-            while (i < _atoms.Count)
+        public void Parse(IEnumerable<UnparsedCommand> _atoms)
+        {
+            _atoms.ForEach(a => atoms.Add(a));
+
+            while (i < atoms.Count)
             {
-                var atom = _atoms[i].Atom;
-                var input = _atoms[i].Input;
+                var atom = atoms[i].Atom;
+                var input = atoms[i].Input;
                 MoveCommand moveCmd;
                 switch (State)
                 {
@@ -94,9 +91,10 @@ namespace Di.Controller
                         var loneCmd = atom as LoneCommand;
                         if (loneCmd != null)
                         {
-                            commands.Add(SetKey(loneCmd, input));
+                            Commands.Add(SetKey(loneCmd, input));
                             ++i;
                             Reset();
+                            continue;
                         }
                         // Range command
                         rangeCmd = atom as RangeCommand;
@@ -116,17 +114,19 @@ namespace Di.Controller
                         var sameRangeCmd = atom as RangeCommand;
                         if (sameRangeCmd != null && sameRangeCmd.GetType() == rangeCmd.GetType())
                         {
-                            commands.Add(rangeCmd.Complete(new Command.CurLine()));
+                            Commands.Add(rangeCmd.Complete(new Command.CurLine()));
                             ++i;
                             Reset();
+                            continue;
                         }
                         // Move command
                         moveCmd = atom as MoveCommand;
                         if (moveCmd != null)
                         {
-                            commands.Add(rangeCmd.Complete(moveCmd));
+                            Commands.Add(rangeCmd.Complete(moveCmd));
                             ++i;
                             Reset();
+                            continue;
                         }
                         // Num command
                         ParseNumCommand(atom, input);
@@ -138,9 +138,10 @@ namespace Di.Controller
                         moveCmd = atom as MoveCommand;
                         if (moveCmd != null)
                         {
-                            commands.Add(rangeCmd.Complete(moveCmd.Repeat(count)));
+                            Commands.Add(rangeCmd.Complete(moveCmd.Repeat(count)));
                             ++i;
                             Reset();
+                            continue;
                         }
                         // Num command
                         ParseNumCommand(atom, input);
@@ -152,31 +153,30 @@ namespace Di.Controller
                         moveCmd = atom as MoveCommand;
                         if (moveCmd != null)
                         {
-                            commands.Add(moveCmd.Repeat(count));
+                            Commands.Add(moveCmd.Repeat(count));
                             ++i;
                             Reset();
+                            continue;
                         }
                         // Repeat command
                         var repCmd = atom as RepeatCommand;
                         if (repCmd != null)
                         {
-                            commands.Add(SetKey(repCmd, input).Repeat(count));
+                            Commands.Add(SetKey(repCmd, input).Repeat(count));
                             ++i;
                             Reset();
+                            continue;
                         }
                         // Num command
                         ParseNumCommand(atom, input);
                         break;
 
                     default:
-                        skipped.Add(Skip());
+                        Skip();
                         Reset();
                         break;
                 }
             }
-
-            Commands = commands;
-            Skipped = skipped;
         }
 		
 		private T SetKey<T>(T cmd, uint input) where T : class
@@ -211,11 +211,11 @@ namespace Di.Controller
         /// <summary>
         /// Add the processed input to the list failed input sequences.
         /// </summary>
-        private IEnumerable<UnparsedCommand> Skip()
+        private void Skip()
         {
-            var skipped = new List<UnparsedCommand>();
-            skipped.AddRange(_atoms.Take(i));
-			return skipped;
+            var skip = new List<UnparsedCommand>();
+            skip.AddRange(atoms.Take(i));
+            skipped.Add(new ReadOnlyCollection<UnparsedCommand>(skip));
         }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace Di.Controller
         {
             while (i > 0)
 			{
-				_atoms.RemoveAt(0);
+				atoms.RemoveAt(0);
 				--i;
 			}
             i = 0;

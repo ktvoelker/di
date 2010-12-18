@@ -39,7 +39,8 @@ namespace Di.Controller
         private WindowMode InsertMode;
 
         public Bind<Window, WindowMode> CurrentMode { get; private set; }
-        private IList<UnparsedCommand> CurrentCommand;
+
+        private CommandParser parser;
 
         public Window(Main _controller, KeyMap _commandModeMap, KeyMap _insertModeMap, Model.Buffer _model)
         {
@@ -48,19 +49,19 @@ namespace Di.Controller
             CommandMode = new WindowMode() { Name = "Command", KeyMap = _commandModeMap };
             InsertMode = new WindowMode() { Name = "Insert", KeyMap = _insertModeMap };
             CurrentMode = new Bind<Window, WindowMode>(this, CommandMode);
-            CurrentCommand = new List<UnparsedCommand>();
+            parser = new CommandParser();
         }
 
         public void KeyPressedHandler(EventKey e)
         {
-			CurrentMode.Value.KeyMap.Lookup(e).ForEach(a =>
+            parser.Parse(CurrentMode.Value.KeyMap.Lookup(e).Map(a =>
             {
-                CurrentCommand.Add(new UnparsedCommand(a, e.KeyValue));
-            });
-            var result = new ParseResult(CurrentCommand);
+                return new UnparsedCommand(a, e.KeyValue);
+            }));
             // TODO alert the user if there were any invalid sequences
             // TODO indicate the current state somewhere
-            result.Commands.ForEach(c => c.Execute(this));
+            parser.Commands.ForEach(c => c.Execute(this));
+            parser.Commands.Clear();
         }
 
         private void EnterMode(WindowMode b)

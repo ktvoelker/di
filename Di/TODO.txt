@@ -2,6 +2,12 @@
 TODO
 ====
 
+Add abstract InterruptCommand class, with parser support
+
+Add abstract MenuMode subclass of WindowMode
+
+Bind "wa" to CreateAndFocusWindow
+
 Test the CreateAndFocusWindow command
 
 Add support for projects

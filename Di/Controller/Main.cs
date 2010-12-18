@@ -33,7 +33,7 @@ namespace Di.Controller
         public readonly ReadOnlyCollection<Window> Windows;
         public readonly BindList<Window>.Events WindowsEvents;
 
-        public readonly Bind<Main, Window> FocusedWindow;
+        public readonly Bind<Main, Window> FocusedWindow = new Bind<Main, Window>(null);
 
         public KeyMap CommandMode
         {
