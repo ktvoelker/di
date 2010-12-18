@@ -44,35 +44,79 @@ namespace Di.Controller
         AfterSameRange = Any
     }
 
-    public class CommandParser
+    public class CommandParser : CommandAnalyzer
     {
         public readonly IList<LoneCommand> Commands;
 
+        private readonly IList<ReadOnlyCollection<UnparsedCommand>> skipped;
+        public readonly ReadOnlyCollection<ReadOnlyCollection<UnparsedCommand>> Skipped;
+
+        public CommandParser()
+        {
+            Commands = new List<LoneCommand>();
+            skipped = new List<ReadOnlyCollection<UnparsedCommand>>();
+            Skipped = new ReadOnlyCollection<ReadOnlyCollection<UnparsedCommand>>(skipped);
+        }
+
+        public override void AddCommand(LoneCommand c)
+        {
+            Commands.Add(c);
+        }
+
+        public override void AddSkipped(ReadOnlyCollection<UnparsedCommand> s)
+        {
+            skipped.Add(s);
+        }
+    }
+
+    public class CommandChecker : CommandAnalyzer
+    {
+        public bool Accepted
+        {
+            get;
+            private set;
+        }
+
+        public CommandChecker()
+        {
+            Accepted = true;
+        }
+
+        public override void AddCommand(LoneCommand c)
+        {
+        }
+
+        public override void AddSkipped(ReadOnlyCollection<UnparsedCommand> s)
+        {
+            Accepted = false;
+        }
+    }
+
+    public abstract class CommandAnalyzer
+    {
         public ParserExpectation State
         {
             get;
             private set;
         }
 
-        private readonly IList<ReadOnlyCollection<UnparsedCommand>> skipped;
-        public readonly ReadOnlyCollection<ReadOnlyCollection<UnparsedCommand>> Skipped;
-
         private readonly IList<UnparsedCommand> atoms;
         private int i;
         private RangeCommand rangeCmd;
         private uint count;
 
-        public CommandParser()
+        public CommandAnalyzer()
         {
-            Commands = new List<LoneCommand>();
             State = ParserExpectation.Any;
-            skipped = new List<ReadOnlyCollection<UnparsedCommand>>();
-            Skipped = new ReadOnlyCollection<ReadOnlyCollection<UnparsedCommand>>(skipped);
             atoms = new List<UnparsedCommand>();
             i = 0;
             rangeCmd = null;
             count = 0;
         }
+
+        public abstract void AddCommand(LoneCommand c);
+
+        public abstract void AddSkipped(ReadOnlyCollection<UnparsedCommand> s);
 
         public void Parse(IEnumerable<UnparsedCommand> _atoms)
         {
@@ -91,7 +135,7 @@ namespace Di.Controller
                         var loneCmd = atom as LoneCommand;
                         if (loneCmd != null)
                         {
-                            Commands.Add(SetKey(loneCmd, input));
+                            AddCommand(SetKey(loneCmd, input));
                             ++i;
                             Reset();
                             continue;
@@ -114,7 +158,7 @@ namespace Di.Controller
                         var sameRangeCmd = atom as RangeCommand;
                         if (sameRangeCmd != null && sameRangeCmd.GetType() == rangeCmd.GetType())
                         {
-                            Commands.Add(rangeCmd.Complete(new Command.CurLine()));
+                            AddCommand(rangeCmd.Complete(new Command.CurLine()));
                             ++i;
                             Reset();
                             continue;
@@ -123,7 +167,7 @@ namespace Di.Controller
                         moveCmd = atom as MoveCommand;
                         if (moveCmd != null)
                         {
-                            Commands.Add(rangeCmd.Complete(moveCmd));
+                            AddCommand(rangeCmd.Complete(moveCmd));
                             ++i;
                             Reset();
                             continue;
@@ -138,7 +182,7 @@ namespace Di.Controller
                         moveCmd = atom as MoveCommand;
                         if (moveCmd != null)
                         {
-                            Commands.Add(rangeCmd.Complete(moveCmd.Repeat(count)));
+                            AddCommand(rangeCmd.Complete(moveCmd.Repeat(count)));
                             ++i;
                             Reset();
                             continue;
@@ -153,7 +197,7 @@ namespace Di.Controller
                         moveCmd = atom as MoveCommand;
                         if (moveCmd != null)
                         {
-                            Commands.Add(moveCmd.Repeat(count));
+                            AddCommand(moveCmd.Repeat(count));
                             ++i;
                             Reset();
                             continue;
@@ -162,7 +206,7 @@ namespace Di.Controller
                         var repCmd = atom as RepeatCommand;
                         if (repCmd != null)
                         {
-                            Commands.Add(SetKey(repCmd, input).Repeat(count));
+                            AddCommand(SetKey(repCmd, input).Repeat(count));
                             ++i;
                             Reset();
                             continue;
@@ -215,7 +259,7 @@ namespace Di.Controller
         {
             var skip = new List<UnparsedCommand>();
             skip.AddRange(atoms.Take(i));
-            skipped.Add(new ReadOnlyCollection<UnparsedCommand>(skip));
+            AddSkipped(new ReadOnlyCollection<UnparsedCommand>(skip));
         }
 
         /// <summary>

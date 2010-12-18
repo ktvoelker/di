@@ -2,9 +2,27 @@
 TODO
 ====
 
+Replace the current window mode with a set of window modes
+
+    Have parameterized command classes for:
+
+        Removing some modes
+        Adding some modes
+        Removing all modes
+
+    Each mode has a "bool Hidden" property
+
+        Don't show hidden modes on the statusbar
+
+    Create a mode which has bindings for the numbers
+
 Add abstract InterruptCommand class, with parser support
 
 Add abstract MenuMode subclass of WindowMode
+
+    Each MenuMode binding has a string attached to it which describes it
+
+    Always show all the bindings (for layout consistency), but gray out invalid ones
 
 Bind "wa" to CreateAndFocusWindow
 
