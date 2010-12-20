@@ -22,6 +22,14 @@ using System;
 using System.Text;
 namespace Di.Controller.Command
 {
+    public class DiscardInput : InterruptCommand
+    {
+        public override void Execute(Window b)
+        {
+            b.Parser.Reset();
+        }
+    }
+
     public class AddWindowMode : LoneCommand
     {
         private int index;
@@ -62,9 +70,8 @@ namespace Di.Controller.Command
 
     public class CurLine : MoveCommand
     {
-        public override Movement Evaluate(Window b)
+        public override Movement Evaluate(Window b, CharIter cursorStart)
         {
-            var cursorStart = b.GtkTextBuffer.GetCursorIter();
             var cursorEnd = cursorStart;
             var actionStart = cursorStart.LineStart;
             var actionEnd = actionStart.ForwardLines(1);
@@ -74,9 +81,8 @@ namespace Di.Controller.Command
 
     public class Down : MoveCommand
     {
-        public override Movement Evaluate(Window b)
+        public override Movement Evaluate(Window b, CharIter cursorStart)
         {
-            var cursorStart = b.GtkTextBuffer.GetCursorIter();
             var actionStart = cursorStart.LineStart;
             var actionEnd = actionStart.ForwardLines(2);
             var cursorEnd = cursorStart.ForwardLines(1);
@@ -86,9 +92,8 @@ namespace Di.Controller.Command
 
     public class Up : MoveCommand
     {
-        public override Movement Evaluate(Window b)
+        public override Movement Evaluate(Window b, CharIter cursorStart)
         {
-            var cursorStart = b.GtkTextBuffer.GetCursorIter();
             var actionStart = cursorStart.LineStart.ForwardLines(1);
             var actionEnd = actionStart.BackwardLines(2);
             var cursorEnd = cursorStart.BackwardLines(1);
@@ -98,9 +103,8 @@ namespace Di.Controller.Command
 
     public class Left : MoveCommand
     {
-        public override Movement Evaluate(Window b)
+        public override Movement Evaluate(Window b, CharIter start)
         {
-            var start = b.GtkTextBuffer.GetCursorIter();
             var range = new Range(start, start - 1);
             return new Movement { CursorRange = range, ActionRange = range };
         }
@@ -108,9 +112,8 @@ namespace Di.Controller.Command
 
     public class Right : MoveCommand
     {
-        public override Movement Evaluate(Window b)
+        public override Movement Evaluate(Window b, CharIter start)
         {
-            var start = b.GtkTextBuffer.GetCursorIter();
             var range = new Range(start, start + 1);
             return new Movement { CursorRange = range, ActionRange = range };
         }
@@ -182,9 +185,8 @@ namespace Di.Controller.Command
 
     public class Backspace : MoveCommand
     {
-        public override Movement Evaluate(Window b)
+        public override Movement Evaluate(Window b, CharIter start)
         {
-            CharIter start = b.GtkTextBuffer.GetCursorIter();
             CharIter end = start;
             CharIter line = start.LineStart;
             if (start - line <= 1)

@@ -52,7 +52,7 @@ namespace Di.Controller
 
         private KeyMap CurrentKeyMap = EmptyKeyMap;
 
-        private CommandParser parser;
+        public readonly CommandParser Parser;
 
         public Window(Main _controller, Model.Buffer _model)
         {
@@ -61,16 +61,18 @@ namespace Di.Controller
             CurrentMode = new BindList<WindowMode>();
             CurrentMode.Event.Changed += (list) => { CurrentKeyMap = list.FoldLeft(EmptyKeyMap, (a, b) => a + b.KeyMap); };
             CurrentMode.Add(Controller.WindowModes[0]);
-            parser = new CommandParser();
+            CurrentMode.Add(Controller.WindowModes[2]);
+            CurrentMode.Add(Controller.WindowModes[3]);
+            Parser = new CommandParser();
         }
 
         public void KeyPressedHandler(EventKey e)
         {
-            parser.Parse(CurrentKeyMap.Lookup(e).Select(a => { return new UnparsedCommand(a, e.KeyValue); }));
+            Parser.Parse(CurrentKeyMap.Lookup(e).Select(a => { return new UnparsedCommand(a, e.KeyValue); }));
             // TODO alert the user if there were any invalid sequences
             // TODO indicate the current state somewhere
-            parser.Commands.ForEach(c => c.Execute(this));
-            parser.Commands.Clear();
+            Parser.Commands.ForEach(c => c.Execute(this));
+            Parser.Commands.Clear();
         }
     }
 }

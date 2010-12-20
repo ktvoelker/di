@@ -29,6 +29,7 @@ namespace Di.View
         public readonly Controller.Window Window;
         private Gtk.ScrolledWindow scroll;
         private Gtk.Statusbar status;
+        private WindowTextView textView;
 
         public WindowView(Controller.Window _ctl)
         {
@@ -36,7 +37,7 @@ namespace Di.View
             Homogeneous = false;
             Spacing = 0;
             BorderWidth = 0;
-            var textView = new WindowTextView(Window);
+            textView = new WindowTextView(Window);
             scroll = new Gtk.ScrolledWindow { HscrollbarPolicy = Gtk.PolicyType.Never, VscrollbarPolicy = Gtk.PolicyType.Automatic };
             scroll.Add(textView);
             System.Action showCursor = delegate
@@ -55,6 +56,11 @@ namespace Di.View
                 status.Push(StatusbarMode, Window.CurrentMode.GetName());
             };
             PackStart(status, false, false, 0);
+        }
+
+        public void FocusTextView()
+        {
+            textView.GrabFocus();
         }
 
         private class WindowTextView : Gtk.TextView

@@ -38,6 +38,8 @@ namespace Di.View
             DefaultHeight = 600;
             DeleteEvent += OnDeleteEvent;
             windowsBox = new Gtk.HBox();
+            windowsBox.Homogeneous = true;
+            windowsBox.Spacing = 10;
             var windowViews = new List<WindowView>();
             foreach (var window in ctl.Windows)
             {
@@ -46,7 +48,13 @@ namespace Di.View
                 windowViews.Add(view);
             }
             Add(windowsBox);
-            ctl.WindowsEvents.Added += (list, index, window) => { windowsBox.Add(new WindowView(window)); };
+            ctl.WindowsEvents.Added += (list, index, window) =>
+            {
+                var view = new WindowView(window);
+                windowsBox.Add(view);
+                windowViews.Insert(index, view);
+                windowsBox.ShowAll();
+            };
             ctl.WindowsEvents.Removed += (list, index, window) =>
             {
                 windowsBox.Remove(windowViews[index]);
@@ -66,7 +74,7 @@ namespace Di.View
                 {
                     if (view.Window == window)
                     {
-                        view.GrabFocus();
+                        view.FocusTextView();
                     }
                 }
             };

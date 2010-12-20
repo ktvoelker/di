@@ -2,17 +2,9 @@
 TODO
 ====
 
-Add abstract InterruptCommand class, with parser support
+Text area word wrap has mysteriously stopped happening
 
-Add abstract MenuMode subclass of WindowMode
-
-    Each MenuMode binding has a string attached to it which describes it
-
-    Always show all the bindings (for layout consistency), but gray out invalid ones
-
-Bind "wa" to CreateAndFocusWindow
-
-Test the CreateAndFocusWindow command
+    The text area grows horizontally now
 
 Add support for projects
 
@@ -98,5 +90,13 @@ Make keybindings configurable
     containing commands to be loaded dynamically and searched for commands.
     
     Also make the initial mode configurable
+
+    Allow sets of modes to be named for reuse in the configuration
+
+Add a side panel which shows the valid bindings in a menu mode
+    Don't show a binding if it has no description
+    Try making command mode be a menu mode
+
+Show the parser state in the statusbar
 
 Fix scrolling to show cursor even when it's at the start of the last, empty line of the file.

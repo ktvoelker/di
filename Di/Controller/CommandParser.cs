@@ -34,10 +34,11 @@ namespace Di.Controller
         Repeat = 8,
         Num = 16,
         SameRange = 32,
-        Any = Lone | Move | Range | Repeat | Num,
-        AfterRange = SameRange | Move | Num,
-        AfterRangeNum = Move | Num,
-        AfterNum = Move | Repeat | Num,
+        Interrupt = 64,
+        Any = Lone | Move | Range | Repeat | Num | Interrupt,
+        AfterRange = SameRange | Move | Num | Interrupt,
+        AfterRangeNum = Move | Num | Interrupt,
+        AfterNum = Move | Repeat | Num | Interrupt,
         AfterMove = Any,
         AfterRepeat = Any,
         AfterLone = Any,
@@ -46,19 +47,19 @@ namespace Di.Controller
 
     public class CommandParser : CommandAnalyzer
     {
-        public readonly IList<LoneCommand> Commands;
+        public readonly IList<IResultCommand> Commands;
 
         private readonly IList<ReadOnlyCollection<UnparsedCommand>> skipped;
         public readonly ReadOnlyCollection<ReadOnlyCollection<UnparsedCommand>> Skipped;
 
         public CommandParser()
         {
-            Commands = new List<LoneCommand>();
+            Commands = new List<IResultCommand>();
             skipped = new List<ReadOnlyCollection<UnparsedCommand>>();
             Skipped = new ReadOnlyCollection<ReadOnlyCollection<UnparsedCommand>>(skipped);
         }
 
-        public override void AddCommand(LoneCommand c)
+        public override void AddCommand(IResultCommand c)
         {
             Commands.Add(c);
         }
@@ -82,7 +83,7 @@ namespace Di.Controller
             Accepted = true;
         }
 
-        public override void AddCommand(LoneCommand c)
+        public override void AddCommand(IResultCommand c)
         {
         }
 
@@ -114,7 +115,7 @@ namespace Di.Controller
             count = 0;
         }
 
-        public abstract void AddCommand(LoneCommand c);
+        public abstract void AddCommand(IResultCommand c);
 
         public abstract void AddSkipped(ReadOnlyCollection<UnparsedCommand> s);
 
@@ -127,6 +128,15 @@ namespace Di.Controller
                 var atom = atoms[i].Atom;
                 var input = atoms[i].Input;
                 MoveCommand moveCmd;
+
+                var interrupt = atom as InterruptCommand;
+                if (interrupt != null)
+                {
+                    AddCommand(interrupt);
+                    ++i;
+                    continue;
+                }
+
                 switch (State)
                 {
                     // Initial state
@@ -265,7 +275,7 @@ namespace Di.Controller
         /// <summary>
         /// Discard the processed input.
         /// </summary>
-        private void Reset()
+        public void Reset()
         {
             while (i > 0)
 			{

@@ -90,10 +90,14 @@ namespace Di.Controller
             Add(_base, ModifierType.None, commands);
         }
 
+        public IEC Lookup(KeyInput key)
+        {
+            return _map.ContainsKey(key) ? _map[key] : Default;
+        }
+
         public IEC Lookup(EventKey e)
         {
-            var key = new KeyInput(e);
-            return _map.ContainsKey(key) ? _map[key] : Default;
+            return Lookup(new KeyInput(e));
         }
 
         public static KeyMap operator +(KeyMap a, KeyMap b)

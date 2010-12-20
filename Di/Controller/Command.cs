@@ -31,9 +31,19 @@ namespace Di.Controller
     {
     }
 
-    public abstract class LoneCommand : ICommand
+    public interface IResultCommand : ICommand
     {
-		public abstract void Execute(Window b);
+        void Execute(Window b);
+    }
+
+    public abstract class InterruptCommand : IResultCommand
+    {
+        public abstract void Execute(Window b);
+    }
+
+    public abstract class LoneCommand : IResultCommand
+    {
+        public abstract void Execute(Window b);
     }
 
     /// <summary>
@@ -41,7 +51,7 @@ namespace Di.Controller
     /// </summary>
     public abstract class RepeatCommand : LoneCommand
     {
-        public virtual RepeatCommand Repeat(uint count)
+        public RepeatCommand Repeat(uint count)
         {
             return new RepeatedCommand(this, count);
         }
@@ -70,46 +80,52 @@ namespace Di.Controller
     /// <summary>
     /// A MoveCommand is like a RepeatCommand but can also be the argument to a RangeCommand.
     /// </summary>
-    public abstract class MoveCommand : RepeatCommand
+    public abstract class MoveCommand : LoneCommand
     {
         public override void Execute(Window b)
         {
-            b.GtkTextBuffer.PlaceCursor(Evaluate(b).CursorRange.End.GtkIter);
+            b.GtkTextBuffer.PlaceCursor(Evaluate(b, b.GtkTextBuffer.GetCursorIter()).CursorRange.End.GtkIter);
         }
 
-        public abstract Movement Evaluate(Window b);
+        public abstract Movement Evaluate(Window b, CharIter start);
 
-        public new MoveCommand Repeat(uint count)
+        public MoveCommand Repeat(uint count)
         {
             return new RepeatedCommand(this, count);
         }
 
         private class RepeatedCommand : MoveCommand
         {
-            private MoveCommand _cmd;
-            private uint _count;
+            private MoveCommand cmd;
+            private uint count;
 
-            public RepeatedCommand(MoveCommand cmd, uint count)
+            public RepeatedCommand(MoveCommand _cmd, uint _count)
             {
-                _cmd = cmd;
-                _count = count;
+                cmd = _cmd;
+                count = _count;
             }
 
-            public override Movement Evaluate(Window b)
+            public override Movement Evaluate(Window b, CharIter start)
             {
-                // TODO handle zero repetitions case
-                var movement = _cmd.Evaluate(b);
-                for (uint i = 1; i < _count - 1; ++i)
+                if (count == 0)
                 {
-                    _cmd.Evaluate(b);
+                    return new Movement()
+                    {
+                        CursorRange = new Range(start, start),
+                        ActionRange = new Range(start, start)
+                    };
                 }
-                if (_count >= 1)
+                Movement firstMovement = cmd.Evaluate(b, start);
+                Movement lastMovement = firstMovement;
+                for (uint i = 1; i < count; ++i)
                 {
-                    var lastMovement = _cmd.Evaluate(b);
-                    movement.CursorRange.End = lastMovement.CursorRange.End;
-                    movement.ActionRange.End = lastMovement.ActionRange.End;
+                    lastMovement = cmd.Evaluate(b, lastMovement.CursorRange.End);
                 }
-                return movement;
+                return new Movement()
+                {
+                    CursorRange = new Range(firstMovement.CursorRange.Start, lastMovement.CursorRange.End),
+                    ActionRange = new Range(firstMovement.ActionRange.Start, lastMovement.ActionRange.End)
+                };
             }
         }
     }
@@ -140,7 +156,7 @@ namespace Di.Controller
 
         public void Execute(Window b, MoveCommand move)
         {
-            var movement = move.Evaluate(b);
+            var movement = move.Evaluate(b, b.GtkTextBuffer.GetCursorIter());
             Execute(b, movement.ActionRange);
         }
 
