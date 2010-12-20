@@ -2,16 +2,6 @@
 TODO
 ====
 
-Create parameterized command classes for:
-
-    Removing some modes
-    Adding some modes
-    Removing all modes
-    
-Remove old CommandMode and InsertMode commands
-
-Create a mode which has bindings for the numbers
-
 Add abstract InterruptCommand class, with parser support
 
 Add abstract MenuMode subclass of WindowMode
@@ -39,7 +29,28 @@ Add support for projects
         Already-visible files should be least-preferred
             But allow a file to become visible in multiple places
 
+Add support for "undo"
+
+    Keep separate "undo" and "redo" stacks for each file in the project
+
+    An undo entry can be a checkpoint, a chunk, a sequence of chunks
+
+    A checkpoint is a clone of the buffer
+
+    A chunk either adds or removes sequential text (but not both)
+        Add specifies start point and length
+        Remove specifies start point and text
+
+    Call BeginUserAction and EndUserAction inside the key press handler
+
+    Have event handlers which create chunks and sequence them automatically
+
+Add auto-save
+    Flash a message in the status bar each time auto-save occurs
+
 Store session state alongside the controlling di-project.ini file
+    Window layout and position in each window
+    Undo and redo stacks
 
 Add support for the pasting stack
     Visual support
@@ -47,6 +58,7 @@ Add support for the pasting stack
     Push command
     Pop-and-paste command
     Pop-and-discard command
+    Add to session
 
 Add support for language plug-ins, which will ultimately provide:
     Behavior for Return and Tab commands

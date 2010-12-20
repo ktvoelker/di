@@ -22,12 +22,41 @@ using System;
 using System.Text;
 namespace Di.Controller.Command
 {
-    public class CommandMode : LoneCommand
+    public class AddWindowMode : LoneCommand
+    {
+        private int index;
+
+        public AddWindowMode(int _index)
+        {
+            index = _index;
+        }
+
+        public override void Execute(Window b)
+        {
+            b.CurrentMode.Add(b.Controller.WindowModes[index]);
+        }
+    }
+
+    public class RemoveWindowMode : LoneCommand
+    {
+        private int index;
+
+        public RemoveWindowMode(int _index)
+        {
+            index = _index;
+        }
+
+        public override void Execute(Window b)
+        {
+            b.CurrentMode.Remove(b.Controller.WindowModes[index]);
+        }
+    }
+
+    public class ClearWindowMode : LoneCommand
     {
         public override void Execute(Window b)
         {
             b.CurrentMode.Clear();
-            b.CurrentMode.Add(b.Controller.WindowModes[0]);
         }
     }
 
@@ -140,15 +169,6 @@ namespace Di.Controller.Command
         public override void Execute(Window b)
         {
             throw new NotSupportedException();
-        }
-    }
-
-    public class InsertMode : LoneCommand
-    {
-        public override void Execute(Window b)
-        {
-            b.CurrentMode.Clear();
-            b.CurrentMode.Add(b.Controller.WindowModes[1]);
         }
     }
 

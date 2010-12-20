@@ -46,7 +46,7 @@ namespace Di.Controller
             
             // Command mode bindings
             var commandMode = new KeyMap();
-            commandMode.Add(Key.i, new Command.InsertMode());
+            commandMode.Add(Key.i, new Command.ClearWindowMode(), new Command.AddWindowMode(1));
             commandMode.Add(Key.h, new Command.Down());
             commandMode.Add(Key.t, new Command.Up());
             commandMode.Add(Key.d, new Command.Left());
@@ -61,7 +61,7 @@ namespace Di.Controller
             var insertMode = new KeyMap();
             insertMode.SetDefault(new Command.InsertKey());
             insertMode.Add(Key.Return, new Command.InsertChar('\n'));
-            insertMode.Add(Key.Escape, new Command.CommandMode());
+            insertMode.Add(Key.Escape, new Command.ClearWindowMode(), new Command.AddWindowMode(0));
             insertMode.Add(Key.BackSpace, new Command.Delete(), new Command.Backspace());
             insertMode.Add(Key.Tab, new Command.Tab());
             insertMode.Add(Key.Down, new Command.Down());

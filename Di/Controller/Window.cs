@@ -59,7 +59,7 @@ namespace Di.Controller
             Controller = _controller;
             model = _model;
             CurrentMode = new BindList<WindowMode>();
-            CurrentMode.Event.Added += (list, index, item) => { CurrentKeyMap += item.KeyMap; };
+            CurrentMode.Event.Changed += (list) => { CurrentKeyMap = list.FoldLeft(EmptyKeyMap, (a, b) => a + b.KeyMap); };
             CurrentMode.Add(Controller.WindowModes[0]);
             parser = new CommandParser();
         }
