@@ -25,16 +25,14 @@ namespace Di
     public class BindList<T> : IList<T>
     {
         public delegate void ItemAdded(BindList<T> list, int index, T item);
-
         public delegate void ItemRemoved(BindList<T> list, int index, T item);
-
         public delegate void ListCleared(BindList<T> list);
-
-        private ItemAdded added = (l, i, t) => { return; };
-
-        private ItemRemoved removed = (l, i, t) => { return; };
-
-        private ListCleared cleared = (l) => { return; };
+		public delegate void ListChanged(BindList<T> list);
+		
+		private ListChanged changed;
+        private ItemAdded added;
+        private ItemRemoved removed;
+        private ListCleared cleared;
 
         public class Events
         {
@@ -57,6 +55,12 @@ namespace Di
                 add { list.cleared += value; }
                 remove { list.cleared -= value; }
             }
+			
+			public event ListChanged Changed
+			{
+				add { list.changed += value; }
+				remove { list.changed -= value; }
+			}
 
             public Events(BindList<T> _list)
             {
@@ -70,6 +74,10 @@ namespace Di
 
         public BindList()
         {
+			changed = (l) => { return; };
+			added = (l, i, t) => { changed(this); };
+			removed = (l, i, t) => { changed(this); };
+			cleared = (l) => { changed(this); };
             Event = new Events(this);
             list = new List<T>();
         }
