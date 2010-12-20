@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gdk;
 namespace Di.Controller
 {
@@ -54,6 +55,12 @@ namespace Di.Controller
 
     public class KeyMap
     {
+        public sbyte Priority
+        {
+            get;
+            set;
+        }
+
         public IEC Default
         {
             get;
@@ -87,6 +94,22 @@ namespace Di.Controller
         {
             var key = new KeyInput(e);
             return _map.ContainsKey(key) ? _map[key] : Default;
+        }
+
+        public static KeyMap operator +(KeyMap a, KeyMap b)
+        {
+            if (a.Priority < b.Priority)
+            {
+                var tmp = b;
+                b = a;
+                a = tmp;
+            }
+            KeyMap result = new KeyMap();
+            result.Priority = a.Priority;
+            result.Default = a.Default;
+            a._map.ForEach(kv => result._map.Add(kv.Key, kv.Value));
+            b._map.Where(kv => !a._map.ContainsKey(kv.Key)).ForEach(kv => result._map.Add(kv.Key, kv.Value));
+            return result;
         }
     }
 }

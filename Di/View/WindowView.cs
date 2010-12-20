@@ -37,28 +37,22 @@ namespace Di.View
             Spacing = 0;
             BorderWidth = 0;
             var textView = new WindowTextView(Window);
-            scroll = new Gtk.ScrolledWindow()
-            {
-                HscrollbarPolicy = Gtk.PolicyType.Never,
-                VscrollbarPolicy = Gtk.PolicyType.Automatic
-            };
+            scroll = new Gtk.ScrolledWindow { HscrollbarPolicy = Gtk.PolicyType.Never, VscrollbarPolicy = Gtk.PolicyType.Automatic };
             scroll.Add(textView);
-            System.Action showCursor = delegate {
+            System.Action showCursor = delegate
+            {
                 var cursor = Window.GtkTextBuffer.GetCursorIter();
                 textView.ScrollToIter(cursor.GtkIter, 0, false, 0, 0);
             };
-            Window.GtkTextBuffer.MarkSet += delegate {
-                showCursor();
-            };
-            Window.GtkTextBuffer.Changed += delegate {
-                showCursor();
-            };
+            Window.GtkTextBuffer.MarkSet += delegate { showCursor(); };
+            Window.GtkTextBuffer.Changed += delegate { showCursor(); };
             PackStart(scroll, true, true, 0);
             status = new Gtk.Statusbar();
-            status.Push(StatusbarMode, Window.CurrentMode.Value.Name);
-            Window.CurrentMode.Changed += (b, m) => {
+            status.Push(StatusbarMode, Window.CurrentMode.GetName());
+            Window.CurrentMode.Event.Changed += m =>
+            {
                 status.Pop(StatusbarMode);
-                status.Push(StatusbarMode, m.Name);
+                status.Push(StatusbarMode, Window.CurrentMode.GetName());
             };
             PackStart(status, false, false, 0);
         }
@@ -71,10 +65,7 @@ namespace Di.View
             {
                 ctl = _ctl;
                 WrapMode = Gtk.WrapMode.WordChar;
-                ModifyFont(new FontDescription {
-                    Family = "monospace",
-                    Size = (int) (14 * Pango.Scale.PangoScale)
-                });
+                ModifyFont(new FontDescription { Family = "monospace", Size = (int) (14 * Pango.Scale.PangoScale) });
             }
 
             protected override bool OnKeyPressEvent(Gdk.EventKey e)

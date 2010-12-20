@@ -27,9 +27,9 @@ namespace Di
         public delegate void ItemAdded(BindList<T> list, int index, T item);
         public delegate void ItemRemoved(BindList<T> list, int index, T item);
         public delegate void ListCleared(BindList<T> list);
-		public delegate void ListChanged(BindList<T> list);
-		
-		private ListChanged changed;
+        public delegate void ListChanged(BindList<T> list);
+
+        private ListChanged changed;
         private ItemAdded added;
         private ItemRemoved removed;
         private ListCleared cleared;
@@ -38,29 +38,25 @@ namespace Di
         {
             BindList<T> list;
 
-            public event ItemAdded Added
-            {
+            public event ItemAdded Added {
                 add { list.added += value; }
                 remove { list.added -= value; }
             }
 
-            public event ItemRemoved Removed
-            {
+            public event ItemRemoved Removed {
                 add { list.removed += value; }
                 remove { list.removed -= value; }
             }
-    
-            public event ListCleared Cleared
-            {
+
+            public event ListCleared Cleared {
                 add { list.cleared += value; }
                 remove { list.cleared -= value; }
             }
-			
-			public event ListChanged Changed
-			{
-				add { list.changed += value; }
-				remove { list.changed -= value; }
-			}
+
+            public event ListChanged Changed {
+                add { list.changed += value; }
+                remove { list.changed -= value; }
+            }
 
             public Events(BindList<T> _list)
             {
@@ -74,10 +70,10 @@ namespace Di
 
         public BindList()
         {
-			changed = (l) => { return; };
-			added = (l, i, t) => { changed(this); };
-			removed = (l, i, t) => { changed(this); };
-			cleared = (l) => { changed(this); };
+            changed = l => { return; };
+            added = (l, i, t) => { changed(this); };
+            removed = (l, i, t) => { changed(this); };
+            cleared = l => { changed(this); };
             Event = new Events(this);
             list = new List<T>();
         }
@@ -106,10 +102,7 @@ namespace Di
 
         public int Count
         {
-            get
-            {
-                return list.Count;
-            }
+            get { return list.Count; }
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -135,18 +128,12 @@ namespace Di
 
         public bool IsReadOnly
         {
-            get
-            {
-                return list.IsReadOnly;
-            }
+            get { return list.IsReadOnly; }
         }
 
         public T this[int index]
         {
-            get
-            {
-                return list[index];
-            }
+            get { return list[index]; }
             set
             {
                 T old = list[index];

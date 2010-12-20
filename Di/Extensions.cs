@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 namespace Di
 {
     public static class Extensions
@@ -58,22 +59,32 @@ namespace Di
             }
         }
 
-        public static IEnumerable<U> Map<T, U>(this IEnumerable<T> elems, Func<T, U> f)
+        public static U FoldLeft<T, U>(this IEnumerable<T> elems, U zero, Func<U, T, U> func)
         {
+            U result = zero;
             foreach (T elem in elems)
             {
-                yield return f(elem);
+                result = func(result, elem);
             }
+            return result;
         }
 
-        public static IEnumerable<T> Filter<T>(this IEnumerable<T> elems, Func<T, bool> pred)
+        public static U FoldRight<T, U>(this IEnumerable<T> elems, U zero, Func<T, U, U> func)
         {
-            foreach (T elem in elems)
+            U result = zero;
+            foreach (T elem in elems.Reverse())
             {
-                if (pred(elem))
-                {
-                    yield return elem;
-                }
+                result = func(elem, result);
+            }
+            return result;
+        }
+
+        public static IEnumerable<T> Reverse<T>(this IEnumerable<T> elems)
+        {
+            var list = new List<T>(elems);
+            for (int i = list.Count - 1; i >= 0; --i)
+            {
+                yield return list[i];
             }
         }
 
@@ -112,6 +123,11 @@ namespace Di
             var start = r.Start.GtkIter;
             var end = r.End.GtkIter;
             buffer.DeleteInteractive(ref start, ref end, true);
+        }
+
+        public static string GetName(this IEnumerable<Controller.WindowMode> mode)
+        {
+            return string.Join("-", mode.Where(m => !m.Hidden).OrderByDescending(m => m.KeyMap.Priority).Select(m => m.Name).ToArray());
         }
     }
 }

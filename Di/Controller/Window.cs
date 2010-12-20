@@ -1,5 +1,5 @@
 //  
-//  Buffer.cs
+//  Window.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Gtk;
 using Gdk;
@@ -35,48 +36,41 @@ namespace Di.Controller
             get { return model; }
         }
 
-        private WindowMode CommandMode;
-        private WindowMode InsertMode;
+        public BindList<WindowMode> CurrentMode
+        {
+            get;
+            private set;
+        }
 
-        public Bind<Window, WindowMode> CurrentMode { get; private set; }
+        private static readonly KeyMap EmptyKeyMap;
+
+        static Window()
+        {
+            EmptyKeyMap = new KeyMap { Priority = sbyte.MinValue };
+            EmptyKeyMap.SetDefault(new Command.Ignore());
+        }
+
+        private KeyMap CurrentKeyMap = EmptyKeyMap;
 
         private CommandParser parser;
 
-        public Window(Main _controller, KeyMap _commandModeMap, KeyMap _insertModeMap, Model.Buffer _model)
+        public Window(Main _controller, Model.Buffer _model)
         {
             Controller = _controller;
             model = _model;
-            CommandMode = new WindowMode() { Name = "Command", KeyMap = _commandModeMap };
-            InsertMode = new WindowMode() { Name = "Insert", KeyMap = _insertModeMap };
-            CurrentMode = new Bind<Window, WindowMode>(this, CommandMode);
+            CurrentMode = new BindList<WindowMode>();
+            CurrentMode.Event.Added += (list, index, item) => { CurrentKeyMap += item.KeyMap; };
+            CurrentMode.Add(Controller.WindowModes[0]);
             parser = new CommandParser();
         }
 
         public void KeyPressedHandler(EventKey e)
         {
-            parser.Parse(CurrentMode.Value.KeyMap.Lookup(e).Map(a =>
-            {
-                return new UnparsedCommand(a, e.KeyValue);
-            }));
+            parser.Parse(CurrentKeyMap.Lookup(e).Select(a => { return new UnparsedCommand(a, e.KeyValue); }));
             // TODO alert the user if there were any invalid sequences
             // TODO indicate the current state somewhere
             parser.Commands.ForEach(c => c.Execute(this));
             parser.Commands.Clear();
-        }
-
-        private void EnterMode(WindowMode b)
-        {
-            CurrentMode.Value = b;
-        }
-
-        public void EnterCommandMode()
-        {
-            EnterMode(CommandMode);
-        }
-
-        public void EnterInsertMode()
-        {
-            EnterMode(InsertMode);
         }
     }
 }

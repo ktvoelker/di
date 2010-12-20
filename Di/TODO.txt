@@ -2,19 +2,15 @@
 TODO
 ====
 
-Replace the current window mode with a set of window modes
+Create parameterized command classes for:
 
-    Have parameterized command classes for:
+    Removing some modes
+    Adding some modes
+    Removing all modes
+    
+Remove old CommandMode and InsertMode commands
 
-        Removing some modes
-        Adding some modes
-        Removing all modes
-
-    Each mode has a "bool Hidden" property
-
-        Don't show hidden modes on the statusbar
-
-    Create a mode which has bindings for the numbers
+Create a mode which has bindings for the numbers
 
 Add abstract InterruptCommand class, with parser support
 
@@ -88,5 +84,7 @@ Make keybindings configurable
 
     Eventually, there will be a configuration option allowing other assemblies
     containing commands to be loaded dynamically and searched for commands.
+    
+    Also make the initial mode configurable
 
 Fix scrolling to show cursor even when it's at the start of the last, empty line of the file.

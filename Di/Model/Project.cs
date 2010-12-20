@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.IO;
+using System.Linq;
 namespace Di.Model
 {
     public class Project
@@ -28,7 +29,9 @@ namespace Di.Model
 
         private DirectoryInfo dir = null;
 
-        public Project() : this(new DirectoryInfo(Environment.CurrentDirectory)) { }
+        public Project() : this(new DirectoryInfo(Environment.CurrentDirectory))
+        {
+        }
 
         public Project(DirectoryInfo _dir)
         {
@@ -49,7 +52,7 @@ namespace Di.Model
 
         public static bool DirIsProjectRoot(DirectoryInfo dir)
         {
-            return dir.GetFiles().Filter(file => file.Name == ConfigFileName).HasAny();
+            return dir.GetFiles().Where(file => file.Name == ConfigFileName).HasAny();
         }
     }
 }

@@ -26,7 +26,8 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            b.EnterCommandMode();
+            b.CurrentMode.Clear();
+            b.CurrentMode.Add(b.Controller.WindowModes[0]);
         }
     }
 
@@ -38,11 +39,7 @@ namespace Di.Controller.Command
             var cursorEnd = cursorStart;
             var actionStart = cursorStart.LineStart;
             var actionEnd = actionStart.ForwardLines(1);
-            return new Movement()
-            {
-                CursorRange = new Range(cursorStart, cursorEnd),
-                ActionRange = new Range(actionStart, actionEnd)
-            };
+            return new Movement { CursorRange = new Range(cursorStart, cursorEnd), ActionRange = new Range(actionStart, actionEnd) };
         }
     }
 
@@ -54,11 +51,7 @@ namespace Di.Controller.Command
             var actionStart = cursorStart.LineStart;
             var actionEnd = actionStart.ForwardLines(2);
             var cursorEnd = cursorStart.ForwardLines(1);
-            return new Movement()
-            {
-                CursorRange = new Range(cursorStart, cursorEnd),
-                ActionRange = new Range(actionStart, actionEnd)
-            };
+            return new Movement { CursorRange = new Range(cursorStart, cursorEnd), ActionRange = new Range(actionStart, actionEnd) };
         }
     }
 
@@ -70,11 +63,7 @@ namespace Di.Controller.Command
             var actionStart = cursorStart.LineStart.ForwardLines(1);
             var actionEnd = actionStart.BackwardLines(2);
             var cursorEnd = cursorStart.BackwardLines(1);
-            return new Movement()
-            {
-                CursorRange = new Range(cursorStart, cursorEnd),
-                ActionRange = new Range(actionStart, actionEnd)
-            };
+            return new Movement { CursorRange = new Range(cursorStart, cursorEnd), ActionRange = new Range(actionStart, actionEnd) };
         }
     }
 
@@ -84,11 +73,7 @@ namespace Di.Controller.Command
         {
             var start = b.GtkTextBuffer.GetCursorIter();
             var range = new Range(start, start - 1);
-            return new Movement()
-            {
-                CursorRange = range,
-                ActionRange = range
-            };
+            return new Movement { CursorRange = range, ActionRange = range };
         }
     }
 
@@ -98,11 +83,7 @@ namespace Di.Controller.Command
         {
             var start = b.GtkTextBuffer.GetCursorIter();
             var range = new Range(start, start + 1);
-            return new Movement()
-            {
-                CursorRange = range,
-                ActionRange = range
-            };
+            return new Movement { CursorRange = range, ActionRange = range };
         }
     }
 
@@ -122,51 +103,52 @@ namespace Di.Controller.Command
             // Empty
         }
     }
-	
-	public class InsertChar : RepeatCommand
-	{
-		private StringBuilder _buffer;
-		
-		public InsertChar(char val)
-		{
-			_buffer = new StringBuilder(1);
-			_buffer.Append(val);
-		}
-		
-		public override void Execute(Window b)
-		{
-			if (_buffer != null)
-			{
-            	b.GtkTextBuffer.InsertAtCursor(_buffer.ToString());
-			}
-		}
-	}
+
+    public class InsertChar : RepeatCommand
+    {
+        private StringBuilder _buffer;
+
+        public InsertChar(char val)
+        {
+            _buffer = new StringBuilder(1);
+            _buffer.Append(val);
+        }
+
+        public override void Execute(Window b)
+        {
+            if (_buffer != null)
+            {
+                b.GtkTextBuffer.InsertAtCursor(_buffer.ToString());
+            }
+        }
+    }
 
     public class InsertKey : RepeatCommand
     {
-		public const char MinInsertableChar = ' ';
-		public const char MaxInsertableChar = '~';
-		
-		public RepeatCommand SetKey(uint val)
-		{
-		    if (val >= MinInsertableChar && val <= MaxInsertableChar)
-		    {
-		        return new InsertChar((char) val);
-		    }
-		    return new Ignore();
-		}
-		
+        public const char MinInsertableChar = ' ';
+        public const char MaxInsertableChar = '~';
+
+        public RepeatCommand SetKey(uint val)
+        {
+            if (val >= MinInsertableChar && val <= MaxInsertableChar)
+            {
+                return new InsertChar((char) val);
+            }
+            return new Ignore();
+        }
+
         public override void Execute(Window b)
-		{
-			throw new NotSupportedException();
-		}
+        {
+            throw new NotSupportedException();
+        }
     }
 
     public class InsertMode : LoneCommand
     {
         public override void Execute(Window b)
         {
-            b.EnterInsertMode();
+            b.CurrentMode.Clear();
+            b.CurrentMode.Add(b.Controller.WindowModes[1]);
         }
     }
 
@@ -189,17 +171,14 @@ namespace Di.Controller.Command
             {
                 --end;
             }
+
             else
             {
                 string xs = new Range(line, end).Chars.Trim();
                 int n = xs == string.Empty ? 2 : 1;
                 end -= n;
             }
-            return new Movement()
-            {
-                CursorRange = new Range(start, end),
-                ActionRange = new Range(start, end)
-            };
+            return new Movement { CursorRange = new Range(start, end), ActionRange = new Range(start, end) };
         }
     }
 

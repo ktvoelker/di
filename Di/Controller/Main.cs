@@ -33,53 +33,48 @@ namespace Di.Controller
         public readonly ReadOnlyCollection<Window> Windows;
         public readonly BindList<Window>.Events WindowsEvents;
 
-        public readonly Bind<Main, Window> FocusedWindow = new Bind<Main, Window>(null);
+        public readonly Bind<Window> FocusedWindow = new Bind<Window>(null);
 
-        public KeyMap CommandMode
-        {
-            get;
-            set;
-        }
-
-        public KeyMap InsertMode
-        {
-            get;
-            set;
-        }
+        public readonly ReadOnlyCollection<WindowMode> WindowModes;
 
         public Main(Model.Main m)
         {
             model = m;
             
+            var windowModes = new List<WindowMode>();
+            WindowModes = new ReadOnlyCollection<WindowMode>(windowModes);
+            
             // Command mode bindings
-            CommandMode = new KeyMap();
-            CommandMode.Add(Key.i, new Command.InsertMode());
-            CommandMode.Add(Key.h, new Command.Down());
-            CommandMode.Add(Key.t, new Command.Up());
-            CommandMode.Add(Key.d, new Command.Left());
-            CommandMode.Add(Key.n, new Command.Right());
-            CommandMode.Add(Key.Down, new Command.Down());
-            CommandMode.Add(Key.Up, new Command.Up());
-            CommandMode.Add(Key.Left, new Command.Left());
-            CommandMode.Add(Key.Right, new Command.Right());
+            var commandMode = new KeyMap();
+            commandMode.Add(Key.i, new Command.InsertMode());
+            commandMode.Add(Key.h, new Command.Down());
+            commandMode.Add(Key.t, new Command.Up());
+            commandMode.Add(Key.d, new Command.Left());
+            commandMode.Add(Key.n, new Command.Right());
+            commandMode.Add(Key.Down, new Command.Down());
+            commandMode.Add(Key.Up, new Command.Up());
+            commandMode.Add(Key.Left, new Command.Left());
+            commandMode.Add(Key.Right, new Command.Right());
+            windowModes.Add(new WindowMode { Name = "Command", KeyMap = commandMode });
             
             // Insert mode bindings
-            InsertMode = new KeyMap();
-            InsertMode.SetDefault(new Command.InsertKey());
-            InsertMode.Add(Key.Return, new Command.InsertChar('\n'));
-            InsertMode.Add(Key.Escape, new Command.CommandMode());
-            InsertMode.Add(Key.BackSpace, new Command.Delete(), new Command.Backspace());
-            InsertMode.Add(Key.Tab, new Command.Tab());
-            InsertMode.Add(Key.Down, new Command.Down());
-            InsertMode.Add(Key.Up, new Command.Up());
-            InsertMode.Add(Key.Left, new Command.Left());
-            InsertMode.Add(Key.Right, new Command.Right());
-            InsertMode.Add(Key.Delete, new Command.Delete(), new Command.Right());
-   
+            var insertMode = new KeyMap();
+            insertMode.SetDefault(new Command.InsertKey());
+            insertMode.Add(Key.Return, new Command.InsertChar('\n'));
+            insertMode.Add(Key.Escape, new Command.CommandMode());
+            insertMode.Add(Key.BackSpace, new Command.Delete(), new Command.Backspace());
+            insertMode.Add(Key.Tab, new Command.Tab());
+            insertMode.Add(Key.Down, new Command.Down());
+            insertMode.Add(Key.Up, new Command.Up());
+            insertMode.Add(Key.Left, new Command.Left());
+            insertMode.Add(Key.Right, new Command.Right());
+            insertMode.Add(Key.Delete, new Command.Delete(), new Command.Right());
+            windowModes.Add(new WindowMode { Name = "Insert", KeyMap = insertMode });
+            
             windows = new BindList<Window>();
             if (model.Buffers.HasAny())
             {
-                var window = new Window(this, CommandMode, InsertMode, model.Buffers.Item(0));
+                var window = new Window(this, model.Buffers.Item(0));
                 windows.Add(window);
                 FocusedWindow.Value = window;
             }
@@ -89,7 +84,7 @@ namespace Di.Controller
 
         public Window CreateWindow()
         {
-            var window = new Window(this, CommandMode, InsertMode, model.CreateBuffer());
+            var window = new Window(this, model.CreateBuffer());
             windows.Add(window);
             return window;
         }

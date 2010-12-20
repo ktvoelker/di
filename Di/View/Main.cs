@@ -46,16 +46,13 @@ namespace Di.View
                 windowViews.Add(view);
             }
             Add(windowsBox);
-            ctl.WindowsEvents.Added += (list, index, window) =>
-            {
-                windowsBox.Add(new WindowView(window));
-            };
+            ctl.WindowsEvents.Added += (list, index, window) => { windowsBox.Add(new WindowView(window)); };
             ctl.WindowsEvents.Removed += (list, index, window) =>
             {
                 windowsBox.Remove(windowViews[index]);
                 windowViews.RemoveAt(index);
             };
-            ctl.WindowsEvents.Cleared += (list) =>
+            ctl.WindowsEvents.Cleared += list =>
             {
                 foreach (var view in windowViews)
                 {
@@ -63,7 +60,7 @@ namespace Di.View
                 }
                 windowViews.Clear();
             };
-            ctl.FocusedWindow.Changed += (main, window) =>
+            ctl.FocusedWindow.Changed += window =>
             {
                 foreach (var view in windowViews)
                 {
