@@ -19,11 +19,18 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+
 namespace Di.Controller
 {
     public class WindowMode
     {
         public string Name
+        {
+            get;
+            set;
+        }
+
+        public bool Hidden
         {
             get;
             set;
@@ -37,7 +44,7 @@ namespace Di.Controller
 
         public WindowMode()
         {
-
+            
         }
     }
 }
