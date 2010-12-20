@@ -36,19 +36,17 @@ namespace Di
         }
     }
 
-    public class Bind<P, V>
+    public class Bind<V>
     {
-        public delegate void ValueChanged(P p, V v);
+        public delegate void ValueChanged(V v);
 
-        private ValueChanged _changed = (p, v) => { return; };
+        private ValueChanged _changed = (v) => { return; };
 
         public event ValueChanged Changed
         {
             add { _changed += value; }
             remove { _changed -= value; }
         }
-
-        private P p;
 
         private V v;
 
@@ -59,28 +57,27 @@ namespace Di
             set
             {
                 v = value;
-                _changed(p, v);
+                _changed(v);
             }
         }
 
-        public Bind(P _p)
+        public Bind()
         {
-            p = _p;
         }
 
-        public Bind(P _p, V _v) : this(_p)
+        public Bind(V _v)
         {
             v = _v;
         }
 
-        public static implicit operator V(Bind<P, V> obj)
+        public static implicit operator V(Bind<V> obj)
         {
             return obj.v;
         }
 
         public IDisposable WithChange()
         {
-            return new Actor(() => _changed(p, v));
+            return new Actor(() => _changed(v));
         }
     }
 }
