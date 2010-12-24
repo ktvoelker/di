@@ -129,5 +129,15 @@ namespace Di
         {
             return string.Join("-", mode.Where(m => !m.Hidden).OrderByDescending(m => m.KeyMap.Priority).Select(m => m.Name).ToArray());
         }
+		
+		public static Gdk.Size GetSize(this Pango.FontDescription font)
+		{
+			var widget = new Gtk.TextView();
+			widget.ModifyFont(font);
+			var layout = widget.CreatePangoLayout("W");
+			int width, height;
+			layout.GetPixelSize(out width, out height);
+			return new Gdk.Size() { Width = width, Height = height };
+		}
     }
 }

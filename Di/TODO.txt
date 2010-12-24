@@ -2,6 +2,28 @@
 TODO
 ====
 
+Create a text-editing control class and associated text buffer class
+
+	1. Generalize CharIter into ICharIter
+	2. Rename CharIter to GtkCharIter
+	3. Create a new text buffer class with a native CharIter implementation
+		a. Keep the text in a StringBuilder
+		b. Keep a sorted linked list of the marks with their positions
+		c. Parameterize the buffer with the mark type
+		d. Add properties to the buffer for the cursor and selection marks
+		e. Provide events for insert(iter, text) and remove(iter, iter)
+		f. Provide events for markAdd(mark, iter) and markRemove(mark, iter)
+	4. Create a new text-editing control class
+		a. Construct with a buffer
+		b. Listen to buffer events
+		c. Expose keyboard events
+		d. Expose mouse events
+			i. MouseEvent(button, modifiers, fromCharIter, toCharIter, releasedYet)
+		e. List to mark events
+		    i. See if the mark implements IStartColorMark or IEndColorMark (or both)
+		f. Parameterize with the font
+		    i. How do we get the size of a fixed-width font?
+
 Text area word wrap has mysteriously stopped happening
 
     The text area grows horizontally now
