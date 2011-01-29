@@ -38,7 +38,7 @@ namespace Di.View
             Spacing = 0;
             BorderWidth = 0;
             textView = new WindowTextView(Window);
-            scroll = new Gtk.ScrolledWindow { HscrollbarPolicy = Gtk.PolicyType.Never, VscrollbarPolicy = Gtk.PolicyType.Automatic };
+            scroll = new Gtk.ScrolledWindow { HscrollbarPolicy = Gtk.PolicyType.Automatic, VscrollbarPolicy = Gtk.PolicyType.Automatic };
             scroll.Add(textView);
             System.Action showCursor = delegate
             {
