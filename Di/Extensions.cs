@@ -69,6 +69,16 @@ namespace Di
             return result;
         }
 
+        public static T FoldLeft1<T>(this IEnumerable<T> elems, Func<T, T, T> func)
+        {
+            T result = elems.First();
+            foreach (T elem in elems.Skip(1))
+            {
+                result = func(result, elem);
+            }
+            return result;
+        }
+
         public static U FoldRight<T, U>(this IEnumerable<T> elems, U zero, Func<T, U, U> func)
         {
             U result = zero;
@@ -139,5 +149,11 @@ namespace Di
 			layout.GetPixelSize(out width, out height);
 			return new Gdk.Size() { Width = width, Height = height };
 		}
+
+        public static V GetWithDefault<K, V>(this IDictionary<K, V> dict, K key, V fallback)
+        {
+            V result;
+            return dict.TryGetValue(key, out result) ? result : fallback;
+        }
     }
 }
