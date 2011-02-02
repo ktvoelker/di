@@ -4,9 +4,8 @@ TODO
 
 Add support for projects
 
-    Search up from the current directory for di-project.ini
-        Globs for inclusion and exclusion of files into project
-        Project name (show it, and nothing else other than "Di", in the title bar)
+    Use FileMatcher to get the list of files in the project
+        [include] and [exclude] sections from config are used
 
     Add commands:
         Close the current window
@@ -16,6 +15,8 @@ Add support for projects
         Prefer the most-recently-visible file over other matches
         Already-visible files should be least-preferred
             But allow a file to become visible in multiple places
+
+Write test suite for FileMatcher class
 
 Add support for "undo"
 
