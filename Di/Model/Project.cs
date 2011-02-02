@@ -19,6 +19,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 namespace Di.Model
@@ -28,6 +30,19 @@ namespace Di.Model
         public const string ConfigFileName = "di-project.ini";
 
         private DirectoryInfo dir = null;
+        private Ini.IIniFile config = null;
+
+        public string Name
+        {
+            get
+            {
+                return config[""].GetWithDefault("name", "Unnamed Project");
+            }
+        }
+
+        private IList<FileInfo> files = new List<FileInfo>();
+
+        public ReadOnlyCollection<FileInfo> Files { get; private set; }
 
         public Project() : this(new DirectoryInfo(Environment.CurrentDirectory))
         {
@@ -35,6 +50,7 @@ namespace Di.Model
 
         public Project(DirectoryInfo _dir)
         {
+            Files = new ReadOnlyCollection<FileInfo>(files);
             while (!DirIsProjectRoot(_dir))
             {
                 _dir = _dir.Parent;
@@ -48,6 +64,8 @@ namespace Di.Model
                 }
             }
             dir = _dir;
+            Ini.IniParser.Parse(Path.Combine(dir.FullName, ConfigFileName), ref config);
+            // TODO find all the project files
         }
 
         public static bool DirIsProjectRoot(DirectoryInfo dir)
