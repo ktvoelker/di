@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 namespace Di
 {
     public static class Extensions
@@ -154,6 +155,39 @@ namespace Di
         {
             V result;
             return dict.TryGetValue(key, out result) ? result : fallback;
+        }
+
+        private static Regex TrueString = new Regex("^(y(es)?|t(rue)?|1|enable(d)?|on)$", RegexOptions.IgnoreCase);
+
+        private static Regex FalseString = new Regex("^(n(o)?|f(alse)?|0|disable(d)?|off)$", RegexOptions.IgnoreCase);
+
+        public static bool ToBool(this string xs)
+        {
+            if (TrueString.IsMatch(xs))
+            {
+                return true;
+            }
+            else if (FalseString.IsMatch(xs))
+            {
+                return false;
+            }
+            else
+            {
+                throw new FormatException("`" + xs + "' has no Boolean interpretation.");
+            }
+        }
+
+        public static bool GetBoolWithDefault<K>(this IDictionary<K, string> dict, K key, bool fallback)
+        {
+            string xs;
+            if (dict.TryGetValue(key, out xs))
+            {
+                return xs.ToBool();
+            }
+            else
+            {
+                return fallback;
+            }
         }
     }
 }
