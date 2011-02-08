@@ -2,9 +2,13 @@
 TODO
 ====
 
-Add the sidebar
+Implement View.FileChooserView
 
-    It will be used for all kinds of things, including the file chooser and the menu mode menus
+Implement Controller.FileChooser
+
+    Expose events and make FileChooserView consume them
+
+Implement Model.FileQuery stub (to be replaced by Conrad)
 
 Add support for projects
 

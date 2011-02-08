@@ -27,7 +27,11 @@ namespace Di.View
     {
         private Controller.Main ctl;
 
+        private Gtk.HBox topLevelBox;
+
         private Gtk.HBox windowsBox;
+
+        private FileChooserView chooser;
 
         public Main(Controller.Main c) : base(Gtk.WindowType.Toplevel)
         {
@@ -37,6 +41,10 @@ namespace Di.View
             DefaultWidth = 800;
             DefaultHeight = 600;
             DeleteEvent += OnDeleteEvent;
+            topLevelBox = new Gtk.HBox();
+            topLevelBox.Homogeneous = false;
+            topLevelBox.Spacing = 20;
+            Add(topLevelBox);
             windowsBox = new Gtk.HBox();
             windowsBox.Homogeneous = true;
             windowsBox.Spacing = 10;
@@ -45,7 +53,9 @@ namespace Di.View
                 var view = new WindowView(window);
                 windowsBox.Add(view);
             }
-            Add(windowsBox);
+            topLevelBox.Add(windowsBox);
+            chooser = new FileChooserView();
+            topLevelBox.Add(chooser);
             ctl.WindowsEvents.Added += (list, index, window) =>
             {
                 var view = new WindowView(window);
