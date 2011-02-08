@@ -2,14 +2,17 @@
 TODO
 ====
 
-Add support for projects
+Add the sidebar
 
-    Use FileMatcher to get the list of files in the project
-        [include] and [exclude] sections from config are used
+    It will be used for all kinds of things, including the file chooser and the menu mode menus
+
+Add support for projects
 
     Add commands:
         Close the current window
-        Load a file in the current window
+        Open a file in a new window (use file chooser)
+        Create a new file in a new window (use file chooser to pick the directory, then get the name)
+        Save the unnamed file in the current window (same interaction as the previous)
 
     Keep a list of project files sorted by most-recently-visible
         Prefer the most-recently-visible file over other matches

@@ -40,7 +40,7 @@ namespace Di.Model
             }
         }
 
-        private IList<FileInfo> files = new List<FileInfo>();
+        private IList<FileInfo> files;
 
         public ReadOnlyCollection<FileInfo> Files { get; private set; }
 
@@ -50,7 +50,6 @@ namespace Di.Model
 
         public Project(DirectoryInfo _dir)
         {
-            Files = new ReadOnlyCollection<FileInfo>(files);
             while (!DirIsProjectRoot(_dir))
             {
                 _dir = _dir.Parent;
@@ -65,7 +64,24 @@ namespace Di.Model
             }
             dir = _dir;
             Ini.IniParser.Parse(Path.Combine(dir.FullName, ConfigFileName), ref config);
-            // TODO find all the project files
+            var m = new FileMatcher();
+            m.ExcludeExecutableFiles = config[""].GetBoolWithDefault("exclude-exec", true);
+            if (config.ContainsKey("include"))
+            {
+                foreach (var i in config["include"].Keys)
+                {
+                    m.IncludeGlob(i);
+                }
+            }
+            if (config.ContainsKey("exclude"))
+            {
+                foreach (var e in config["exclude"].Keys)
+                {
+                    m.ExcludeGlob(e);
+                }
+            }
+            files = m.MatchAll(dir);
+            Files = new ReadOnlyCollection<FileInfo>(files);
         }
 
         public static bool DirIsProjectRoot(DirectoryInfo dir)

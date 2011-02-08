@@ -25,7 +25,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 namespace Di
 {
-    public abstract class FileMatcher
+    public class FileMatcher
     {
         private string includePattern = null;
 
@@ -39,7 +39,7 @@ namespace Di
         {
             get
             {
-                if (include == null)
+                if (include == null && includePattern != null)
                 {
                     include = new Regex(includePattern);
                 }
@@ -51,7 +51,7 @@ namespace Di
         {
             get
             {
-                if (exclude == null)
+                if (exclude == null && excludePattern != null)
                 {
                     exclude = new Regex(excludePattern);
                 }
@@ -83,7 +83,7 @@ namespace Di
 
         private bool Match(string path)
         {
-            return !Exclude.IsMatch(path) || Include.IsMatch(path);
+            return (Exclude != null && !Exclude.IsMatch(path)) || (Include != null && Include.IsMatch(path));
         }
 
         public IList<FileInfo> MatchAll(DirectoryInfo root)
