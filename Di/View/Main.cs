@@ -40,41 +40,38 @@ namespace Di.View
             windowsBox = new Gtk.HBox();
             windowsBox.Homogeneous = true;
             windowsBox.Spacing = 10;
-            var windowViews = new List<WindowView>();
             foreach (var window in ctl.Windows)
             {
                 var view = new WindowView(window);
                 windowsBox.Add(view);
-                windowViews.Add(view);
             }
             Add(windowsBox);
             ctl.WindowsEvents.Added += (list, index, window) =>
             {
                 var view = new WindowView(window);
                 windowsBox.Add(view);
-                windowViews.Insert(index, view);
                 windowsBox.ShowAll();
             };
             ctl.WindowsEvents.Removed += (list, index, window) =>
             {
-                windowsBox.Remove(windowViews[index]);
-                windowViews.RemoveAt(index);
+                windowsBox.Remove(windowsBox.Children[index]);
             };
             ctl.WindowsEvents.Cleared += list =>
             {
-                foreach (var view in windowViews)
+                foreach (var view in windowsBox.Children)
                 {
                     windowsBox.Remove(view);
                 }
-                windowViews.Clear();
             };
             ctl.FocusedWindow.Changed += window =>
             {
-                foreach (var view in windowViews)
+                foreach (var widget in windowsBox.Children)
                 {
-                    if (view.Window == window)
+                    var view = widget as WindowView;
+                    if (view != null && view.Window == window)
                     {
                         view.FocusTextView();
+                        break;
                     }
                 }
             };
