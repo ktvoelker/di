@@ -40,9 +40,9 @@ namespace Di.Model
             }
         }
 
-        private IList<FileInfo> files;
+        private IList<ProjectFile> files;
 
-        public ReadOnlyCollection<FileInfo> Files { get; private set; }
+        public ReadOnlyCollection<ProjectFile> Files { get; private set; }
 
         public Project() : this(new DirectoryInfo(Environment.CurrentDirectory))
         {
@@ -80,8 +80,8 @@ namespace Di.Model
                     m.ExcludeGlob(e);
                 }
             }
-            files = m.MatchAll(dir);
-            Files = new ReadOnlyCollection<FileInfo>(files);
+            files = m.MatchAll(dir).Select(f => new ProjectFile(f)).ToList();
+            Files = new ReadOnlyCollection<ProjectFile>(files);
         }
 
         public static bool DirIsProjectRoot(DirectoryInfo dir)

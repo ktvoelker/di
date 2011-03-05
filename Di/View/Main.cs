@@ -54,8 +54,6 @@ namespace Di.View
                 windowsBox.Add(view);
             }
             topLevelBox.Add(windowsBox);
-            chooser = new FileChooserView();
-            topLevelBox.Add(chooser);
             ctl.WindowsEvents.Added += (list, index, window) =>
             {
                 var view = new WindowView(window);
@@ -84,6 +82,16 @@ namespace Di.View
                         break;
                     }
                 }
+            };
+            ctl.BeginFileChooser += ch =>
+            {
+                chooser = new FileChooserView(ch);
+                topLevelBox.Add(chooser);
+                chooser.ShowAll();
+            };
+            ctl.EndFileChooser -= ch =>
+            {
+                topLevelBox.Remove(chooser);
             };
         }
 

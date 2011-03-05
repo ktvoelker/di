@@ -208,7 +208,14 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            b.Controller.FocusedWindow.Value = b.Controller.CreateWindow();
+            FileChooser chooser = null;
+            Action<Di.Model.ProjectFile> handler = file =>
+            {
+                b.Controller.CallEndFileChooser(chooser);
+                b.Controller.FocusedWindow.Value = b.Controller.CreateWindow(file);
+            };
+            chooser = new FileChooser(b.Controller.Model.CurrentProject, handler);
+            b.Controller.CallBeginFileChooser(chooser);
         }
     }
 }

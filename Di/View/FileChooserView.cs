@@ -19,14 +19,30 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 namespace Di.View
 {
     public class FileChooserView : Gtk.VBox
     {
-        public FileChooserView()
+        private Controller.FileChooser ctl;
+
+        public FileChooserView(Controller.FileChooser _ctl)
         {
-            NoShowAll = true;
-            Add(new Gtk.Label("FILE CHOOSER"));
+            ctl = _ctl;
+            ctl.Files.Event.Changed += Update;
+            // Add a text entry box for the query
+            // Add a key listener to the text entry box for Enter that calls ctl.Choose
+            // Add an HBox where the query results will be listed
+            // Add a label where the number of excess results will be shown
+            Update();
+        }
+
+        private void Update(IList<Di.Model.ProjectFile> files)
+        {
+            // Clear the results box
+            // For the first ten results:
+            // Add one label per file to the results box, including the position of the file in the list
+            // If there are more results, update and show the special label; otherwise, hide it
         }
     }
 }

@@ -1,10 +1,10 @@
 //  
-//  Buffer.cs
+//  Language.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
 // 
-//  Copyright (c) 2010 Karl Voelker
+//  Copyright (c) 2011 Karl Voelker
 // 
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -19,31 +19,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Gtk;
-namespace Di.Model
+namespace Di.Model.Language
 {
-    public class Buffer : TextBuffer
+    public abstract class Base
     {
-        private static TextTagTable tags = new TextTagTable();
+        public string Name { get; protected set; }
 
-        private ProjectFile file;
-
-        public Buffer() : base(tags)
+        public Base()
         {
-            file = null;
-        }
-
-        public Buffer(ProjectFile _file) : base(tags)
-        {
-            file = _file;
-            var input = file.File.OpenText();
-            InsertAtCursor(input.ReadToEnd());
-            input.Close();
-        }
-
-        public void InsertAtCursor(char c)
-        {
-            InsertAtCursor(string.Format("{0}", c));
         }
     }
 }

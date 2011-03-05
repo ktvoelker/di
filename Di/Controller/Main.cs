@@ -27,7 +27,7 @@ namespace Di.Controller
 {
     public partial class Main
     {
-        private Model.Main model;
+        public readonly Model.Main Model;
 
         private readonly BindList<Window> windows;
         public readonly ReadOnlyCollection<Window> Windows;
@@ -37,9 +37,51 @@ namespace Di.Controller
 
         public readonly ReadOnlyCollection<WindowMode> WindowModes;
 
+        public delegate void FileChooserHandler(FileChooser c);
+
+        private FileChooserHandler beginFileChooser = (c) => { return; };
+
+        public event FileChooserHandler BeginFileChooser
+        {
+            add
+            {
+                beginFileChooser += value;
+            }
+
+            remove
+            {
+                beginFileChooser -= value;
+            }
+        }
+
+        public void CallBeginFileChooser(FileChooser c)
+        {
+            beginFileChooser(c);
+        }
+
+        private FileChooserHandler endFileChooser = (c) => { return; };
+
+        public event FileChooserHandler EndFileChooser
+        {
+            add
+            {
+                endFileChooser += value;
+            }
+
+            remove
+            {
+                beginFileChooser -= value;
+            }
+        }
+
+        public void CallEndFileChooser(FileChooser c)
+        {
+            endFileChooser(c);
+        }
+
         public Main(Model.Main m)
         {
-            model = m;
+            Model = m;
             
             var windowModes = new List<WindowMode>();
             WindowModes = new ReadOnlyCollection<WindowMode>(windowModes);
@@ -107,9 +149,9 @@ namespace Di.Controller
             windowModes.Add(new WindowMode { Name = "Window", KeyMap = windowMode });
             
             windows = new BindList<Window>();
-            if (model.Buffers.HasAny())
+            if (Model.Buffers.HasAny())
             {
-                var window = new Window(this, model.Buffers.Item(0));
+                var window = new Window(this, Model.Buffers.Item(0));
                 windows.Add(window);
                 FocusedWindow.Value = window;
             }
@@ -119,7 +161,14 @@ namespace Di.Controller
 
         public Window CreateWindow()
         {
-            var window = new Window(this, model.CreateBuffer());
+            var window = new Window(this, Model.CreateBuffer());
+            windows.Add(window);
+            return window;
+        }
+
+        public Window CreateWindow(Di.Model.ProjectFile file)
+        {
+            var window = new Window(this, Model.CreateBuffer(file));
             windows.Add(window);
             return window;
         }

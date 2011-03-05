@@ -2,21 +2,19 @@
 TODO
 ====
 
-Implement View.FileChooserView
+Implement View.FileChooserView based on the comments in that file
 
-Implement Controller.FileChooser
+Add support for using the file chooser to pick a directory
+    Make Project expose a separate list of all directories
+        Make a common interface for ProjectFile and whatever the directories are return as
+            It just exposes the information needed by FileQuery
+        Make FileQuery use that interface instead of ProjectFile
 
-    Expose events and make FileChooserView consume them
-
-Implement Model.FileQuery stub (to be replaced by Conrad)
-
-Add support for projects
-
-    Add commands:
-        Close the current window
-        Open a file in a new window (use file chooser)
-        Create a new file in a new window (use file chooser to pick the directory, then get the name)
-        Save the unnamed file in the current window (same interaction as the previous)
+Add commands:
+    Close the current window
+    Open a file in a new window (use file chooser)
+    Create a new file in a new window (use file chooser to pick the directory, then get the name)
+    Save the unnamed file in the current window (same interaction as the previous)
 
     Keep a list of project files sorted by most-recently-visible
         Prefer the most-recently-visible file over other matches

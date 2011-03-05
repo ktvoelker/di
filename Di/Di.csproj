@@ -56,6 +56,11 @@
     <Compile Include="Controller\MenuMode.cs" />
     <Compile Include="FileMatcher.cs" />
     <Compile Include="View\FileChooserView.cs" />
+    <Compile Include="Model\ProjectFile.cs" />
+    <Compile Include="Model\Language\Plain.cs" />
+    <Compile Include="Model\Language\Base.cs" />
+    <Compile Include="Model\FileQuery.cs" />
+    <Compile Include="Controller\FileChooser.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
@@ -71,6 +76,7 @@
     <Folder Include="Model\" />
     <Folder Include="Controller\" />
     <Folder Include="View\" />
+    <Folder Include="Model\Language\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TODO.txt" />

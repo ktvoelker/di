@@ -1,10 +1,10 @@
 //  
-//  Model.cs
+//  ProjectFile.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
 // 
-//  Copyright (c) 2010 Karl Voelker
+//  Copyright (c) 2011 Karl Voelker
 // 
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -19,38 +19,27 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.IO;
 namespace Di.Model
 {
-    public class Main
+    public class ProjectFile
     {
-        private readonly BindList<Buffer> buffers;
-        public readonly ReadOnlyCollection<Buffer> Buffers;
-
-        public Project CurrentProject { get; private set; }
-
-        public Main()
+        public FileInfo File
         {
-            CurrentProject = new Project();
-
-            buffers = new BindList<Buffer>();
-            buffers.Add(new Buffer());
-            Buffers = new ReadOnlyCollection<Buffer>(buffers);
+            get;
+            private set;
         }
 
-        public Buffer CreateBuffer()
+        public Language.Base Lang
         {
-            var buffer = new Buffer();
-            buffers.Add(buffer);
-            return buffer;
+            get;
+            private set;
         }
 
-        public Buffer CreateBuffer(ProjectFile file)
+        public ProjectFile(FileInfo file)
         {
-            var buffer = new Buffer(file);
-            buffers.Add(buffer);
-            return buffer;
+            File = file;
+            Lang = new Language.Plain();
         }
     }
 }

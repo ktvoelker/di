@@ -1,10 +1,10 @@
 //  
-//  Model.cs
+//  FileQuery.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
 // 
-//  Copyright (c) 2010 Karl Voelker
+//  Copyright (c) 2011 Karl Voelker
 // 
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -20,37 +20,21 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Linq;
 namespace Di.Model
 {
-    public class Main
+    public class FileQuery
     {
-        private readonly BindList<Buffer> buffers;
-        public readonly ReadOnlyCollection<Buffer> Buffers;
+        private string query;
 
-        public Project CurrentProject { get; private set; }
-
-        public Main()
+        public FileQuery(string _query)
         {
-            CurrentProject = new Project();
-
-            buffers = new BindList<Buffer>();
-            buffers.Add(new Buffer());
-            Buffers = new ReadOnlyCollection<Buffer>(buffers);
+            query = _query;
         }
 
-        public Buffer CreateBuffer()
+        public IQueryable<ProjectFile> Evaluate(IEnumerable<ProjectFile> files)
         {
-            var buffer = new Buffer();
-            buffers.Add(buffer);
-            return buffer;
-        }
-
-        public Buffer CreateBuffer(ProjectFile file)
-        {
-            var buffer = new Buffer(file);
-            buffers.Add(buffer);
-            return buffer;
+            return files.AsQueryable().Where(f => f.File.Name == query);
         }
     }
 }
