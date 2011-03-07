@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 namespace Di.Model
 {
     public class Main
@@ -30,9 +31,9 @@ namespace Di.Model
 
         public Project CurrentProject { get; private set; }
 
-        public Main()
+        public Main(DirectoryInfo root)
         {
-            CurrentProject = new Project();
+            CurrentProject = new Project(root);
 
             buffers = new BindList<Buffer>();
             buffers.Add(new Buffer());

@@ -37,47 +37,11 @@ namespace Di.Controller
 
         public readonly ReadOnlyCollection<WindowMode> WindowModes;
 
-        public delegate void FileChooserHandler(FileChooser c);
+        public Event1<FileChooser> BeginFileChooser = new Event1<FileChooser>();
 
-        private FileChooserHandler beginFileChooser = (c) => { return; };
+        public Event1<FileChooser> EndFileChooser = new Event1<FileChooser>();
 
-        public event FileChooserHandler BeginFileChooser
-        {
-            add
-            {
-                beginFileChooser += value;
-            }
-
-            remove
-            {
-                beginFileChooser -= value;
-            }
-        }
-
-        public void CallBeginFileChooser(FileChooser c)
-        {
-            beginFileChooser(c);
-        }
-
-        private FileChooserHandler endFileChooser = (c) => { return; };
-
-        public event FileChooserHandler EndFileChooser
-        {
-            add
-            {
-                endFileChooser += value;
-            }
-
-            remove
-            {
-                beginFileChooser -= value;
-            }
-        }
-
-        public void CallEndFileChooser(FileChooser c)
-        {
-            endFileChooser(c);
-        }
+        public Event0 CancelFileChooser = new Event0();
 
         public Main(Model.Main m)
         {

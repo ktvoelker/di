@@ -24,25 +24,64 @@ namespace Di.View
 {
     public class FileChooserView : Gtk.VBox
     {
+        private const int VisibleResults = 9;
+
         private Controller.FileChooser ctl;
 
         public FileChooserView(Controller.FileChooser _ctl)
         {
             ctl = _ctl;
-            ctl.Files.Event.Changed += Update;
-            // Add a text entry box for the query
-            // Add a key listener to the text entry box for Enter that calls ctl.Choose
-            // Add an HBox where the query results will be listed
-            // Add a label where the number of excess results will be shown
-            Update();
-        }
-
-        private void Update(IList<Di.Model.ProjectFile> files)
-        {
-            // Clear the results box
-            // For the first ten results:
-            // Add one label per file to the results box, including the position of the file in the list
-            // If there are more results, update and show the special label; otherwise, hide it
+            var queryBox = new Gtk.Entry();
+            queryBox.Changed += (o, e) =>
+            {
+                ctl.Query = queryBox.Text;
+            };
+            queryBox.Shown += (o, e) =>
+            {
+                queryBox.GrabFocus();
+            };
+            Add(queryBox);
+            queryBox.KeyPressEvent += (object o, Gtk.KeyPressEventArgs e) =>
+            {
+                if (e.Event.Key == Gdk.Key.Return)
+                {
+                    ctl.Choose(ctl.Files[0]);
+                }
+                else if (e.Event.Key == Gdk.Key.Escape)
+                {
+                    ctl.Cancel();
+                }
+            };
+            var resultBox = new Gtk.VBox();
+            Add(resultBox);
+            var excessLabel = new Gtk.Label();
+            excessLabel.NoShowAll = true;
+            Add(excessLabel);
+            ctl.Files.Event.Changed += list =>
+            {
+                foreach (var child in resultBox.Children)
+                {
+                    resultBox.Remove(child);
+                }
+                if (list.Count <= VisibleResults)
+                {
+                    excessLabel.Text = "";
+                    excessLabel.NoShowAll = true;
+                }
+                else
+                {
+                    excessLabel.Text = string.Format("and {0} more results", list.Count - VisibleResults);
+                    excessLabel.NoShowAll = false;
+                }
+                for (int i = 0; i < VisibleResults && i < list.Count; ++i)
+                {
+                    var label = new Gtk.Label(string.Format("{0}. {1}", i + 1, list[i].File.FullName));
+                    label.LineWrap = true;
+                    label.LineWrapMode = Pango.WrapMode.Char;
+                    resultBox.Add(label);
+                }
+                resultBox.ShowAll();
+            };
         }
     }
 }

@@ -44,10 +44,6 @@ namespace Di.Model
 
         public ReadOnlyCollection<ProjectFile> Files { get; private set; }
 
-        public Project() : this(new DirectoryInfo(Environment.CurrentDirectory))
-        {
-        }
-
         public Project(DirectoryInfo _dir)
         {
             while (!DirIsProjectRoot(_dir))

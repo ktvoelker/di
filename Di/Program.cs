@@ -19,6 +19,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.IO;
 using Gtk;
 
 namespace Di
@@ -27,8 +28,25 @@ namespace Di
     {
         public static void Main(string[] args)
         {
+            string rootPath;
+            if (args.Length == 0)
+            {
+                string env = Environment.GetEnvironmentVariable("DI_PROJECT");
+                if (string.IsNullOrEmpty(env))
+                {
+                    rootPath = Environment.CurrentDirectory;
+                }
+                else
+                {
+                    rootPath = env;
+                }
+            }
+            else
+            {
+                rootPath = args[0];
+            }
             Application.Init();
-            new View.Main(new Controller.Main(new Model.Main())).ShowAll();
+            new View.Main(new Controller.Main(new Model.Main(new DirectoryInfo(rootPath)))).ShowAll();
             Application.Run();
         }
     }

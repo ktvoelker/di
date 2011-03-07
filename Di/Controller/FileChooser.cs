@@ -28,6 +28,8 @@ namespace Di.Controller
 
         private Action<Di.Model.ProjectFile> handler;
 
+        private Action cancelHandler;
+
         private Di.Model.FileQuery query;
 
         public string Query
@@ -42,10 +44,11 @@ namespace Di.Controller
 
         public BindList<Di.Model.ProjectFile> Files;
 
-        public FileChooser(Di.Model.Project _project, Action<Di.Model.ProjectFile> _handler)
+        public FileChooser(Di.Model.Project _project, Action<Di.Model.ProjectFile> _handler, Action _cancelHandler)
         {
             project = _project;
             handler = _handler;
+            cancelHandler = _cancelHandler;
             query = new Di.Model.FileQuery("");
             Files = new BindList<Di.Model.ProjectFile>();
             Update();
@@ -54,6 +57,11 @@ namespace Di.Controller
         public void Choose(Di.Model.ProjectFile file)
         {
             handler(file);
+        }
+
+        public void Cancel()
+        {
+            cancelHandler();
         }
 
         private void Update()

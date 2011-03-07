@@ -72,18 +72,33 @@ namespace Di
         public void IncludeGlob(string glob)
         {
             include = null;
-            includePattern = RegexUnion(includePattern, glob);
+            includePattern = RegexUnion(includePattern, GlobToRegex(glob));
         }
 
         public void ExcludeGlob(string glob)
         {
             exclude = null;
-            excludePattern = RegexUnion(excludePattern, glob);
+            excludePattern = RegexUnion(excludePattern, GlobToRegex(glob));
         }
 
-        private bool Match(string path)
+        private bool MatchDefaultInclude(string path)
         {
-            return (Exclude != null && !Exclude.IsMatch(path)) || (Include != null && Include.IsMatch(path));
+            return Exclude == null || !Exclude.IsMatch(path) || (Include != null && Include.IsMatch(path));
+        }
+
+        private bool MatchDefaultExclude(string path)
+        {
+            return Include != null && Include.IsMatch(path) && (Exclude == null || !Exclude.IsMatch(path));
+        }
+
+        private bool MatchDir(DirectoryInfo dir)
+        {
+            return MatchDefaultInclude(dir.FullName + Path.DirectorySeparatorChar);
+        }
+
+        private bool MatchFile(FileInfo file)
+        {
+            return MatchDefaultExclude(file.FullName);
         }
 
         public IList<FileInfo> MatchAll(DirectoryInfo root)
@@ -95,7 +110,7 @@ namespace Di
 
         private void MatchAll(DirectoryInfo dir, ref IList<FileInfo> matches)
         {
-            if (Match(dir.FullName + Path.PathSeparator))
+            if (MatchDir(dir))
             {
                 foreach (var subdir in dir.GetDirectories())
                 {
@@ -103,7 +118,7 @@ namespace Di
                 }
                 foreach (var file in dir.GetFiles())
                 {
-                    if (Match(file.FullName))
+                    if (MatchFile(file))
                     {
                         matches.Add(file);
                     }
@@ -169,13 +184,13 @@ namespace Di
         //
         // When the regex is being matched against a directory, the path separator should be
         // appended to the name.
-        private static Regex GlobToRegex(string glob)
+        private static string GlobToRegex(string glob)
         {
-            if (glob[0] == Path.PathSeparator)
+            if (glob[0] == Path.DirectorySeparatorChar)
             {
                 throw new ArgumentException("A glob may not start with a path separator.");
             }
-            string pathSeparator = Escape(Path.PathSeparator);
+            string pathSeparator = Escape(Path.DirectorySeparatorChar);
             string notPathSeparator = "[^" + pathSeparator + "]";
             var pat = new StringBuilder();
             // The match must begin at the beginning of the string or at a path separator.
@@ -200,7 +215,7 @@ namespace Di
                             {
                                 pat.Append('|');
                             }
-                            if (m == Path.PathSeparator)
+                            if (m == Path.DirectorySeparatorChar)
                             {
                                 throw new ArgumentException("A glob may not have a character class containing the path separator.");
                             }
@@ -235,7 +250,7 @@ namespace Di
                 throw new ArgumentException("A glob may not contain dangling character classes.");
             }
             pat.Append('$');
-            return new Regex(pat.ToString());
+            return pat.ToString();
         }
     }
 }

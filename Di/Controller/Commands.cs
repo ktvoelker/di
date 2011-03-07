@@ -211,11 +211,15 @@ namespace Di.Controller.Command
             FileChooser chooser = null;
             Action<Di.Model.ProjectFile> handler = file =>
             {
-                b.Controller.CallEndFileChooser(chooser);
+                b.Controller.EndFileChooser.Handler(chooser);
                 b.Controller.FocusedWindow.Value = b.Controller.CreateWindow(file);
             };
-            chooser = new FileChooser(b.Controller.Model.CurrentProject, handler);
-            b.Controller.CallBeginFileChooser(chooser);
+            Action cancel = () =>
+            {
+                b.Controller.CancelFileChooser.Handler();
+            };
+            chooser = new FileChooser(b.Controller.Model.CurrentProject, handler, cancel);
+            b.Controller.BeginFileChooser.Handler(chooser);
         }
     }
 }

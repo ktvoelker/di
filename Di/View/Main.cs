@@ -83,16 +83,16 @@ namespace Di.View
                     }
                 }
             };
-            ctl.BeginFileChooser += ch =>
+            ctl.BeginFileChooser.Add(ch =>
             {
                 chooser = new FileChooserView(ch);
                 topLevelBox.Add(chooser);
                 chooser.ShowAll();
-            };
-            ctl.EndFileChooser -= ch =>
+            });
+            ctl.EndFileChooser.Add(ch =>
             {
                 topLevelBox.Remove(chooser);
-            };
+            });
         }
 
         protected void OnDeleteEvent(object sender, Gtk.DeleteEventArgs a)
