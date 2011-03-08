@@ -29,7 +29,7 @@ namespace Di.Model
     {
         public const string ConfigFileName = "di-project.ini";
 
-        private DirectoryInfo dir = null;
+        public readonly DirectoryInfo Root;
         private Ini.IIniFile config = null;
 
         public string Name
@@ -58,8 +58,8 @@ namespace Di.Model
                     throw new InvalidOperationException();
                 }
             }
-            dir = _dir;
-            Ini.IniParser.Parse(Path.Combine(dir.FullName, ConfigFileName), ref config);
+            Root = _dir;
+            Ini.IniParser.Parse(Path.Combine(Root.FullName, ConfigFileName), ref config);
             var m = new FileMatcher();
             m.ExcludeExecutableFiles = config[""].GetBoolWithDefault("exclude-exec", true);
             if (config.ContainsKey("include"))
@@ -76,7 +76,7 @@ namespace Di.Model
                     m.ExcludeGlob(e);
                 }
             }
-            files = m.MatchAll(dir).Select(f => new ProjectFile(f)).ToList();
+            files = m.MatchAll(Root).Select(f => new ProjectFile(this, f)).ToList();
             Files = new ReadOnlyCollection<ProjectFile>(files);
         }
 

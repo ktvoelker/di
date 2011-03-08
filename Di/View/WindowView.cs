@@ -38,7 +38,10 @@ namespace Di.View
             Spacing = 0;
             BorderWidth = 0;
             textView = new WindowTextView(Window);
-            scroll = new Gtk.ScrolledWindow { HscrollbarPolicy = Gtk.PolicyType.Automatic, VscrollbarPolicy = Gtk.PolicyType.Automatic };
+            scroll = new Gtk.ScrolledWindow {
+                HscrollbarPolicy = Gtk.PolicyType.Automatic,
+                VscrollbarPolicy = Gtk.PolicyType.Automatic
+            };
             scroll.Add(textView);
             System.Action showCursor = delegate
             {
@@ -49,6 +52,7 @@ namespace Di.View
             Window.GtkTextBuffer.Changed += delegate { showCursor(); };
             PackStart(scroll, true, true, 0);
             status = new Gtk.Statusbar();
+            status.HasResizeGrip = false;
             status.Push(StatusbarMode, Window.CurrentMode.GetName());
             Window.CurrentMode.Event.Changed += m =>
             {
@@ -71,7 +75,7 @@ namespace Di.View
             {
                 ctl = _ctl;
                 WrapMode = Gtk.WrapMode.WordChar;
-                ModifyFont(new FontDescription { Family = "monospace", Size = (int) (14 * Pango.Scale.PangoScale) });
+                ModifyFont(new Font(14, FontFamily.Monospace));
             }
 
             protected override bool OnKeyPressEvent(Gdk.EventKey e)

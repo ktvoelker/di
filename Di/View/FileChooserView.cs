@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Text;
 namespace Di.View
 {
     public class FileChooserView : Gtk.VBox
@@ -31,7 +32,19 @@ namespace Di.View
         public FileChooserView(Controller.FileChooser _ctl)
         {
             ctl = _ctl;
+            Homogeneous = false;
+            Spacing = 0;
+            var topLevelBox = new Gtk.VBox();
+            topLevelBox.Homogeneous = false;
+            topLevelBox.Spacing = 15;
+            topLevelBox.PackStart(new Gtk.HBox(), false, false, 0);
+            var message = new Gtk.Label(string.Format("{0}:", ctl.Message));
+            var messageAlign = new Gtk.Alignment(0, 0, 0, 0);
+            messageAlign.Add(message);
+            topLevelBox.PackStart(messageAlign, false, false, 0);
             var queryBox = new Gtk.Entry();
+            queryBox.ModifyFont(new Font(14, FontFamily.Monospace));
+            queryBox.WidthChars = 30;
             queryBox.Changed += (o, e) =>
             {
                 ctl.Query = queryBox.Text;
@@ -40,48 +53,47 @@ namespace Di.View
             {
                 queryBox.GrabFocus();
             };
-            Add(queryBox);
-            queryBox.KeyPressEvent += (object o, Gtk.KeyPressEventArgs e) =>
-            {
-                if (e.Event.Key == Gdk.Key.Return)
-                {
-                    ctl.Choose(ctl.Files[0]);
-                }
-                else if (e.Event.Key == Gdk.Key.Escape)
-                {
-                    ctl.Cancel();
-                }
-            };
-            var resultBox = new Gtk.VBox();
-            Add(resultBox);
-            var excessLabel = new Gtk.Label();
-            excessLabel.NoShowAll = true;
-            Add(excessLabel);
+            topLevelBox.PackStart(queryBox, false, false, 0);
+            queryBox.KeyPressEvent += OnQueryKeyPress;
+            var resultBox = new Gtk.TextView();
+            resultBox.ModifyFont(new Font(12, FontFamily.Monospace));
+            resultBox.Editable = false;
+            resultBox.CursorVisible = false;
+            resultBox.WrapMode = Gtk.WrapMode.WordChar;
+            var resultScroll = new Gtk.ScrolledWindow();
+            resultScroll.Add(resultBox);
+            topLevelBox.PackStart(resultScroll, true, true, 0);
+            PackStart(topLevelBox, true, true, 0);
+            var excessLabel = new Gtk.Statusbar();
+            excessLabel.HasResizeGrip = false;
+            PackStart(excessLabel, false, false, 0);
             ctl.Files.Event.Changed += list =>
             {
-                foreach (var child in resultBox.Children)
+                excessLabel.Pop(0);
+                if (list.Count > VisibleResults)
                 {
-                    resultBox.Remove(child);
+                    excessLabel.Push(0, string.Format("and {0} more results", list.Count - VisibleResults));
                 }
-                if (list.Count <= VisibleResults)
-                {
-                    excessLabel.Text = "";
-                    excessLabel.NoShowAll = true;
-                }
-                else
-                {
-                    excessLabel.Text = string.Format("and {0} more results", list.Count - VisibleResults);
-                    excessLabel.NoShowAll = false;
-                }
+                var sb = new StringBuilder();
                 for (int i = 0; i < VisibleResults && i < list.Count; ++i)
                 {
-                    var label = new Gtk.Label(string.Format("{0}. {1}", i + 1, list[i].File.FullName));
-                    label.LineWrap = true;
-                    label.LineWrapMode = Pango.WrapMode.Char;
-                    resultBox.Add(label);
+                    sb.AppendFormat("{0}. {1}\n", i + 1, list[i].ProjectRelativeFullName);
                 }
-                resultBox.ShowAll();
+                resultBox.Buffer.Text = sb.ToString();
             };
+        }
+
+        [GLib.ConnectBefore]
+        private void OnQueryKeyPress(object o, Gtk.KeyPressEventArgs e)
+        {
+            if (e.Event.Key == Gdk.Key.Return)
+            {
+                ctl.Choose(ctl.Files[0]);
+            }
+            else if (e.Event.Key == Gdk.Key.Escape)
+            {
+                ctl.Cancel();
+            }
         }
     }
 }

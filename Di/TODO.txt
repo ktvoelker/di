@@ -2,17 +2,7 @@
 TODO
 ====
 
-Improve the layout of the FileChooserView
-
-    Replace the excessLabel with a statusbar
-
-    Maintain a fixed width for the whole widget
-
-    Use a fixed-width font in the entry box and result list
-
-    Only include the part of the path starting from the project root
-
-        This should be implemented in ProjectFile as a string property
+Implement restoration of focus in View.Main.RemoveFileChooser
 
 Add support for using the file chooser to pick a directory
     Make Project expose a separate list of all directories

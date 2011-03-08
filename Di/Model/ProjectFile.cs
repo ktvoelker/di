@@ -24,10 +24,26 @@ namespace Di.Model
 {
     public class ProjectFile
     {
-        public FileInfo File
+        public Project Parent
         {
             get;
             private set;
+        }
+
+        private FileInfo file;
+
+        public FileInfo File
+        {
+            get
+            {
+                return file;
+            }
+
+            private set
+            {
+                file = value;
+                ProjectRelativeFullName = file.FullName.Substring(Parent.Root.FullName.Length + 1);
+            }
         }
 
         public Language.Base Lang
@@ -36,8 +52,15 @@ namespace Di.Model
             private set;
         }
 
-        public ProjectFile(FileInfo file)
+        public string ProjectRelativeFullName
         {
+            get;
+            private set;
+        }
+
+        public ProjectFile(Project parent, FileInfo file)
+        {
+            Parent = parent;
             File = file;
             Lang = new Language.Plain();
         }

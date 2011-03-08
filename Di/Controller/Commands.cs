@@ -218,7 +218,7 @@ namespace Di.Controller.Command
             {
                 b.Controller.CancelFileChooser.Handler();
             };
-            chooser = new FileChooser(b.Controller.Model.CurrentProject, handler, cancel);
+            chooser = new FileChooser(b.Controller.Model.CurrentProject, "Choose a file", handler, cancel);
             b.Controller.BeginFileChooser.Handler(chooser);
         }
     }

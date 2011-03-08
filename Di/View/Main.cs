@@ -53,7 +53,7 @@ namespace Di.View
                 var view = new WindowView(window);
                 windowsBox.Add(view);
             }
-            topLevelBox.Add(windowsBox);
+            topLevelBox.PackStart(windowsBox, true, true, 0);
             ctl.WindowsEvents.Added += (list, index, window) =>
             {
                 var view = new WindowView(window);
@@ -86,13 +86,21 @@ namespace Di.View
             ctl.BeginFileChooser.Add(ch =>
             {
                 chooser = new FileChooserView(ch);
-                topLevelBox.Add(chooser);
+                topLevelBox.PackEnd(chooser, false, false, 20);
                 chooser.ShowAll();
             });
-            ctl.EndFileChooser.Add(ch =>
+            ctl.EndFileChooser.Add(ch => RemoveFileChooser());
+            ctl.CancelFileChooser.Add(RemoveFileChooser);
+        }
+
+        private void RemoveFileChooser()
+        {
+            bool hadFocus = chooser.HasFocus;
+            topLevelBox.Remove(chooser);
+            if (hadFocus)
             {
-                topLevelBox.Remove(chooser);
-            });
+                // TODO put the focus back in the window that had it before
+            }
         }
 
         protected void OnDeleteEvent(object sender, Gtk.DeleteEventArgs a)
