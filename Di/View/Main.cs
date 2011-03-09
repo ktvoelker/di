@@ -71,18 +71,7 @@ namespace Di.View
                     windowsBox.Remove(view);
                 }
             };
-            ctl.FocusedWindow.Changed += window =>
-            {
-                foreach (var widget in windowsBox.Children)
-                {
-                    var view = widget as WindowView;
-                    if (view != null && view.Window == window)
-                    {
-                        view.FocusTextView();
-                        break;
-                    }
-                }
-            };
+            ctl.FocusedWindow.Changed += ApplyControllerFocus;
             ctl.BeginFileChooser.Add(ch =>
             {
                 chooser = new FileChooserView(ch);
@@ -93,13 +82,26 @@ namespace Di.View
             ctl.CancelFileChooser.Add(RemoveFileChooser);
         }
 
+        public void ApplyControllerFocus(Controller.Window window)
+        {
+            foreach (var widget in windowsBox.Children)
+            {
+                var view = widget as WindowView;
+                if (view != null && view.Window == window)
+                {
+                    view.FocusTextView();
+                    break;
+                }
+            }
+        }
+
         private void RemoveFileChooser()
         {
-            bool hadFocus = chooser.HasFocus;
+            bool hadFocus = chooser.QueryEntryHasFocus;
             topLevelBox.Remove(chooser);
             if (hadFocus)
             {
-                // TODO put the focus back in the window that had it before
+                ApplyControllerFocus(ctl.FocusedWindow);
             }
         }
 

@@ -29,6 +29,16 @@ namespace Di.View
 
         private Controller.FileChooser ctl;
 
+        private Gtk.Entry queryBox;
+
+        public bool QueryEntryHasFocus
+        {
+            get
+            {
+                return queryBox.HasFocus;
+            }
+        }
+
         public FileChooserView(Controller.FileChooser _ctl)
         {
             ctl = _ctl;
@@ -42,7 +52,7 @@ namespace Di.View
             var messageAlign = new Gtk.Alignment(0, 0, 0, 0);
             messageAlign.Add(message);
             topLevelBox.PackStart(messageAlign, false, false, 0);
-            var queryBox = new Gtk.Entry();
+            queryBox = new Gtk.Entry();
             queryBox.ModifyFont(new Font(14, FontFamily.Monospace));
             queryBox.WidthChars = 30;
             queryBox.Changed += (o, e) =>

@@ -37,6 +37,10 @@ namespace Di.View
             Homogeneous = false;
             Spacing = 0;
             BorderWidth = 0;
+            var topLevelBox = new Gtk.VBox();
+            topLevelBox.Homogeneous = false;
+            topLevelBox.Spacing = 0;
+            topLevelBox.BorderWidth = 0;
             textView = new WindowTextView(Window);
             scroll = new Gtk.ScrolledWindow {
                 HscrollbarPolicy = Gtk.PolicyType.Automatic,
@@ -45,12 +49,12 @@ namespace Di.View
             scroll.Add(textView);
             System.Action showCursor = delegate
             {
-                var cursor = Window.GtkTextBuffer.GetCursorIter();
+                var cursor = Window.Model.GetCursorIter();
                 textView.ScrollToIter(cursor.GtkIter, 0, false, 0, 0);
             };
-            Window.GtkTextBuffer.MarkSet += delegate { showCursor(); };
-            Window.GtkTextBuffer.Changed += delegate { showCursor(); };
-            PackStart(scroll, true, true, 0);
+            Window.Model.MarkSet += delegate { showCursor(); };
+            Window.Model.Changed += delegate { showCursor(); };
+            topLevelBox.PackStart(scroll, true, true, 0);
             status = new Gtk.Statusbar();
             status.HasResizeGrip = false;
             status.Push(StatusbarMode, Window.CurrentMode.GetName());
@@ -59,7 +63,21 @@ namespace Di.View
                 status.Pop(StatusbarMode);
                 status.Push(StatusbarMode, Window.CurrentMode.GetName());
             };
-            PackStart(status, false, false, 0);
+            topLevelBox.PackStart(status, false, false, 0);
+
+            // Wrap the topLevelBox with borders on the left and right
+            var bgBox = new Gtk.EventBox();
+            bgBox.ModifyBg(bgBox.State, new Gdk.Color(0x49, 0x65, 0xD6));
+            var borderBox = new Gtk.HBox();
+            borderBox.Homogeneous = false;
+            borderBox.Spacing = 10;
+            borderBox.BorderWidth = 0;
+            borderBox.PackStart(new Gtk.HBox(), false, false, 0);
+            borderBox.PackStart(topLevelBox, true, true, 0);
+            borderBox.PackStart(new Gtk.HBox(), false, false, 0);
+            bgBox.Add(borderBox);
+
+            Add(bgBox);
         }
 
         public void FocusTextView()
@@ -71,7 +89,7 @@ namespace Di.View
         {
             private Controller.Window ctl;
 
-            public WindowTextView(Controller.Window _ctl) : base(_ctl.GtkTextBuffer)
+            public WindowTextView(Controller.Window _ctl) : base(_ctl.Model)
             {
                 ctl = _ctl;
                 WrapMode = Gtk.WrapMode.WordChar;

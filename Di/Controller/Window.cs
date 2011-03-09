@@ -30,11 +30,7 @@ namespace Di.Controller
     {
         public readonly Main Controller;
 
-        private Model.Buffer model;
-        public TextBuffer GtkTextBuffer
-        {
-            get { return model; }
-        }
+        public readonly Model.Buffer Model;
 
         public BindList<WindowMode> CurrentMode
         {
@@ -57,7 +53,7 @@ namespace Di.Controller
         public Window(Main _controller, Model.Buffer _model)
         {
             Controller = _controller;
-            model = _model;
+            Model = _model;
             CurrentMode = new BindList<WindowMode>();
             CurrentMode.Event.Changed += (list) => { CurrentKeyMap = list.FoldLeft(EmptyKeyMap, (a, b) => a + b.KeyMap); };
             CurrentMode.Add(Controller.WindowModes[0]);

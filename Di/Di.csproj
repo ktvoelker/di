@@ -39,7 +39,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Program.cs" />
-    <Compile Include="Controller\Events.cs" />
     <Compile Include="View\Main.cs" />
     <Compile Include="Model\Main.cs" />
     <Compile Include="Controller\Main.cs" />

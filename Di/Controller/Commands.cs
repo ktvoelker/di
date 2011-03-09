@@ -123,8 +123,8 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            var cursor = b.GtkTextBuffer.GetCursorIter();
-            b.GtkTextBuffer.InsertAtCursor((cursor - cursor.LineStart) % 2 == 0 ? "  " : " ");
+            var cursor = b.Model.GetCursorIter();
+            b.Model.InsertAtCursor((cursor - cursor.LineStart) % 2 == 0 ? "  " : " ");
         }
     }
 
@@ -150,7 +150,7 @@ namespace Di.Controller.Command
         {
             if (_buffer != null)
             {
-                b.GtkTextBuffer.InsertAtCursor(_buffer.ToString());
+                b.Model.InsertAtCursor(_buffer.ToString());
             }
         }
     }
@@ -179,7 +179,7 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b, Range r)
         {
-            b.GtkTextBuffer.Delete(r);
+            b.Model.Delete(r);
         }
     }
 
@@ -212,7 +212,7 @@ namespace Di.Controller.Command
             Action<Di.Model.ProjectFile> handler = file =>
             {
                 b.Controller.EndFileChooser.Handler(chooser);
-                b.Controller.FocusedWindow.Value = b.Controller.CreateWindow(file);
+                b.Controller.FocusedWindow.Value = b.Controller.FindOrCreateWindow(file);
             };
             Action cancel = () =>
             {

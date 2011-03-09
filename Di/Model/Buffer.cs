@@ -26,19 +26,24 @@ namespace Di.Model
     {
         private static TextTagTable tags = new TextTagTable();
 
-        private ProjectFile file;
+        public ProjectFile File
+        {
+            get;
+            private set;
+        }
 
         public Buffer() : base(tags)
         {
-            file = null;
+            File = null;
         }
 
         public Buffer(ProjectFile _file) : base(tags)
         {
-            file = _file;
-            var input = file.File.OpenText();
+            File = _file;
+            var input = File.File.OpenText();
             InsertAtCursor(input.ReadToEnd());
             input.Close();
+            PlaceCursor(GetIterAtOffset(0));
         }
 
         public void InsertAtCursor(char c)

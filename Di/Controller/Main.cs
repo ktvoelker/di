@@ -37,11 +37,11 @@ namespace Di.Controller
 
         public readonly ReadOnlyCollection<WindowMode> WindowModes;
 
-        public Event1<FileChooser> BeginFileChooser = new Event1<FileChooser>();
+        public readonly Event1<FileChooser> BeginFileChooser = new Event1<FileChooser>();
 
-        public Event1<FileChooser> EndFileChooser = new Event1<FileChooser>();
+        public readonly Event1<FileChooser> EndFileChooser = new Event1<FileChooser>();
 
-        public Event0 CancelFileChooser = new Event0();
+        public readonly Event0 CancelFileChooser = new Event0();
 
         public Main(Model.Main m)
         {
@@ -135,6 +135,18 @@ namespace Di.Controller
             var window = new Window(this, Model.CreateBuffer(file));
             windows.Add(window);
             return window;
+        }
+
+        public Window FindOrCreateWindow(Di.Model.ProjectFile file)
+        {
+            foreach (var window in Windows)
+            {
+                if (window.Model.File == file)
+                {
+                    return window;
+                }
+            }
+            return CreateWindow(file);
         }
     }
 }

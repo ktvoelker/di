@@ -87,5 +87,23 @@ namespace Di
             Handler -= f;
         }
     }
+
+    public class Event3<T, U, V> : Event<Action<T, U, V>>
+    {
+        public Event3()
+        {
+            Handler = (x, y, z) => { return; };
+        }
+
+        public override void Add(Action<T, U, V> f)
+        {
+            Handler += f;
+        }
+
+        public override void Remove(Action<T, U, V> f)
+        {
+            Handler -= f;
+        }
+    }
 }
 

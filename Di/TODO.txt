@@ -2,7 +2,17 @@
 TODO
 ====
 
-Implement restoration of focus in View.Main.RemoveFileChooser
+Put a brightly-colored border around the focused window
+
+    Currently, there's a small gap between the scrollbar and the text area in which
+    the color shows through.
+
+    Instead, make the bar of color a bit wider, but only put it on the left side of the window.
+
+Fix the existing open-in-new-window command to reuse an existing Buffer object when there is one
+
+Fix the scrollbars on windows so they can be moved with the mouse
+    There might be some kind of problematic feedback loop involving an event handler
 
 Add support for using the file chooser to pick a directory
     Make Project expose a separate list of all directories
@@ -12,14 +22,14 @@ Add support for using the file chooser to pick a directory
 
 Add commands:
     Close the current window
-    Open a file in a new window (use file chooser)
     Create a new file in a new window (use file chooser to pick the directory, then get the name)
-    Save the unnamed file in the current window (same interaction as the previous)
+    Open a file in the current window
+        If the file is already open, just jump to it
+    Create a new file in the current window
 
-    Keep a list of project files sorted by most-recently-visible
-        Prefer the most-recently-visible file over other matches
-        Already-visible files should be least-preferred
-            But allow a file to become visible in multiple places
+Keep a list of project files sorted by most-recently-visible
+    Prefer the most-recently-visible file over other matches
+    Already-visible files should be least-preferred
 
 Write test suite for FileMatcher class
 

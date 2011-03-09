@@ -84,7 +84,7 @@ namespace Di.Controller
     {
         public override void Execute(Window b)
         {
-            b.GtkTextBuffer.PlaceCursor(Evaluate(b, b.GtkTextBuffer.GetCursorIter()).CursorRange.End.GtkIter);
+            b.Model.PlaceCursor(Evaluate(b, b.Model.GetCursorIter()).CursorRange.End.GtkIter);
         }
 
         public abstract Movement Evaluate(Window b, CharIter start);
@@ -156,7 +156,7 @@ namespace Di.Controller
 
         public void Execute(Window b, MoveCommand move)
         {
-            var movement = move.Evaluate(b, b.GtkTextBuffer.GetCursorIter());
+            var movement = move.Evaluate(b, b.Model.GetCursorIter());
             Execute(b, movement.ActionRange);
         }
 
