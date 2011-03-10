@@ -47,11 +47,23 @@ namespace Di.Model
             return buffer;
         }
 
-        public Buffer CreateBuffer(ProjectFile file)
+        private Buffer CreateBuffer(ProjectFile file)
         {
             var buffer = new Buffer(file);
             buffers.Add(buffer);
             return buffer;
+        }
+
+        public Buffer FindOrCreateBuffer(ProjectFile file)
+        {
+            foreach (var buffer in Buffers)
+            {
+                if (buffer.File == file)
+                {
+                    return buffer;
+                }
+            }
+            return CreateBuffer(file);
         }
     }
 }

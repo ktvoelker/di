@@ -31,6 +31,9 @@ namespace Di.View
         private Gtk.Statusbar status;
         private WindowTextView textView;
 
+        private readonly Gdk.Color HighlightColor = new Gdk.Color(0x49, 0x65, 0xD6);
+        private readonly Gdk.Color NormalColor;
+
         public WindowView(Controller.Window _ctl)
         {
             Window = _ctl;
@@ -47,13 +50,10 @@ namespace Di.View
                 VscrollbarPolicy = Gtk.PolicyType.Automatic
             };
             scroll.Add(textView);
-            System.Action showCursor = delegate
+            Window.CursorMovedByCommand.Add(i =>
             {
-                var cursor = Window.Model.GetCursorIter();
-                textView.ScrollToIter(cursor.GtkIter, 0, false, 0, 0);
-            };
-            Window.Model.MarkSet += delegate { showCursor(); };
-            Window.Model.Changed += delegate { showCursor(); };
+                textView.ScrollToIter(i.GtkIter, 0, false, 0, 0);
+            });
             topLevelBox.PackStart(scroll, true, true, 0);
             status = new Gtk.Statusbar();
             status.HasResizeGrip = false;
@@ -66,18 +66,28 @@ namespace Di.View
             topLevelBox.PackStart(status, false, false, 0);
 
             // Wrap the topLevelBox with borders on the left and right
-            var bgBox = new Gtk.EventBox();
-            bgBox.ModifyBg(bgBox.State, new Gdk.Color(0x49, 0x65, 0xD6));
+            var hlBox = new Gtk.DrawingArea();
+            NormalColor = hlBox.Style.Background(Gtk.StateType.Normal);
+            hlBox.WidthRequest = 10;
             var borderBox = new Gtk.HBox();
             borderBox.Homogeneous = false;
-            borderBox.Spacing = 10;
+            borderBox.Spacing = 0;
             borderBox.BorderWidth = 0;
-            borderBox.PackStart(new Gtk.HBox(), false, false, 0);
+            borderBox.PackStart(hlBox, false, false, 0);
             borderBox.PackStart(topLevelBox, true, true, 0);
-            borderBox.PackStart(new Gtk.HBox(), false, false, 0);
-            bgBox.Add(borderBox);
 
-            Add(bgBox);
+            textView.FocusInEvent += (object o, Gtk.FocusInEventArgs args) =>
+            {
+                Window.Controller.FocusedWindow.Value = Window;
+                hlBox.ModifyBg(Gtk.StateType.Normal, HighlightColor);
+            };
+
+            textView.FocusOutEvent += (object o, Gtk.FocusOutEventArgs args) =>
+            {
+                hlBox.ModifyBg(Gtk.StateType.Normal, NormalColor);
+            };
+
+            Add(borderBox);
         }
 
         public void FocusTextView()

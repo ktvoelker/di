@@ -123,16 +123,16 @@ namespace Di.Controller
             WindowsEvents = windows.Event;
         }
 
-        public Window CreateWindow()
+        private Window CreateWindow()
         {
             var window = new Window(this, Model.CreateBuffer());
             windows.Add(window);
             return window;
         }
 
-        public Window CreateWindow(Di.Model.ProjectFile file)
+        private Window CreateWindow(Di.Model.ProjectFile file)
         {
-            var window = new Window(this, Model.CreateBuffer(file));
+            var window = new Window(this, Model.FindOrCreateBuffer(file));
             windows.Add(window);
             return window;
         }

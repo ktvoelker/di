@@ -24,7 +24,14 @@ namespace Di
 {
     public struct Range
     {
+        /// <summary>
+        /// An iterator pointing to the first character within the range.
+        /// </summary>
         public CharIter Start;
+
+        /// <summary>
+        /// An iterator pointing one past the last character within the range.
+        /// </summary>
         public CharIter End;
 
         public string Chars
@@ -46,6 +53,11 @@ namespace Di
         {
             Start = s;
             End = e;
+        }
+
+        public bool Contains(CharIter i)
+        {
+            return i >= Start && i < End;
         }
     }
 }

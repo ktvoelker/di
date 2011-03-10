@@ -123,9 +123,19 @@ namespace Di
             return OffsetOp(i, j, (m, n) => m < n);
         }
 
+        public static bool operator <=(CharIter i, CharIter j)
+        {
+            return i < j || i == j;
+        }
+
         public static bool operator >(CharIter i, CharIter j)
         {
             return OffsetOp(i, j, (m, n) => m > n);
+        }
+
+        public static bool operator >=(CharIter i, CharIter j)
+        {
+            return i > j || i == j;
         }
 
         public static bool operator ==(CharIter i, CharIter j)

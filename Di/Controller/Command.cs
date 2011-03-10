@@ -84,7 +84,7 @@ namespace Di.Controller
     {
         public override void Execute(Window b)
         {
-            b.Model.PlaceCursor(Evaluate(b, b.Model.GetCursorIter()).CursorRange.End.GtkIter);
+            b.PlaceCursorKeepVisible(Evaluate(b, b.Model.GetCursorIter()).CursorRange.End);
         }
 
         public abstract Movement Evaluate(Window b, CharIter start);

@@ -40,6 +40,8 @@ namespace Di.Controller
 
         private static readonly KeyMap EmptyKeyMap;
 
+        public Event1<CharIter> CursorMovedByCommand = new Event1<CharIter>();
+
         static Window()
         {
             EmptyKeyMap = new KeyMap { Priority = sbyte.MinValue };
@@ -69,6 +71,12 @@ namespace Di.Controller
             // TODO indicate the current state somewhere
             Parser.Commands.ForEach(c => c.Execute(this));
             Parser.Commands.Clear();
+        }
+
+        public void PlaceCursorKeepVisible(CharIter i)
+        {
+            Model.PlaceCursor(i.GtkIter);
+            CursorMovedByCommand.Handler(i);
         }
     }
 }

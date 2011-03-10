@@ -2,18 +2,6 @@
 TODO
 ====
 
-Put a brightly-colored border around the focused window
-
-    Currently, there's a small gap between the scrollbar and the text area in which
-    the color shows through.
-
-    Instead, make the bar of color a bit wider, but only put it on the left side of the window.
-
-Fix the existing open-in-new-window command to reuse an existing Buffer object when there is one
-
-Fix the scrollbars on windows so they can be moved with the mouse
-    There might be some kind of problematic feedback loop involving an event handler
-
 Add support for using the file chooser to pick a directory
     Make Project expose a separate list of all directories
         Make a common interface for ProjectFile and whatever the directories are return as
