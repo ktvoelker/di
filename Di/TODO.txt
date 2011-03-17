@@ -2,11 +2,13 @@
 TODO
 ====
 
-Add support for using the file chooser to pick a directory
-    Make Project expose a separate list of all directories
-        Make a common interface for ProjectFile and whatever the directories are return as
-            It just exposes the information needed by FileQuery
-        Make FileQuery use that interface instead of ProjectFile
+Merge Model.Project into Model.Main
+
+Rename ProjectDirectory and ProjectFile to Directory and File
+
+Make Project expose a separate list of all directories
+
+Make Project add Parent links between IFileQueryables
 
 Add commands:
     Close the current window

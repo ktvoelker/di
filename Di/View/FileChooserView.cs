@@ -23,11 +23,11 @@ using System.Collections.Generic;
 using System.Text;
 namespace Di.View
 {
-    public class FileChooserView : Gtk.VBox
+    public class FileChooserView<T> : Gtk.VBox where T : Model.IFileQueryable
     {
         private const int VisibleResults = 9;
 
-        private Controller.FileChooser ctl;
+        private Controller.FileChooser<T> ctl;
 
         private Gtk.Entry queryBox;
 
@@ -39,7 +39,7 @@ namespace Di.View
             }
         }
 
-        public FileChooserView(Controller.FileChooser _ctl)
+        public FileChooserView(Controller.FileChooser<T> _ctl)
         {
             ctl = _ctl;
             Homogeneous = false;
@@ -87,7 +87,7 @@ namespace Di.View
                 var sb = new StringBuilder();
                 for (int i = 0; i < VisibleResults && i < list.Count; ++i)
                 {
-                    sb.AppendFormat("{0}. {1}\n", i + 1, list[i].ProjectRelativeFullName);
+                    sb.AppendFormat("{0}. {1}\n", i + 1, list[i].ProjectRelativeFullName());
                 }
                 resultBox.Buffer.Text = sb.ToString();
             };

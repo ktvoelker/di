@@ -22,42 +22,51 @@ using System;
 using System.Collections.Generic;
 namespace Di.Controller
 {
-    public class FileChooser
+    public class FileChooserEvents<T> where T : Model.IFileQueryable
     {
-        private Di.Model.Project project;
+        public readonly Event1<FileChooser<T>> Begin = new Event1<FileChooser<T>>();
+
+        public readonly Event1<FileChooser<T>> End = new Event1<FileChooser<T>>();
+
+        public readonly Event0 Cancel = new Event0();
+    }
+
+    public class FileChooser<T> where T : Model.IFileQueryable
+    {
+        private Func<IEnumerable<T>> getCandidates;
 
         public readonly string Message;
 
-        private Action<Di.Model.ProjectFile> handler;
+        private Action<T> handler;
 
         private Action cancelHandler;
 
-        private Di.Model.FileQuery query;
+        private Di.Model.FileQuery<T> query;
 
         public string Query
         {
             set
             {
-                query = new Di.Model.FileQuery(value);
+                query = new Di.Model.FileQuery<T>(value);
                 Files.Clear();
                 Update();
             }
         }
 
-        public BindList<Di.Model.ProjectFile> Files;
+        public BindList<T> Files;
 
-        public FileChooser(Di.Model.Project _project, string _message, Action<Di.Model.ProjectFile> _handler, Action _cancelHandler)
+        public FileChooser(Func<IEnumerable<T>> _getCandidates, string _message, Action<T> _handler, Action _cancelHandler)
         {
-            project = _project;
+            getCandidates = _getCandidates;
             handler = _handler;
             Message = _message;
             cancelHandler = _cancelHandler;
-            query = new Di.Model.FileQuery("");
-            Files = new BindList<Di.Model.ProjectFile>();
+            query = new Di.Model.FileQuery<T>("");
+            Files = new BindList<T>();
             Update();
         }
 
-        public void Choose(Di.Model.ProjectFile file)
+        public void Choose(T file)
         {
             handler(file);
         }
@@ -69,7 +78,7 @@ namespace Di.Controller
 
         private void Update()
         {
-            query.Evaluate(project.Files).ForEach(f => Files.Add(f));
+            query.Evaluate(getCandidates()).ForEach(f => Files.Add(f));
         }
     }
 }

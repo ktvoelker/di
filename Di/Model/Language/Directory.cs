@@ -1,5 +1,5 @@
 //  
-//  FileQuery.cs
+//  Directory.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -19,50 +19,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-namespace Di.Model
+namespace Di.Model.Language
 {
-    public interface IFileQueryable
+    public class Directory : Base
     {
-        Project Root
+        public Directory()
         {
-            get;
-        }
-
-        ProjectDirectory Parent
-        {
-            get;
-        }
-
-        Language.Base Lang
-        {
-            get;
-        }
-
-        string Name
-        {
-            get;
-        }
-
-        string FullName
-        {
-            get;
-        }
-    }
-
-    public class FileQuery<T> where T : IFileQueryable
-    {
-        private string query;
-
-        public FileQuery(string _query)
-        {
-            query = _query;
-        }
-
-        public IQueryable<T> Evaluate(IEnumerable<T> files)
-        {
-            return files.AsQueryable().Where(f => f.Name == query);
+            Name = "Directory";
         }
     }
 }

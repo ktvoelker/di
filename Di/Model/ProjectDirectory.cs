@@ -1,5 +1,5 @@
 //  
-//  ProjectFile.cs
+//  ProjectDirectory.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -22,8 +22,10 @@ using System;
 using System.IO;
 namespace Di.Model
 {
-    public class ProjectFile : IFileQueryable
+    public class ProjectDirectory : IFileQueryable
     {
+        private static readonly Language.Base LangInstance = new Language.Directory();
+
         public Project Root
         {
             get;
@@ -36,7 +38,7 @@ namespace Di.Model
             private set;
         }
 
-        public FileInfo File
+        public DirectoryInfo Directory
         {
             get;
             private set;
@@ -44,15 +46,17 @@ namespace Di.Model
 
         public Language.Base Lang
         {
-            get;
-            private set;
+            get
+            {
+                return LangInstance;
+            }
         }
 
         public string Name
         {
             get
             {
-                return File.Name;
+                return Directory.Name;
             }
         }
 
@@ -60,24 +64,20 @@ namespace Di.Model
         {
             get
             {
-                return File.FullName;
+                return Directory.FullName;
             }
         }
 
         public string ProjectRelativeFullName
         {
-            get
-            {
-                return File.FullName.Substring(Root.Root.FullName.Length + 1);
-            }
+            get { return Directory.FullName.Substring(Root.Root.FullName.Length + 1); }
         }
 
-        public ProjectFile(Project root, ProjectDirectory parent, FileInfo file)
+        public ProjectDirectory(Project root, ProjectDirectory parent, DirectoryInfo dir)
         {
             Root = root;
             Parent = parent;
-            File = file;
-            Lang = new Language.Plain();
+            Directory = dir;
         }
     }
 }

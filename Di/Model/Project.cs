@@ -76,7 +76,8 @@ namespace Di.Model
                     m.ExcludeGlob(e);
                 }
             }
-            files = m.MatchAll(Root).Select(f => new ProjectFile(this, f)).ToList();
+            // TODO pass a non-null Parent
+            files = m.MatchAll(Root).Select(f => new ProjectFile(this, null, f)).ToList();
             Files = new ReadOnlyCollection<ProjectFile>(files);
         }
 

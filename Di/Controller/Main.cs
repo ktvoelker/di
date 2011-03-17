@@ -37,11 +37,9 @@ namespace Di.Controller
 
         public readonly ReadOnlyCollection<WindowMode> WindowModes;
 
-        public readonly Event1<FileChooser> BeginFileChooser = new Event1<FileChooser>();
+        public readonly FileChooserEvents<Model.ProjectFile> FileChooserEvents = new FileChooserEvents<Model.ProjectFile>();
 
-        public readonly Event1<FileChooser> EndFileChooser = new Event1<FileChooser>();
-
-        public readonly Event0 CancelFileChooser = new Event0();
+        public readonly FileChooserEvents<Model.ProjectDirectory> DirectoryChooserEvents = new FileChooserEvents<Model.ProjectDirectory>();
 
         public Main(Model.Main m)
         {

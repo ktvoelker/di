@@ -189,5 +189,10 @@ namespace Di
                 return fallback;
             }
         }
+
+        public static string ProjectRelativeFullName(this Model.IFileQueryable node)
+        {
+            return node.FullName.Substring(node.Root.Root.FullName.Length + 1);
+        }
     }
 }
