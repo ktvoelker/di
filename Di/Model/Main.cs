@@ -22,18 +22,68 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 namespace Di.Model
 {
     public class Main
     {
+        public const string ConfigFileName = "di-project.ini";
+
+        public readonly DirectoryInfo Root;
+
+        private Ini.IIniFile config = null;
+
+        public string Name
+        {
+            get { return config[""].GetWithDefault("name", "Unnamed Project"); }
+        }
+
+        private IList<File> files;
+
+        public ReadOnlyCollection<File> Files
+        {
+            get;
+            private set;
+        }
+
         private readonly BindList<Buffer> buffers;
         public readonly ReadOnlyCollection<Buffer> Buffers;
 
-        public Project CurrentProject { get; private set; }
-
-        public Main(DirectoryInfo root)
+        public Main(DirectoryInfo _dir)
         {
-            CurrentProject = new Project(root);
+            while (!DirIsProjectRoot(_dir))
+            {
+                _dir = _dir.Parent;
+                if (_dir == null)
+                {
+                    // TODO
+                    // Create an exception class to throw here.
+                    // It'll get caught somewhere and result in a special interaction with the user
+                    // to determine which directory to create the project file in.
+                    throw new InvalidOperationException();
+                }
+            }
+            Root = _dir;
+            Ini.IniParser.Parse(Path.Combine(Root.FullName, ConfigFileName), ref config);
+            var m = new FileMatcher();
+            m.ExcludeExecutableFiles = config[""].GetBoolWithDefault("exclude-exec", true);
+            if (config.ContainsKey("include"))
+            {
+                foreach (var i in config["include"].Keys)
+                {
+                    m.IncludeGlob(i);
+                }
+            }
+            if (config.ContainsKey("exclude"))
+            {
+                foreach (var e in config["exclude"].Keys)
+                {
+                    m.ExcludeGlob(e);
+                }
+            }
+            // TODO pass a non-null Parent
+            files = m.MatchAll(Root).Select(f => new File(this, null, f)).ToList();
+            Files = new ReadOnlyCollection<File>(files);
 
             buffers = new BindList<Buffer>();
             buffers.Add(new Buffer());
@@ -47,14 +97,14 @@ namespace Di.Model
             return buffer;
         }
 
-        private Buffer CreateBuffer(ProjectFile file)
+        private Buffer CreateBuffer(File file)
         {
             var buffer = new Buffer(file);
             buffers.Add(buffer);
             return buffer;
         }
 
-        public Buffer FindOrCreateBuffer(ProjectFile file)
+        public Buffer FindOrCreateBuffer(File file)
         {
             foreach (var buffer in Buffers)
             {
@@ -64,6 +114,11 @@ namespace Di.Model
                 }
             }
             return CreateBuffer(file);
+        }
+
+        public static bool DirIsProjectRoot(DirectoryInfo dir)
+        {
+            return dir.GetFiles().Where(file => file.Name == ConfigFileName).HasAny();
         }
     }
 }

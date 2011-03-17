@@ -190,7 +190,7 @@ namespace Di
             }
         }
 
-        public static string ProjectRelativeFullName(this Model.IFileQueryable node)
+        public static string ProjectRelativeFullName(this Model.IFsQueryable node)
         {
             return node.FullName.Substring(node.Root.Root.FullName.Length + 1);
         }

@@ -22,23 +22,23 @@ using System;
 using System.IO;
 namespace Di.Model
 {
-    public class ProjectDirectory : IFileQueryable
+    public class Directory : IFsQueryable
     {
         private static readonly Language.Base LangInstance = new Language.Directory();
 
-        public Project Root
+        public Main Root
         {
             get;
             private set;
         }
 
-        public ProjectDirectory Parent
+        public Directory Parent
         {
             get;
             private set;
         }
 
-        public DirectoryInfo Directory
+        public DirectoryInfo Info
         {
             get;
             private set;
@@ -56,7 +56,7 @@ namespace Di.Model
         {
             get
             {
-                return Directory.Name;
+                return Info.Name;
             }
         }
 
@@ -64,20 +64,20 @@ namespace Di.Model
         {
             get
             {
-                return Directory.FullName;
+                return Info.FullName;
             }
         }
 
         public string ProjectRelativeFullName
         {
-            get { return Directory.FullName.Substring(Root.Root.FullName.Length + 1); }
+            get { return Info.FullName.Substring(Root.Root.FullName.Length + 1); }
         }
 
-        public ProjectDirectory(Project root, ProjectDirectory parent, DirectoryInfo dir)
+        public Directory(Main root, Directory parent, DirectoryInfo dir)
         {
             Root = root;
             Parent = parent;
-            Directory = dir;
+            Info = dir;
         }
     }
 }

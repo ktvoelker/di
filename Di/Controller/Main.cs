@@ -37,9 +37,9 @@ namespace Di.Controller
 
         public readonly ReadOnlyCollection<WindowMode> WindowModes;
 
-        public readonly FileChooserEvents<Model.ProjectFile> FileChooserEvents = new FileChooserEvents<Model.ProjectFile>();
+        public readonly FsChooserEvents<Model.File> FsChooserEvents = new FsChooserEvents<Model.File>();
 
-        public readonly FileChooserEvents<Model.ProjectDirectory> DirectoryChooserEvents = new FileChooserEvents<Model.ProjectDirectory>();
+        public readonly FsChooserEvents<Model.Directory> DirectoryChooserEvents = new FsChooserEvents<Model.Directory>();
 
         public Main(Model.Main m)
         {
@@ -128,14 +128,14 @@ namespace Di.Controller
             return window;
         }
 
-        private Window CreateWindow(Di.Model.ProjectFile file)
+        private Window CreateWindow(Di.Model.File file)
         {
             var window = new Window(this, Model.FindOrCreateBuffer(file));
             windows.Add(window);
             return window;
         }
 
-        public Window FindOrCreateWindow(Di.Model.ProjectFile file)
+        public Window FindOrCreateWindow(Di.Model.File file)
         {
             foreach (var window in Windows)
             {

@@ -22,21 +22,21 @@ using System;
 using System.IO;
 namespace Di.Model
 {
-    public class ProjectFile : IFileQueryable
+    public class File : IFsQueryable
     {
-        public Project Root
+        public Main Root
         {
             get;
             private set;
         }
 
-        public ProjectDirectory Parent
+        public Directory Parent
         {
             get;
             private set;
         }
 
-        public FileInfo File
+        public FileInfo Info
         {
             get;
             private set;
@@ -52,7 +52,7 @@ namespace Di.Model
         {
             get
             {
-                return File.Name;
+                return Info.Name;
             }
         }
 
@@ -60,7 +60,7 @@ namespace Di.Model
         {
             get
             {
-                return File.FullName;
+                return Info.FullName;
             }
         }
 
@@ -68,15 +68,15 @@ namespace Di.Model
         {
             get
             {
-                return File.FullName.Substring(Root.Root.FullName.Length + 1);
+                return Info.FullName.Substring(Root.Root.FullName.Length + 1);
             }
         }
 
-        public ProjectFile(Project root, ProjectDirectory parent, FileInfo file)
+        public File(Main root, Directory parent, FileInfo file)
         {
             Root = root;
             Parent = parent;
-            File = file;
+            Info = file;
             Lang = new Language.Plain();
         }
     }

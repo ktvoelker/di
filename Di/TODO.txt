@@ -2,13 +2,13 @@
 TODO
 ====
 
-Merge Model.Project into Model.Main
+Make Project expose a list of all directories and link all IFileQueryables together by Parent
 
-Rename ProjectDirectory and ProjectFile to Directory and File
+    Don't mess with FileMatcher.
 
-Make Project expose a separate list of all directories
+    Start with the files produced by the FileMatcher and work upward through their ancestors.
 
-Make Project add Parent links between IFileQueryables
+    Use a dictionary to find directory objects which have already been created.
 
 Add commands:
     Close the current window

@@ -52,23 +52,22 @@
     <Compile Include="Range.cs" />
     <Compile Include="CharIter.cs" />
     <Compile Include="Bind.cs" />
-    <Compile Include="Model\Project.cs" />
     <Compile Include="Controller\Window.cs" />
     <Compile Include="View\WindowView.cs" />
     <Compile Include="Controller\WindowMode.cs" />
     <Compile Include="BindList.cs" />
     <Compile Include="Controller\MenuMode.cs" />
     <Compile Include="FileMatcher.cs" />
-    <Compile Include="View\FileChooserView.cs" />
-    <Compile Include="Model\ProjectFile.cs" />
     <Compile Include="Model\Language\Plain.cs" />
     <Compile Include="Model\Language\Base.cs" />
-    <Compile Include="Model\FileQuery.cs" />
-    <Compile Include="Controller\FileChooser.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="Font.cs" />
-    <Compile Include="Model\ProjectDirectory.cs" />
     <Compile Include="Model\Language\Directory.cs" />
+    <Compile Include="Model\Directory.cs" />
+    <Compile Include="Model\File.cs" />
+    <Compile Include="Model\FsQuery.cs" />
+    <Compile Include="Controller\FsChooser.cs" />
+    <Compile Include="View\FsChooserView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />

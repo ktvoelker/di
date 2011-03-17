@@ -1,5 +1,5 @@
 //  
-//  FileChooser.cs
+//  FsChooser.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -23,11 +23,11 @@ using System.Collections.Generic;
 using System.Text;
 namespace Di.View
 {
-    public class FileChooserView<T> : Gtk.VBox where T : Model.IFileQueryable
+    public class FsChooserView<T> : Gtk.VBox where T : Model.IFsQueryable
     {
         private const int VisibleResults = 9;
 
-        private Controller.FileChooser<T> ctl;
+        private Controller.FsChooser<T> ctl;
 
         private Gtk.Entry queryBox;
 
@@ -39,7 +39,7 @@ namespace Di.View
             }
         }
 
-        public FileChooserView(Controller.FileChooser<T> _ctl)
+        public FsChooserView(Controller.FsChooser<T> _ctl)
         {
             ctl = _ctl;
             Homogeneous = false;

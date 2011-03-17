@@ -26,7 +26,7 @@ namespace Di.Model
     {
         private static TextTagTable tags = new TextTagTable();
 
-        public ProjectFile File
+        public File File
         {
             get;
             private set;
@@ -37,10 +37,10 @@ namespace Di.Model
             File = null;
         }
 
-        public Buffer(ProjectFile _file) : base(tags)
+        public Buffer(File _file) : base(tags)
         {
             File = _file;
-            var input = File.File.OpenText();
+            var input = File.Info.OpenText();
             InsertAtCursor(input.ReadToEnd());
             input.Close();
             PlaceCursor(GetIterAtOffset(0));

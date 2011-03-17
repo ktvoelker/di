@@ -31,9 +31,9 @@ namespace Di.View
 
         private Gtk.HBox windowsBox;
 
-        private FileChooserView<Model.ProjectFile> fileChooser;
+        private FsChooserView<Model.File> fileChooser;
 
-        private FileChooserView<Model.ProjectDirectory> directoryChooser;
+        private FsChooserView<Model.Directory> directoryChooser;
 
         public Main(Controller.Main c) : base(Gtk.WindowType.Toplevel)
         {
@@ -74,16 +74,16 @@ namespace Di.View
                 }
             };
             ctl.FocusedWindow.Changed += ApplyControllerFocus;
-            SetupChooser(ctl.FileChooserEvents, (fc) => fileChooser = fc);
+            SetupChooser(ctl.FsChooserEvents, (fc) => fileChooser = fc);
             SetupChooser(ctl.DirectoryChooserEvents, (dc) => directoryChooser = dc);
         }
 
-        public void SetupChooser<T>(Controller.FileChooserEvents<T> events, Action<FileChooserView<T>> setChooser) where T : Model.IFileQueryable
+        public void SetupChooser<T>(Controller.FsChooserEvents<T> events, Action<FsChooserView<T>> setChooser) where T : Model.IFsQueryable
         {
-            FileChooserView<T> chooser = null;
+            FsChooserView<T> chooser = null;
             events.Begin.Add(ch =>
             {
-                chooser = new FileChooserView<T>(ch);
+                chooser = new FsChooserView<T>(ch);
                 setChooser(chooser);
                 topLevelBox.PackEnd(chooser, false, false, 20);
                 chooser.ShowAll();
@@ -105,7 +105,7 @@ namespace Di.View
             }
         }
 
-        private void RemoveFileChooser<T>(FileChooserView<T> chooser) where T : Model.IFileQueryable
+        private void RemoveFileChooser<T>(FsChooserView<T> chooser) where T : Model.IFsQueryable
         {
             bool hadFocus = chooser.QueryEntryHasFocus;
             topLevelBox.Remove(chooser);

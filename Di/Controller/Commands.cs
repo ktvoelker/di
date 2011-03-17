@@ -208,18 +208,18 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            FileChooser<Model.ProjectFile> chooser = null;
-            Action<Di.Model.ProjectFile> handler = file =>
+            FsChooser<Model.File> chooser = null;
+            Action<Di.Model.File> handler = file =>
             {
-                b.Controller.FileChooserEvents.End.Handler(chooser);
+                b.Controller.FsChooserEvents.End.Handler(chooser);
                 b.Controller.FocusedWindow.Value = b.Controller.FindOrCreateWindow(file);
             };
             Action cancel = () =>
             {
-                b.Controller.FileChooserEvents.Cancel.Handler();
+                b.Controller.FsChooserEvents.Cancel.Handler();
             };
-            chooser = new FileChooser<Model.ProjectFile>(() => b.Controller.Model.CurrentProject.Files, "Choose a file", handler, cancel);
-            b.Controller.FileChooserEvents.Begin.Handler(chooser);
+            chooser = new FsChooser<Model.File>(() => b.Controller.Model.Files, "Choose a file", handler, cancel);
+            b.Controller.FsChooserEvents.Begin.Handler(chooser);
         }
     }
 }

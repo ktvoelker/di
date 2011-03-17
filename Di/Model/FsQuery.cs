@@ -1,5 +1,5 @@
 //  
-//  FileQuery.cs
+//  FsQuery.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -23,14 +23,14 @@ using System.Collections.Generic;
 using System.Linq;
 namespace Di.Model
 {
-    public interface IFileQueryable
+    public interface IFsQueryable
     {
-        Project Root
+        Main Root
         {
             get;
         }
 
-        ProjectDirectory Parent
+        Directory Parent
         {
             get;
         }
@@ -51,11 +51,11 @@ namespace Di.Model
         }
     }
 
-    public class FileQuery<T> where T : IFileQueryable
+    public class FsQuery<T> where T : IFsQueryable
     {
         private string query;
 
-        public FileQuery(string _query)
+        public FsQuery(string _query)
         {
             query = _query;
         }
