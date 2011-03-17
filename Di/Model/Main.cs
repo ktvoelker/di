@@ -81,8 +81,7 @@ namespace Di.Model
                     m.ExcludeGlob(e);
                 }
             }
-            // TODO pass a non-null Parent
-            files = m.MatchAll(Root).Select(f => new File(this, null, f)).ToList();
+            files = m.MatchAll(Root).Select(f => new File(this, f)).ToList();
             Files = new ReadOnlyCollection<File>(files);
 
             buffers = new BindList<Buffer>();

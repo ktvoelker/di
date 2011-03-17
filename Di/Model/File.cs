@@ -19,6 +19,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 using System.IO;
 namespace Di.Model
 {
@@ -64,19 +65,11 @@ namespace Di.Model
             }
         }
 
-        public string ProjectRelativeFullName
-        {
-            get
-            {
-                return Info.FullName.Substring(Root.Root.FullName.Length + 1);
-            }
-        }
-
-        public File(Main root, Directory parent, FileInfo file)
+        public File(Main root, FileInfo file)
         {
             Root = root;
-            Parent = parent;
             Info = file;
+            Parent = Directory.Get(root, file.Directory);
             Lang = new Language.Plain();
         }
     }

@@ -2,20 +2,16 @@
 TODO
 ====
 
-Make Project expose a list of all directories and link all IFileQueryables together by Parent
-
-    Don't mess with FileMatcher.
-
-    Start with the files produced by the FileMatcher and work upward through their ancestors.
-
-    Use a dictionary to find directory objects which have already been created.
-
 Add commands:
     Close the current window
     Create a new file in a new window (use file chooser to pick the directory, then get the name)
     Open a file in the current window
         If the file is already open, just jump to it
     Create a new file in the current window
+
+Look for places where FileInfo or DirectoryInfo objects are compared by reference.
+    This is unreliable.
+    Replace these with comparisons by FullName.
 
 Keep a list of project files sorted by most-recently-visible
     Prefer the most-recently-visible file over other matches

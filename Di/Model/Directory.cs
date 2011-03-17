@@ -19,6 +19,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 using System.IO;
 namespace Di.Model
 {
@@ -68,16 +69,31 @@ namespace Di.Model
             }
         }
 
-        public string ProjectRelativeFullName
+        private static IDictionary<Main, IDictionary<DirectoryInfo, Directory>> Directories;
+
+        static Directory()
         {
-            get { return Info.FullName.Substring(Root.Root.FullName.Length + 1); }
+            Directories = new Dictionary<Main, IDictionary<DirectoryInfo, Directory>>();
         }
 
-        public Directory(Main root, Directory parent, DirectoryInfo dir)
+        private Directory(Main root, DirectoryInfo info)
         {
             Root = root;
-            Parent = parent;
-            Info = dir;
+            Info = info;
+            Parent = info.FullName == root.Root.FullName ? null : Get(root, info.Parent);
+        }
+
+        public static Directory Get(Main root, DirectoryInfo info)
+        {
+            if (!Directories.ContainsKey(root))
+            {
+                Directories[root] = new Dictionary<DirectoryInfo, Directory>();
+            }
+            if (!Directories[root].ContainsKey(info))
+            {
+                Directories[root][info] = new Directory(root, info);
+            }
+            return Directories[root][info];
         }
     }
 }
