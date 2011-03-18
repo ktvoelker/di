@@ -74,6 +74,10 @@ namespace Di.View
                 status.Pop(StatusbarMode);
                 status.Push(StatusbarMode, Window.CurrentMode.GetName());
             };
+            Window.Model.Changed += m =>
+            {
+                textView.Buffer = m;
+            };
             topLevelBox.PackStart(status, false, false, 0);
 
             // Wrap the topLevelBox with borders on the left and right

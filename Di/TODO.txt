@@ -4,8 +4,6 @@ TODO
 
 Add commands:
     Create a new file in a new window (use file chooser to pick the directory, then get the name)
-    Open a file in the current window
-        If the file is already open, just jump to it
     Create a new file in the current window
 
 Keep a list of project files sorted by most-recently-visible

@@ -58,6 +58,7 @@ namespace Di.Controller
             commandMode.Add(Key.Up, new Command.Up());
             commandMode.Add(Key.Left, new Command.Left());
             commandMode.Add(Key.Right, new Command.Right());
+            commandMode.Add(Key.o, new Command.OpenFile());
             commandMode.Add(Key.w, new Command.ClearWindowMode(), new Command.AddWindowMode(4), new Command.AddWindowMode(3));
             windowModes.Add(new WindowMode { Name = "Command", KeyMap = commandMode });
             
@@ -102,7 +103,7 @@ namespace Di.Controller
             // Window mode bindings (4)
             var windowMode = new KeyMap();
             windowMode.Add(Key.a,
-                           new Command.CreateAndFocusWindow(),
+                           new Command.OpenFileInNewWindow(),
                            new Command.ClearWindowMode(),
                            new Command.AddWindowMode(0),
                            new Command.AddWindowMode(2),
@@ -139,16 +140,22 @@ namespace Di.Controller
             return window;
         }
 
-        public Window FindOrCreateWindow(Di.Model.File file)
+        public Window FindWindow(Di.Model.File file)
         {
             foreach (var window in Windows)
             {
-                if (window.Model.File == file)
+                if (window.Model.Value.File == file)
                 {
                     return window;
                 }
             }
-            return CreateWindow(file);
+            return null;
+        }
+
+        public Window FindOrCreateWindow(Di.Model.File file)
+        {
+            var window = FindWindow(file);
+            return window == null ? CreateWindow(file) : window;
         }
     }
 }
