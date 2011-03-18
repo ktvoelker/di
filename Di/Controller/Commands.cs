@@ -222,5 +222,13 @@ namespace Di.Controller.Command
             b.Controller.FsChooserEvents.Begin.Handler(chooser);
         }
     }
+
+    public class CloseWindow : LoneCommand
+    {
+        public override void Execute(Window b)
+        {
+            b.Controller.Windows.Remove(b);
+        }
+    }
 }
 

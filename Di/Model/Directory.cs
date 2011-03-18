@@ -95,6 +95,11 @@ namespace Di.Model
             }
             return Directories[root][info];
         }
+
+        public static IEnumerable<Directory> GetAll(Main root)
+        {
+            return Directories[root].Values;
+        }
     }
 }
 

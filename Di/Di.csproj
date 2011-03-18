@@ -68,6 +68,7 @@
     <Compile Include="Model\FsQuery.cs" />
     <Compile Include="Controller\FsChooser.cs" />
     <Compile Include="View\FsChooserView.cs" />
+    <Compile Include="View\IContainFocus.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />

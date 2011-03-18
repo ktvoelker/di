@@ -52,19 +52,25 @@ namespace Di.View
             windowsBox.Spacing = 10;
             foreach (var window in ctl.Windows)
             {
-                var view = new WindowView(window);
+                var view = new WindowView(this, window);
                 windowsBox.Add(view);
             }
             topLevelBox.PackStart(windowsBox, true, true, 0);
             ctl.WindowsEvents.Added += (list, index, window) =>
             {
-                var view = new WindowView(window);
+                var view = new WindowView(this, window);
                 windowsBox.Add(view);
                 windowsBox.ShowAll();
             };
             ctl.WindowsEvents.Removed += (list, index, window) =>
             {
-                windowsBox.Remove(windowsBox.Children[index]);
+                var view = windowsBox.Children[index];
+                bool hadFocus = view.ContainsFocus();
+                windowsBox.Remove(view);
+                if (hadFocus && windowsBox.Children.Length > 0)
+                {
+                    windowsBox.Children[0].GiveFocus();
+                }
             };
             ctl.WindowsEvents.Cleared += list =>
             {
@@ -107,7 +113,7 @@ namespace Di.View
 
         private void RemoveFileChooser<T>(FsChooserView<T> chooser) where T : Model.IFsQueryable
         {
-            bool hadFocus = chooser.QueryEntryHasFocus;
+            bool hadFocus = chooser.ContainsFocus();
             topLevelBox.Remove(chooser);
             if (hadFocus)
             {

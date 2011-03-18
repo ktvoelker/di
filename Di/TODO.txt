@@ -3,19 +3,20 @@ TODO
 ====
 
 Add commands:
-    Close the current window
     Create a new file in a new window (use file chooser to pick the directory, then get the name)
     Open a file in the current window
         If the file is already open, just jump to it
     Create a new file in the current window
 
-Look for places where FileInfo or DirectoryInfo objects are compared by reference.
-    This is unreliable.
-    Replace these with comparisons by FullName.
-
 Keep a list of project files sorted by most-recently-visible
     Prefer the most-recently-visible file over other matches
     Already-visible files should be least-preferred
+
+Add auto-save
+    Flash a message in the status bar each time auto-save occurs
+
+Add a quit command which triggers a final auto-save
+    Hook this same command up to handle the kill signal
 
 Write test suite for FileMatcher class
 
@@ -34,9 +35,6 @@ Add support for "undo"
     Call BeginUserAction and EndUserAction inside the key press handler
 
     Have event handlers which create chunks and sequence them automatically
-
-Add auto-save
-    Flash a message in the status bar each time auto-save occurs
 
 Store session state alongside the controlling di-project.ini file
     Window layout and position in each window
@@ -67,6 +65,8 @@ Add intelligent window layout
     Group columns by directory
         Shade the background behind each group in a unique color
         Highlight name references in the source code in the same color as the directory containing the referent
+
+    Keep track of the focus history
 
 Configuration support
     $HOME/di-user.ini

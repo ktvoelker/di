@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 namespace Di.View
 {
-    public class FsChooserView<T> : Gtk.VBox where T : Model.IFsQueryable
+    public class FsChooserView<T> : Gtk.VBox, IContainFocus where T : Model.IFsQueryable
     {
         private const int VisibleResults = 9;
 
@@ -31,11 +31,11 @@ namespace Di.View
 
         private Gtk.Entry queryBox;
 
-        public bool QueryEntryHasFocus
+        public Gtk.Widget FocusWidget
         {
             get
             {
-                return queryBox.HasFocus;
+                return queryBox;
             }
         }
 

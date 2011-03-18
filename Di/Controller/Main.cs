@@ -29,8 +29,7 @@ namespace Di.Controller
     {
         public readonly Model.Main Model;
 
-        private readonly BindList<Window> windows;
-        public readonly ReadOnlyCollection<Window> Windows;
+        public readonly BindList<Window> Windows;
         public readonly BindList<Window>.Events WindowsEvents;
 
         public readonly Bind<Window> FocusedWindow = new Bind<Window>(null);
@@ -108,30 +107,35 @@ namespace Di.Controller
                            new Command.AddWindowMode(0),
                            new Command.AddWindowMode(2),
                            new Command.AddWindowMode(3));
+            windowMode.Add(Key.c,
+                           new Command.CloseWindow(),
+                           new Command.ClearWindowMode(),
+                           new Command.AddWindowMode(0),
+                           new Command.AddWindowMode(2),
+                           new Command.AddWindowMode(3));
             windowModes.Add(new WindowMode { Name = "Window", KeyMap = windowMode });
             
-            windows = new BindList<Window>();
+            Windows = new BindList<Window>();
             if (Model.Buffers.HasAny())
             {
                 var window = new Window(this, Model.Buffers.Item(0));
-                windows.Add(window);
+                Windows.Add(window);
                 FocusedWindow.Value = window;
             }
-            Windows = new ReadOnlyCollection<Window>(windows);
-            WindowsEvents = windows.Event;
+            WindowsEvents = Windows.Event;
         }
 
         private Window CreateWindow()
         {
             var window = new Window(this, Model.CreateBuffer());
-            windows.Add(window);
+            Windows.Add(window);
             return window;
         }
 
         private Window CreateWindow(Di.Model.File file)
         {
             var window = new Window(this, Model.FindOrCreateBuffer(file));
-            windows.Add(window);
+            Windows.Add(window);
             return window;
         }
 

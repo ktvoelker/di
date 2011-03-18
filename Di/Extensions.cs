@@ -194,5 +194,17 @@ namespace Di
         {
             return node.FullName.Substring(node.Root.Root.FullName.Length + 1);
         }
+
+        public static bool ContainsFocus(this Gtk.Widget w)
+        {
+            var v = w as View.IContainFocus;
+            return (v == null ? w : v.FocusWidget).HasFocus;
+        }
+
+        public static void GiveFocus(this Gtk.Widget w)
+        {
+            var v = w as View.IContainFocus;
+            (v == null ? w : v.FocusWidget).GrabFocus();
+        }
     }
 }
