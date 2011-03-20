@@ -1,5 +1,5 @@
 //  
-//  FileQuery.cs
+//  FsQuery.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -23,18 +23,46 @@ using System.Collections.Generic;
 using System.Linq;
 namespace Di.Model
 {
-    public class FileQuery
+    public interface IFsQueryable
+    {
+        Main Root
+        {
+            get;
+        }
+
+        Directory Parent
+        {
+            get;
+        }
+
+        Language.Base Lang
+        {
+            get;
+        }
+
+        string Name
+        {
+            get;
+        }
+
+        string FullName
+        {
+            get;
+        }
+    }
+
+    public class FsQuery<T> where T : IFsQueryable
     {
         private string query;
 
-        public FileQuery(string _query)
+        public FsQuery(string _query)
         {
             query = _query;
         }
 
-        public IQueryable<ProjectFile> Evaluate(IEnumerable<ProjectFile> files)
+        public IQueryable<T> Evaluate(IEnumerable<T> files)
         {
-            return files.AsQueryable().Where(f => f.File.Name == query);
+            return files.AsQueryable().Where(f => f.Name == query);
         }
     }
 }

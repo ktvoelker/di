@@ -19,31 +19,28 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 using System.IO;
 namespace Di.Model
 {
-    public class ProjectFile
+    public class File : IFsQueryable
     {
-        public Project Parent
+        public Main Root
         {
             get;
             private set;
         }
 
-        private FileInfo file;
-
-        public FileInfo File
+        public Directory Parent
         {
-            get
-            {
-                return file;
-            }
+            get;
+            private set;
+        }
 
-            private set
-            {
-                file = value;
-                ProjectRelativeFullName = file.FullName.Substring(Parent.Root.FullName.Length + 1);
-            }
+        public FileInfo Info
+        {
+            get;
+            private set;
         }
 
         public Language.Base Lang
@@ -52,16 +49,27 @@ namespace Di.Model
             private set;
         }
 
-        public string ProjectRelativeFullName
+        public string Name
         {
-            get;
-            private set;
+            get
+            {
+                return Info.Name;
+            }
         }
 
-        public ProjectFile(Project parent, FileInfo file)
+        public string FullName
         {
-            Parent = parent;
-            File = file;
+            get
+            {
+                return Info.FullName;
+            }
+        }
+
+        public File(Main root, FileInfo file)
+        {
+            Root = root;
+            Info = file;
+            Parent = Directory.Get(root, file.Directory);
             Lang = new Language.Plain();
         }
     }

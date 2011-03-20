@@ -31,7 +31,9 @@ namespace Di.View
 
         private Gtk.HBox windowsBox;
 
-        private FileChooserView chooser;
+        private FsChooserView<Model.File> fileChooser;
+
+        private FsChooserView<Model.Directory> directoryChooser;
 
         public Main(Controller.Main c) : base(Gtk.WindowType.Toplevel)
         {
@@ -50,19 +52,25 @@ namespace Di.View
             windowsBox.Spacing = 10;
             foreach (var window in ctl.Windows)
             {
-                var view = new WindowView(window);
+                var view = new WindowView(this, window);
                 windowsBox.Add(view);
             }
             topLevelBox.PackStart(windowsBox, true, true, 0);
             ctl.WindowsEvents.Added += (list, index, window) =>
             {
-                var view = new WindowView(window);
+                var view = new WindowView(this, window);
                 windowsBox.Add(view);
                 windowsBox.ShowAll();
             };
             ctl.WindowsEvents.Removed += (list, index, window) =>
             {
-                windowsBox.Remove(windowsBox.Children[index]);
+                var view = windowsBox.Children[index];
+                bool hadFocus = view.ContainsFocus();
+                windowsBox.Remove(view);
+                if (hadFocus && windowsBox.Children.Length > 0)
+                {
+                    windowsBox.Children[0].GiveFocus();
+                }
             };
             ctl.WindowsEvents.Cleared += list =>
             {
@@ -72,14 +80,22 @@ namespace Di.View
                 }
             };
             ctl.FocusedWindow.Changed += ApplyControllerFocus;
-            ctl.BeginFileChooser.Add(ch =>
+            SetupChooser(ctl.FsChooserEvents, (fc) => fileChooser = fc);
+            SetupChooser(ctl.DirectoryChooserEvents, (dc) => directoryChooser = dc);
+        }
+
+        public void SetupChooser<T>(Controller.FsChooserEvents<T> events, Action<FsChooserView<T>> setChooser) where T : Model.IFsQueryable
+        {
+            FsChooserView<T> chooser = null;
+            events.Begin.Add(ch =>
             {
-                chooser = new FileChooserView(ch);
+                chooser = new FsChooserView<T>(ch);
+                setChooser(chooser);
                 topLevelBox.PackEnd(chooser, false, false, 20);
                 chooser.ShowAll();
             });
-            ctl.EndFileChooser.Add(ch => RemoveFileChooser());
-            ctl.CancelFileChooser.Add(RemoveFileChooser);
+            events.End.Add(ch => RemoveFileChooser<T>(chooser));
+            events.Cancel.Add(() => RemoveFileChooser<T>(chooser));
         }
 
         public void ApplyControllerFocus(Controller.Window window)
@@ -95,9 +111,9 @@ namespace Di.View
             }
         }
 
-        private void RemoveFileChooser()
+        private void RemoveFileChooser<T>(FsChooserView<T> chooser) where T : Model.IFsQueryable
         {
-            bool hadFocus = chooser.QueryEntryHasFocus;
+            bool hadFocus = chooser.ContainsFocus();
             topLevelBox.Remove(chooser);
             if (hadFocus)
             {

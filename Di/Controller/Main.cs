@@ -29,19 +29,16 @@ namespace Di.Controller
     {
         public readonly Model.Main Model;
 
-        private readonly BindList<Window> windows;
-        public readonly ReadOnlyCollection<Window> Windows;
+        public readonly BindList<Window> Windows;
         public readonly BindList<Window>.Events WindowsEvents;
 
         public readonly Bind<Window> FocusedWindow = new Bind<Window>(null);
 
         public readonly ReadOnlyCollection<WindowMode> WindowModes;
 
-        public readonly Event1<FileChooser> BeginFileChooser = new Event1<FileChooser>();
+        public readonly FsChooserEvents<Model.File> FsChooserEvents = new FsChooserEvents<Model.File>();
 
-        public readonly Event1<FileChooser> EndFileChooser = new Event1<FileChooser>();
-
-        public readonly Event0 CancelFileChooser = new Event0();
+        public readonly FsChooserEvents<Model.Directory> DirectoryChooserEvents = new FsChooserEvents<Model.Directory>();
 
         public Main(Model.Main m)
         {
@@ -61,6 +58,7 @@ namespace Di.Controller
             commandMode.Add(Key.Up, new Command.Up());
             commandMode.Add(Key.Left, new Command.Left());
             commandMode.Add(Key.Right, new Command.Right());
+            commandMode.Add(Key.o, new Command.OpenFile());
             commandMode.Add(Key.w, new Command.ClearWindowMode(), new Command.AddWindowMode(4), new Command.AddWindowMode(3));
             windowModes.Add(new WindowMode { Name = "Command", KeyMap = commandMode });
             
@@ -105,48 +103,59 @@ namespace Di.Controller
             // Window mode bindings (4)
             var windowMode = new KeyMap();
             windowMode.Add(Key.a,
-                           new Command.CreateAndFocusWindow(),
+                           new Command.OpenFileInNewWindow(),
+                           new Command.ClearWindowMode(),
+                           new Command.AddWindowMode(0),
+                           new Command.AddWindowMode(2),
+                           new Command.AddWindowMode(3));
+            windowMode.Add(Key.c,
+                           new Command.CloseWindow(),
                            new Command.ClearWindowMode(),
                            new Command.AddWindowMode(0),
                            new Command.AddWindowMode(2),
                            new Command.AddWindowMode(3));
             windowModes.Add(new WindowMode { Name = "Window", KeyMap = windowMode });
             
-            windows = new BindList<Window>();
+            Windows = new BindList<Window>();
             if (Model.Buffers.HasAny())
             {
                 var window = new Window(this, Model.Buffers.Item(0));
-                windows.Add(window);
+                Windows.Add(window);
                 FocusedWindow.Value = window;
             }
-            Windows = new ReadOnlyCollection<Window>(windows);
-            WindowsEvents = windows.Event;
+            WindowsEvents = Windows.Event;
         }
 
         private Window CreateWindow()
         {
             var window = new Window(this, Model.CreateBuffer());
-            windows.Add(window);
+            Windows.Add(window);
             return window;
         }
 
-        private Window CreateWindow(Di.Model.ProjectFile file)
+        private Window CreateWindow(Di.Model.File file)
         {
             var window = new Window(this, Model.FindOrCreateBuffer(file));
-            windows.Add(window);
+            Windows.Add(window);
             return window;
         }
 
-        public Window FindOrCreateWindow(Di.Model.ProjectFile file)
+        public Window FindWindow(Di.Model.File file)
         {
             foreach (var window in Windows)
             {
-                if (window.Model.File == file)
+                if (window.Model.Value.File == file)
                 {
                     return window;
                 }
             }
-            return CreateWindow(file);
+            return null;
+        }
+
+        public Window FindOrCreateWindow(Di.Model.File file)
+        {
+            var window = FindWindow(file);
+            return window == null ? CreateWindow(file) : window;
         }
     }
 }

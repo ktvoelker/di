@@ -1,10 +1,10 @@
 //  
-//  Buffer.cs
+//  IContainFocus.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
 // 
-//  Copyright (c) 2010 Karl Voelker
+//  Copyright (c) 2011 Karl Voelker
 // 
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -19,37 +19,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Gtk;
-namespace Di.Model
+namespace Di.View
 {
-    public class Buffer : TextBuffer
+    public interface IContainFocus
     {
-        private static TextTagTable tags = new TextTagTable();
-
-        public File File
-        {
-            get;
-            private set;
-        }
-
-        public Buffer() : base(tags)
-        {
-            File = null;
-        }
-
-        public Buffer(File _file) : base(tags)
-        {
-            File = _file;
-            var input = File.Info.OpenText();
-            InsertAtCursor(input.ReadToEnd());
-            input.Close();
-            PlaceCursor(GetIterAtOffset(0));
-        }
-
-        public void InsertAtCursor(char c)
-        {
-            InsertAtCursor(string.Format("{0}", c));
-        }
+        Gtk.Widget FocusWidget { get; }
     }
 }
 

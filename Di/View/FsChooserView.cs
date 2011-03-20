@@ -1,5 +1,5 @@
 //  
-//  FileChooser.cs
+//  FsChooser.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -23,23 +23,23 @@ using System.Collections.Generic;
 using System.Text;
 namespace Di.View
 {
-    public class FileChooserView : Gtk.VBox
+    public class FsChooserView<T> : Gtk.VBox, IContainFocus where T : Model.IFsQueryable
     {
         private const int VisibleResults = 9;
 
-        private Controller.FileChooser ctl;
+        private Controller.FsChooser<T> ctl;
 
         private Gtk.Entry queryBox;
 
-        public bool QueryEntryHasFocus
+        public Gtk.Widget FocusWidget
         {
             get
             {
-                return queryBox.HasFocus;
+                return queryBox;
             }
         }
 
-        public FileChooserView(Controller.FileChooser _ctl)
+        public FsChooserView(Controller.FsChooser<T> _ctl)
         {
             ctl = _ctl;
             Homogeneous = false;
@@ -87,7 +87,7 @@ namespace Di.View
                 var sb = new StringBuilder();
                 for (int i = 0; i < VisibleResults && i < list.Count; ++i)
                 {
-                    sb.AppendFormat("{0}. {1}\n", i + 1, list[i].ProjectRelativeFullName);
+                    sb.AppendFormat("{0}. {1}\n", i + 1, list[i].ProjectRelativeFullName());
                 }
                 resultBox.Buffer.Text = sb.ToString();
             };

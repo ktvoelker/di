@@ -123,8 +123,8 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            var cursor = b.Model.GetCursorIter();
-            b.Model.InsertAtCursor((cursor - cursor.LineStart) % 2 == 0 ? "  " : " ");
+            var cursor = b.Model.Value.GetCursorIter();
+            b.Model.Value.InsertAtCursor((cursor - cursor.LineStart) % 2 == 0 ? "  " : " ");
         }
     }
 
@@ -150,7 +150,7 @@ namespace Di.Controller.Command
         {
             if (_buffer != null)
             {
-                b.Model.InsertAtCursor(_buffer.ToString());
+                b.Model.Value.InsertAtCursor(_buffer.ToString());
             }
         }
     }
@@ -179,7 +179,7 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b, Range r)
         {
-            b.Model.Delete(r);
+            b.Model.Value.Delete(r);
         }
     }
 
@@ -204,22 +204,54 @@ namespace Di.Controller.Command
         }
     }
 
-    public class CreateAndFocusWindow : LoneCommand
+    public class OpenFileInNewWindow : LoneCommand
     {
         public override void Execute(Window b)
         {
-            FileChooser chooser = null;
-            Action<Di.Model.ProjectFile> handler = file =>
+            FsChooser<Model.File> chooser = null;
+            Action<Di.Model.File> handler = file =>
             {
-                b.Controller.EndFileChooser.Handler(chooser);
+                b.Controller.FsChooserEvents.End.Handler(chooser);
                 b.Controller.FocusedWindow.Value = b.Controller.FindOrCreateWindow(file);
             };
             Action cancel = () =>
             {
-                b.Controller.CancelFileChooser.Handler();
+                b.Controller.FsChooserEvents.Cancel.Handler();
             };
-            chooser = new FileChooser(b.Controller.Model.CurrentProject, "Choose a file", handler, cancel);
-            b.Controller.BeginFileChooser.Handler(chooser);
+            chooser = new FsChooser<Model.File>(() => b.Controller.Model.Files, "Choose a file", handler, cancel);
+            b.Controller.FsChooserEvents.Begin.Handler(chooser);
+        }
+    }
+
+    public class OpenFile : LoneCommand
+    {
+        public override void Execute(Window b)
+        {
+            FsChooser<Model.File> chooser = null;
+            Action<Di.Model.File> handler = file =>
+            {
+                b.Controller.FsChooserEvents.End.Handler(chooser);
+                var window = b.Controller.FindWindow(file);
+                if (window == null)
+                {
+                    b.Controller.FocusedWindow.Value.Model.Value = b.Controller.Model.FindOrCreateBuffer(file);
+                }
+                else
+                {
+                    b.Controller.FocusedWindow.Value = window;
+                }
+            };
+            Action cancel = () => { b.Controller.FsChooserEvents.Cancel.Handler(); };
+            chooser = new FsChooser<Model.File>(() => b.Controller.Model.Files, "Choose a file", handler, cancel);
+            b.Controller.FsChooserEvents.Begin.Handler(chooser);
+        }
+    }
+
+    public class CloseWindow : LoneCommand
+    {
+        public override void Execute(Window b)
+        {
+            b.Controller.Windows.Remove(b);
         }
     }
 }

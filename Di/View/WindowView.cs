@@ -22,8 +22,10 @@ using System;
 using Pango;
 namespace Di.View
 {
-    public class WindowView : Gtk.VBox
+    public class WindowView : Gtk.VBox, IContainFocus
     {
+        public readonly Main View;
+
         private const uint StatusbarMode = 1;
 
         public readonly Controller.Window Window;
@@ -31,11 +33,20 @@ namespace Di.View
         private Gtk.Statusbar status;
         private WindowTextView textView;
 
+        public Gtk.Widget FocusWidget
+        {
+            get
+            {
+                return textView;
+            }
+        }
+
         private readonly Gdk.Color HighlightColor = new Gdk.Color(0x49, 0x65, 0xD6);
         private readonly Gdk.Color NormalColor;
 
-        public WindowView(Controller.Window _ctl)
+        public WindowView(Main _view, Controller.Window _ctl)
         {
+            View = _view;
             Window = _ctl;
             Homogeneous = false;
             Spacing = 0;
@@ -62,6 +73,10 @@ namespace Di.View
             {
                 status.Pop(StatusbarMode);
                 status.Push(StatusbarMode, Window.CurrentMode.GetName());
+            };
+            Window.Model.Changed += m =>
+            {
+                textView.Buffer = m;
             };
             topLevelBox.PackStart(status, false, false, 0);
 

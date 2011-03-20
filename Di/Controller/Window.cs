@@ -30,7 +30,7 @@ namespace Di.Controller
     {
         public readonly Main Controller;
 
-        public readonly Model.Buffer Model;
+        public readonly Bind<Model.Buffer> Model;
 
         public BindList<WindowMode> CurrentMode
         {
@@ -55,7 +55,7 @@ namespace Di.Controller
         public Window(Main _controller, Model.Buffer _model)
         {
             Controller = _controller;
-            Model = _model;
+            Model = new Bind<Model.Buffer>(_model);
             CurrentMode = new BindList<WindowMode>();
             CurrentMode.Event.Changed += (list) => { CurrentKeyMap = list.FoldLeft(EmptyKeyMap, (a, b) => a + b.KeyMap); };
             CurrentMode.Add(Controller.WindowModes[0]);
@@ -75,7 +75,7 @@ namespace Di.Controller
 
         public void PlaceCursorKeepVisible(CharIter i)
         {
-            Model.PlaceCursor(i.GtkIter);
+            Model.Value.PlaceCursor(i.GtkIter);
             CursorMovedByCommand.Handler(i);
         }
     }
