@@ -1,2 +1,2 @@
-Di - A general purpose integrated development environment
-=========================================================
+Di - An integrated development environment
+==========================================
