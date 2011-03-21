@@ -22,24 +22,13 @@ using System;
 using System.Collections.Generic;
 namespace Di.Controller
 {
-    public class FsChooserEvents<T> where T : Model.IFsQueryable
-    {
-        public readonly Event1<FsChooser<T>> Begin = new Event1<FsChooser<T>>();
-
-        public readonly Event1<FsChooser<T>> End = new Event1<FsChooser<T>>();
-
-        public readonly Event0 Cancel = new Event0();
-    }
-
-    public class FsChooser<T> where T : Model.IFsQueryable
+    public class FsChooser<T> : Task where T : Model.IFsQueryable
     {
         private Func<IEnumerable<T>> getCandidates;
 
         public readonly string Message;
 
         private Action<T> handler;
-
-        private Action cancelHandler;
 
         private Di.Model.FsQuery<T> query;
 
@@ -55,12 +44,11 @@ namespace Di.Controller
 
         public BindList<T> Files;
 
-        public FsChooser(Func<IEnumerable<T>> _getCandidates, string _message, Action<T> _handler, Action _cancelHandler)
+        public FsChooser(Func<IEnumerable<T>> _getCandidates, string _message, Action<T> _handler)
         {
             getCandidates = _getCandidates;
             handler = _handler;
             Message = _message;
-            cancelHandler = _cancelHandler;
             query = new Di.Model.FsQuery<T>("");
             Files = new BindList<T>();
             Update();
@@ -68,12 +56,13 @@ namespace Di.Controller
 
         public void Choose(T file)
         {
+            End.Handler();
             handler(file);
         }
 
         public void Cancel()
         {
-            cancelHandler();
+            End.Handler();
         }
 
         private void Update()

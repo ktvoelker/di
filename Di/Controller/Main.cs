@@ -36,9 +36,7 @@ namespace Di.Controller
 
         public readonly ReadOnlyCollection<WindowMode> WindowModes;
 
-        public readonly FsChooserEvents<Model.File> FsChooserEvents = new FsChooserEvents<Model.File>();
-
-        public readonly FsChooserEvents<Model.Directory> DirectoryChooserEvents = new FsChooserEvents<Model.Directory>();
+        public readonly Event1<Task> BeginTask = new Event1<Task>();
 
         public Main(Model.Main m)
         {

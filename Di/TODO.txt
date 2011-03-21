@@ -5,16 +5,17 @@ TODO
 Add commands:
     Create a new file in a new window (use file chooser to pick the directory, then get the name)
     Create a new file in the current window
-
-Keep a list of project files sorted by most-recently-visible
-    Prefer the most-recently-visible file over other matches
-    Already-visible files should be least-preferred
+    Move focus left or right
 
 Add auto-save
     Flash a message in the status bar each time auto-save occurs
 
 Add a quit command which triggers a final auto-save
     Hook this same command up to handle the kill signal
+
+Keep a list of project files sorted by most-recently-visible
+    Prefer the most-recently-visible file over other matches
+    Already-visible files should be least-preferred
 
 Write test suite for FileMatcher class
 

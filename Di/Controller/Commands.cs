@@ -208,18 +208,11 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            FsChooser<Model.File> chooser = null;
             Action<Di.Model.File> handler = file =>
             {
-                b.Controller.FsChooserEvents.End.Handler(chooser);
                 b.Controller.FocusedWindow.Value = b.Controller.FindOrCreateWindow(file);
             };
-            Action cancel = () =>
-            {
-                b.Controller.FsChooserEvents.Cancel.Handler();
-            };
-            chooser = new FsChooser<Model.File>(() => b.Controller.Model.Files, "Choose a file", handler, cancel);
-            b.Controller.FsChooserEvents.Begin.Handler(chooser);
+            b.Controller.BeginTask.Handler(new FsChooser<Model.File>(() => b.Controller.Model.Files, "Choose a file", handler));
         }
     }
 
@@ -227,10 +220,8 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            FsChooser<Model.File> chooser = null;
-            Action<Di.Model.File> handler = file =>
+            Action<Model.File> handler = file =>
             {
-                b.Controller.FsChooserEvents.End.Handler(chooser);
                 var window = b.Controller.FindWindow(file);
                 if (window == null)
                 {
@@ -241,9 +232,7 @@ namespace Di.Controller.Command
                     b.Controller.FocusedWindow.Value = window;
                 }
             };
-            Action cancel = () => { b.Controller.FsChooserEvents.Cancel.Handler(); };
-            chooser = new FsChooser<Model.File>(() => b.Controller.Model.Files, "Choose a file", handler, cancel);
-            b.Controller.FsChooserEvents.Begin.Handler(chooser);
+            b.Controller.BeginTask.Handler(new FsChooser<Model.File>(() => b.Controller.Model.Files, "Choose a file", handler));
         }
     }
 

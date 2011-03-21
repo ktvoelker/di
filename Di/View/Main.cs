@@ -80,22 +80,21 @@ namespace Di.View
                 }
             };
             ctl.FocusedWindow.Changed += ApplyControllerFocus;
-            SetupChooser(ctl.FsChooserEvents, (fc) => fileChooser = fc);
-            SetupChooser(ctl.DirectoryChooserEvents, (dc) => directoryChooser = dc);
-        }
-
-        public void SetupChooser<T>(Controller.FsChooserEvents<T> events, Action<FsChooserView<T>> setChooser) where T : Model.IFsQueryable
-        {
-            FsChooserView<T> chooser = null;
-            events.Begin.Add(ch =>
+            ctl.BeginTask.Add(task =>
             {
-                chooser = new FsChooserView<T>(ch);
-                setChooser(chooser);
-                topLevelBox.PackEnd(chooser, false, false, 20);
-                chooser.ShowAll();
+                var sidebar = Sidebar.Create(task);
+                topLevelBox.PackEnd(sidebar, false, false, 20);
+                task.End.Add(() =>
+                {
+                    bool hadFocus = sidebar.ContainsFocus();
+                    topLevelBox.Remove(sidebar);
+                    if (hadFocus)
+                    {
+                        ApplyControllerFocus(ctl.FocusedWindow);
+                    }
+                });
+                sidebar.ShowAll();
             });
-            events.End.Add(ch => RemoveFileChooser<T>(chooser));
-            events.Cancel.Add(() => RemoveFileChooser<T>(chooser));
         }
 
         public void ApplyControllerFocus(Controller.Window window)
@@ -108,16 +107,6 @@ namespace Di.View
                     view.FocusTextView();
                     break;
                 }
-            }
-        }
-
-        private void RemoveFileChooser<T>(FsChooserView<T> chooser) where T : Model.IFsQueryable
-        {
-            bool hadFocus = chooser.ContainsFocus();
-            topLevelBox.Remove(chooser);
-            if (hadFocus)
-            {
-                ApplyControllerFocus(ctl.FocusedWindow);
             }
         }
 
