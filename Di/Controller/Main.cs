@@ -57,6 +57,7 @@ namespace Di.Controller
             commandMode.Add(Key.Left, new Command.Left());
             commandMode.Add(Key.Right, new Command.Right());
             commandMode.Add(Key.o, new Command.OpenFile());
+            commandMode.Add(Key.e, new Command.NewFile());
             commandMode.Add(Key.w, new Command.ClearWindowMode(), new Command.AddWindowMode(4), new Command.AddWindowMode(3));
             windowModes.Add(new WindowMode { Name = "Command", KeyMap = commandMode });
             
@@ -108,6 +109,12 @@ namespace Di.Controller
                            new Command.AddWindowMode(3));
             windowMode.Add(Key.c,
                            new Command.CloseWindow(),
+                           new Command.ClearWindowMode(),
+                           new Command.AddWindowMode(0),
+                           new Command.AddWindowMode(2),
+                           new Command.AddWindowMode(3));
+            windowMode.Add(Key.e,
+                           new Command.NewFileInNewWindow(),
                            new Command.ClearWindowMode(),
                            new Command.AddWindowMode(0),
                            new Command.AddWindowMode(2),

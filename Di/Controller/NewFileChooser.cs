@@ -1,5 +1,5 @@
 //  
-//  FsChooser.cs
+//  NewFileChooser.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -19,49 +19,42 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
+using System.IO;
 namespace Di.Controller
 {
-    public class FsChooser<T> : Chooser<T> where T : Model.IFsQueryable
+    public class NewFileChooser : Chooser<string>
     {
-        private Func<IEnumerable<T>> getCandidates;
-
-        private Action<T> handler;
-
-        private Di.Model.FsQuery<T> query;
+        private Model.Directory dir;
+        private Action<Model.File> handler;
+        private string name = "";
 
         public override string Query
         {
             set
             {
-                query = new Di.Model.FsQuery<T>(value);
+                name = value;
                 Candidates.Clear();
-                Update();
+                Candidates.Add(string.Format("[new] {0}{1}{2}", dir.ProjectRelativeFullName(), Path.DirectorySeparatorChar, name));
             }
         }
 
-        public FsChooser(Func<IEnumerable<T>> _getCandidates, string _message, Action<T> _handler) : base(_message)
+        public NewFileChooser(Model.Directory _dir, Action<Model.File> _handler) : base("Name the new file")
         {
-            getCandidates = _getCandidates;
+            dir = _dir;
             handler = _handler;
-            query = new Di.Model.FsQuery<T>("");
-            Update();
         }
 
-        public override string CandidateToString(T candidate)
+        public override string CandidateToString(string cand)
         {
-            return candidate.ProjectRelativeFullName();
+            return cand;
         }
 
-        public override void Choose(T file)
+        public override void Choose(string ignore)
         {
-            base.Choose(file);
-            handler(file);
-        }
-        
-        private void Update()
-        {
-            query.Evaluate(getCandidates()).ForEach(f => Candidates.Add(f));
+            base.Choose(ignore);
+            var info = new FileInfo(dir.FullName + Path.DirectorySeparatorChar + name);
+            info.CreateText().Close();
+            handler(new Model.File(dir.Root, info));
         }
     }
 }

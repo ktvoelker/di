@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 namespace Di.View
 {
-    public class ChooserView<T> : Sidebar where T : Model.IFsQueryable
+    public class ChooserView<T> : Sidebar
     {
         private const int VisibleResults = 9;
 

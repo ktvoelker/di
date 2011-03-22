@@ -46,6 +46,14 @@ namespace Di.Model
             private set;
         }
 
+        private IList<Directory> directories;
+
+        public ReadOnlyCollection<Directory> Directories
+        {
+            get;
+            private set;
+        }
+
         private readonly BindList<Buffer> buffers;
         public readonly ReadOnlyCollection<Buffer> Buffers;
 
@@ -82,7 +90,9 @@ namespace Di.Model
                 }
             }
             files = m.MatchAll(Root).Select(f => new File(this, f)).ToList();
+            directories = Directory.GetAll(this).ToList();
             Files = new ReadOnlyCollection<File>(files);
+            Directories = new ReadOnlyCollection<Directory>(directories);
 
             buffers = new BindList<Buffer>();
             buffers.Add(new Buffer());

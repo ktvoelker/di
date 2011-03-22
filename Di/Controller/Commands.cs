@@ -204,23 +204,19 @@ namespace Di.Controller.Command
         }
     }
 
-    public class OpenFileInNewWindow : LoneCommand
+    public abstract class FileCommand : LoneCommand
     {
-        public override void Execute(Window b)
+        public static Action<Model.File> InNewWindow(Window b)
         {
-            Action<Di.Model.File> handler = file =>
+            return file =>
             {
                 b.Controller.FocusedWindow.Value = b.Controller.FindOrCreateWindow(file);
             };
-            b.Controller.BeginTask.Handler(new FsChooser<Model.File>(() => b.Controller.Model.Files, "Choose a file", handler));
         }
-    }
 
-    public class OpenFile : LoneCommand
-    {
-        public override void Execute(Window b)
+        public static Action<Model.File> InFocusedWindow(Window b)
         {
-            Action<Model.File> handler = file =>
+            return file =>
             {
                 var window = b.Controller.FindWindow(file);
                 if (window == null)
@@ -232,7 +228,52 @@ namespace Di.Controller.Command
                     b.Controller.FocusedWindow.Value = window;
                 }
             };
-            b.Controller.BeginTask.Handler(new FsChooser<Model.File>(() => b.Controller.Model.Files, "Choose a file", handler));
+        }
+
+        public static void OpenFile(Window b, Func<Window, Action<Model.File>> handler)
+        {
+            b.Controller.BeginTask.Handler(new FsChooser<Model.File>(() => b.Controller.Model.Files, "Choose a file", handler(b)));
+        }
+
+        public static void NewFile(Window b, Func<Window, Action<Model.File>> fileHandler)
+        {
+            Action<Model.Directory> dirHandler = dir =>
+            {
+                b.Controller.BeginTask.Handler(new NewFileChooser(dir, fileHandler(b)));
+            };
+            b.Controller.BeginTask.Handler(new FsChooser<Model.Directory>(() => b.Controller.Model.Directories, "Choose a directory", dirHandler));
+        }
+    }
+
+    public class OpenFileInNewWindow : FileCommand
+    {
+        public override void Execute(Window b)
+        {
+            OpenFile(b, InNewWindow);
+        }
+    }
+
+    public class OpenFile : FileCommand
+    {
+        public override void Execute(Window b)
+        {
+            OpenFile(b, InFocusedWindow);
+        }
+    }
+
+    public class NewFileInNewWindow : FileCommand
+    {
+        public override void Execute(Window b)
+        {
+            NewFile(b, InNewWindow);
+        }
+    }
+
+    public class NewFile : FileCommand
+    {
+        public override void Execute(Window b)
+        {
+            NewFile(b, InFocusedWindow);
         }
     }
 

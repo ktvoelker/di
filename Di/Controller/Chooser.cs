@@ -40,9 +40,12 @@ namespace Di.Controller
 
         public abstract string CandidateToString(T candidate);
 
-        public abstract void Choose(T choice);
+        public virtual void Choose(T choice)
+        {
+            End.Handler();
+        }
 
-        public void Cancel()
+        public virtual void Cancel()
         {
             End.Handler();
         }
