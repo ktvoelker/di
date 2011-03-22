@@ -23,11 +23,11 @@ using System.Collections.Generic;
 using System.Text;
 namespace Di.View
 {
-    public class FsChooserView<T> : Sidebar where T : Model.IFsQueryable
+    public class ChooserView<T> : Sidebar where T : Model.IFsQueryable
     {
         private const int VisibleResults = 9;
 
-        private Controller.FsChooser<T> ctl;
+        private Controller.Chooser<T> ctl;
 
         private Gtk.Entry queryBox;
 
@@ -39,7 +39,7 @@ namespace Di.View
             }
         }
 
-        public FsChooserView(Controller.FsChooser<T> _ctl) : base(_ctl)
+        public ChooserView(Controller.Chooser<T> _ctl) : base(_ctl)
         {
             ctl = _ctl;
             Homogeneous = false;
@@ -77,7 +77,7 @@ namespace Di.View
             var excessLabel = new Gtk.Statusbar();
             excessLabel.HasResizeGrip = false;
             PackStart(excessLabel, false, false, 0);
-            ctl.Files.Event.Changed += list =>
+            ctl.Candidates.Event.Changed += list =>
             {
                 excessLabel.Pop(0);
                 if (list.Count > VisibleResults)
@@ -87,7 +87,7 @@ namespace Di.View
                 var sb = new StringBuilder();
                 for (int i = 0; i < VisibleResults && i < list.Count; ++i)
                 {
-                    sb.AppendFormat("{0}. {1}\n", i + 1, list[i].ProjectRelativeFullName());
+                    sb.AppendFormat("{0}. {1}\n", i + 1, ctl.CandidateToString(list[i]));
                 }
                 resultBox.Buffer.Text = sb.ToString();
             };
@@ -98,7 +98,7 @@ namespace Di.View
         {
             if (e.Event.Key == Gdk.Key.Return)
             {
-                ctl.Choose(ctl.Files[0]);
+                ctl.Choose(ctl.Candidates[0]);
             }
             else if (e.Event.Key == Gdk.Key.Escape)
             {

@@ -7,6 +7,12 @@ Add commands:
     Create a new file in the current window
     Move focus left or right
 
+Make the directory chooser return a special "new directory" result if the "query"
+contains no spaces or metacharacters and is not the complete project-relative path
+of an existing directory.
+
+Return this special result last.
+
 Add auto-save
     Flash a message in the status bar each time auto-save occurs
 

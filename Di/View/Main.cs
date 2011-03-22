@@ -31,10 +31,6 @@ namespace Di.View
 
         private Gtk.HBox windowsBox;
 
-        private FsChooserView<Model.File> fileChooser;
-
-        private FsChooserView<Model.Directory> directoryChooser;
-
         public Main(Controller.Main c) : base(Gtk.WindowType.Toplevel)
         {
             ctl = c;

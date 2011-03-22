@@ -22,52 +22,46 @@ using System;
 using System.Collections.Generic;
 namespace Di.Controller
 {
-    public class FsChooser<T> : Task where T : Model.IFsQueryable
+    public class FsChooser<T> : Chooser<T> where T : Model.IFsQueryable
     {
         private Func<IEnumerable<T>> getCandidates;
-
-        public readonly string Message;
 
         private Action<T> handler;
 
         private Di.Model.FsQuery<T> query;
 
-        public string Query
+        public override string Query
         {
             set
             {
                 query = new Di.Model.FsQuery<T>(value);
-                Files.Clear();
+                Candidates.Clear();
                 Update();
             }
         }
 
-        public BindList<T> Files;
-
-        public FsChooser(Func<IEnumerable<T>> _getCandidates, string _message, Action<T> _handler)
+        public FsChooser(Func<IEnumerable<T>> _getCandidates, string _message, Action<T> _handler) : base(_message)
         {
             getCandidates = _getCandidates;
             handler = _handler;
-            Message = _message;
             query = new Di.Model.FsQuery<T>("");
-            Files = new BindList<T>();
             Update();
         }
 
-        public void Choose(T file)
+        public override string CandidateToString(T candidate)
+        {
+            return candidate.ProjectRelativeFullName();
+        }
+
+        public override void Choose(T file)
         {
             End.Handler();
             handler(file);
         }
-
-        public void Cancel()
-        {
-            End.Handler();
-        }
-
+        
         private void Update()
         {
-            query.Evaluate(getCandidates()).ForEach(f => Files.Add(f));
+            query.Evaluate(getCandidates()).ForEach(f => Candidates.Add(f));
         }
     }
 }
