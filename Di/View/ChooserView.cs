@@ -53,6 +53,7 @@ namespace Di.View
             messageAlign.Add(message);
             topLevelBox.PackStart(messageAlign, false, false, 0);
             queryBox = new Gtk.Entry();
+            queryBox.Text = ctl.Query;
             queryBox.ModifyFont(new Font(14, FontFamily.Monospace));
             queryBox.WidthChars = 30;
             queryBox.Changed += (o, e) =>
@@ -98,11 +99,11 @@ namespace Di.View
         {
             if (e.Event.Key == Gdk.Key.Return)
             {
-                ctl.Choose(ctl.Candidates[0]);
+                ctl.Choose.Handler(ctl.Candidates[0]);
             }
             else if (e.Event.Key == Gdk.Key.Escape)
             {
-                ctl.Cancel();
+                ctl.Cancel.Handler();
             }
         }
     }

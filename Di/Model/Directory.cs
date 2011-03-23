@@ -69,25 +69,25 @@ namespace Di.Model
             }
         }
 
-        private static IDictionary<Main, IDictionary<DirectoryInfo, Directory>> Directories;
+        private static IDictionary<Main, IDictionary<DirWrapper, Directory>> Directories;
 
         static Directory()
         {
-            Directories = new Dictionary<Main, IDictionary<DirectoryInfo, Directory>>();
+            Directories = new Dictionary<Main, IDictionary<DirWrapper, Directory>>();
         }
 
         private Directory(Main root, DirectoryInfo info)
         {
             Root = root;
             Info = info;
-            Parent = info.FullName == root.Root.FullName ? null : Get(root, info.Parent);
+            Parent = info.FullName == root.RootInfo.FullName ? null : Get(root, info.Parent);
         }
 
         public static Directory Get(Main root, DirectoryInfo info)
         {
             if (!Directories.ContainsKey(root))
             {
-                Directories[root] = new Dictionary<DirectoryInfo, Directory>();
+                Directories[root] = new Dictionary<DirWrapper, Directory>();
             }
             if (!Directories[root].ContainsKey(info))
             {

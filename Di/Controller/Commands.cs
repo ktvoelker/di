@@ -232,16 +232,27 @@ namespace Di.Controller.Command
 
         public static void OpenFile(Window b, Func<Window, Action<Model.File>> handler)
         {
-            b.Controller.BeginTask.Handler(new FsChooser<Model.File>(() => b.Controller.Model.Files, "Choose a file", handler(b)));
+            var chooser = new FsChooser<Model.File>(() => b.Controller.Model.Files, "Choose a file");
+            chooser.Choose.Add(handler(b));
+            b.Controller.BeginTask.Handler(chooser);
         }
 
-        public static void NewFile(Window b, Func<Window, Action<Model.File>> fileHandler)
+        public static void NewFile(Window b, Func<Window, Action<Model.File>> fileHandler, string initDirQuery = "")
         {
+            var dirChooser = new FsChooser<Model.Directory>(() => b.Controller.Model.Directories, "Choose a directory");
             Action<Model.Directory> dirHandler = dir =>
             {
-                b.Controller.BeginTask.Handler(new NewFileChooser(dir, fileHandler(b)));
+                var fileChooser = new NewFileChooser(dir);
+                fileChooser.ChooseFile.Add(fileHandler(b));
+                fileChooser.Cancel.Add(() =>
+                {
+                    NewFile(b, fileHandler, dirChooser.Query);
+                });
+                b.Controller.BeginTask.Handler(fileChooser);
             };
-            b.Controller.BeginTask.Handler(new FsChooser<Model.Directory>(() => b.Controller.Model.Directories, "Choose a directory", dirHandler));
+            dirChooser.Choose.Add(dirHandler);
+            dirChooser.Query = initDirQuery;
+            b.Controller.BeginTask.Handler(dirChooser);
         }
     }
 

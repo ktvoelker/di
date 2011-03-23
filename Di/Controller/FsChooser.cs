@@ -26,24 +26,29 @@ namespace Di.Controller
     {
         private Func<IEnumerable<T>> getCandidates;
 
-        private Action<T> handler;
-
         private Di.Model.FsQuery<T> query;
+
+        private string queryString;
 
         public override string Query
         {
+            get
+            {
+                return queryString;
+            }
+
             set
             {
+                queryString = value;
                 query = new Di.Model.FsQuery<T>(value);
                 Candidates.Clear();
                 Update();
             }
         }
 
-        public FsChooser(Func<IEnumerable<T>> _getCandidates, string _message, Action<T> _handler) : base(_message)
+        public FsChooser(Func<IEnumerable<T>> _getCandidates, string _message) : base(_message)
         {
             getCandidates = _getCandidates;
-            handler = _handler;
             query = new Di.Model.FsQuery<T>("");
             Update();
         }
@@ -51,12 +56,6 @@ namespace Di.Controller
         public override string CandidateToString(T candidate)
         {
             return candidate.ProjectRelativeFullName();
-        }
-
-        public override void Choose(T file)
-        {
-            base.Choose(file);
-            handler(file);
         }
         
         private void Update()

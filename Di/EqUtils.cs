@@ -1,5 +1,5 @@
 //  
-//  Chooser.cs
+//  EqUtils.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -19,34 +19,27 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-namespace Di.Controller
+namespace Di
 {
-    public abstract class Chooser<T> : Task
+    public static class EqUtils
     {
-        public readonly string Message;
-
-        public readonly BindList<T> Candidates;
-
-        public readonly Event1<T> Choose = new Event1<T>();
-
-        public readonly Event0 Cancel = new Event0();
-
-        public abstract string Query
+        public static bool EqOpByProjection<T, U>(T a, T b, Func<T, U> f) where T : class where U : class
         {
-            get;
-            set;
+            bool aNull = object.ReferenceEquals(a, null);
+            bool bNull = object.ReferenceEquals(b, null);
+            if (aNull && bNull)
+            {
+                return true;
+            }
+            else if (aNull || bNull)
+            {
+                return false;
+            }
+            else
+            {
+                return f(a) == f(b);
+            }
         }
-
-        public Chooser(string _message)
-        {
-            Message = _message;
-            Candidates = new BindList<T>();
-            Choose.Add(choice => End.Handler());
-            Cancel.Add(() => End.Handler());
-        }
-
-        public abstract string CandidateToString(T candidate);
-
     }
 }
 

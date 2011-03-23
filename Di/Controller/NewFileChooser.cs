@@ -25,36 +25,42 @@ namespace Di.Controller
     public class NewFileChooser : Chooser<string>
     {
         private Model.Directory dir;
-        private Action<Model.File> handler;
         private string name = "";
+
+        public Event1<Model.File> ChooseFile = new Event1<Model.File>();
 
         public override string Query
         {
+            get
+            {
+                return name;
+            }
+
             set
             {
-                name = value;
+                name = value.Trim();
                 Candidates.Clear();
-                Candidates.Add(string.Format("[new] {0}{1}{2}", dir.ProjectRelativeFullName(), Path.DirectorySeparatorChar, name));
+                if (name != string.Empty)
+                {
+                    Candidates.Add(string.Format("[new] {0}{1}{2}", dir.ProjectRelativeFullName(), Path.DirectorySeparatorChar, name));
+                }
             }
         }
 
-        public NewFileChooser(Model.Directory _dir, Action<Model.File> _handler) : base("Name the new file")
+        public NewFileChooser(Model.Directory _dir) : base("Name the new file")
         {
             dir = _dir;
-            handler = _handler;
+            Choose.Add(ignore =>
+            {
+                var info = new FileInfo(dir.FullName + Path.DirectorySeparatorChar + name);
+                info.CreateText().Close();
+                ChooseFile.Handler(new Model.File(dir.Root, info));
+            });
         }
 
         public override string CandidateToString(string cand)
         {
             return cand;
-        }
-
-        public override void Choose(string ignore)
-        {
-            base.Choose(ignore);
-            var info = new FileInfo(dir.FullName + Path.DirectorySeparatorChar + name);
-            info.CreateText().Close();
-            handler(new Model.File(dir.Root, info));
         }
     }
 }

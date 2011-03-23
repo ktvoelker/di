@@ -101,26 +101,27 @@ namespace Di
             return MatchDefaultExclude(file.FullName);
         }
 
-        public IList<FileInfo> MatchAll(DirectoryInfo root)
+        public void MatchAll(DirectoryInfo root, out IList<FileInfo> fileMatches, out IList<DirectoryInfo> dirMatches)
         {
-            IList<FileInfo> result = new List<FileInfo>();
-            MatchAll(root, ref result);
-            return result;
+            fileMatches = new List<FileInfo>();
+            dirMatches = new List<DirectoryInfo>();
+            MatchAllImpl(root, ref fileMatches, ref dirMatches);
         }
 
-        private void MatchAll(DirectoryInfo dir, ref IList<FileInfo> matches)
+        private void MatchAllImpl(DirectoryInfo dir, ref IList<FileInfo> fileMatches, ref IList<DirectoryInfo> dirMatches)
         {
             if (MatchDir(dir))
             {
+                dirMatches.Add(dir);
                 foreach (var subdir in dir.GetDirectories())
                 {
-                    MatchAll(subdir, ref matches);
+                    MatchAllImpl(subdir, ref fileMatches, ref dirMatches);
                 }
                 foreach (var file in dir.GetFiles())
                 {
                     if (MatchFile(file))
                     {
-                        matches.Add(file);
+                        fileMatches.Add(file);
                     }
                 }
             }

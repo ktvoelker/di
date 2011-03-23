@@ -192,7 +192,14 @@ namespace Di
 
         public static string ProjectRelativeFullName(this Model.IFsQueryable node)
         {
-            return node.FullName.Substring(node.Root.Root.FullName.Length + 1);
+            if (node == node.Root.Root)
+            {
+                return ".";
+            }
+            else
+            {
+                return node.FullName.Substring(node.Root.Root.FullName.Length + 1);
+            }
         }
 
         public static bool ContainsFocus(this Gtk.Widget w)

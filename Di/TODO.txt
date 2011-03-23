@@ -2,20 +2,17 @@
 TODO
 ====
 
-Fix the directory chooser
-
-Test the new file commands
-
-Make NewFile try to get a directory again when the user cancels in the second step
-
-Add commands:
-    Move focus left or right
+Don't allow the creation of a file or directory that would not be included in the project
+under the current configuration
 
 Make the directory chooser return a special "new directory" result if the "query"
 contains no spaces or metacharacters and is not the complete project-relative path
 of an existing directory.
 
 Return this special result last.
+
+Add commands:
+    Move focus left or right
 
 Add auto-save
     Flash a message in the status bar each time auto-save occurs

@@ -29,7 +29,13 @@ namespace Di.Model
     {
         public const string ConfigFileName = "di-project.ini";
 
-        public readonly DirectoryInfo Root;
+        /// <summary>
+        /// RootInfo is used by Directory to know where the root is before the Directory
+        /// object tree has been created.
+        /// </summary>
+        public readonly DirectoryInfo RootInfo;
+
+        public readonly Directory Root;
 
         private Ini.IIniFile config = null;
 
@@ -71,8 +77,8 @@ namespace Di.Model
                     throw new InvalidOperationException();
                 }
             }
-            Root = _dir;
-            Ini.IniParser.Parse(Path.Combine(Root.FullName, ConfigFileName), ref config);
+            RootInfo = _dir;
+            Ini.IniParser.Parse(Path.Combine(RootInfo.FullName, ConfigFileName), ref config);
             var m = new FileMatcher();
             m.ExcludeExecutableFiles = config[""].GetBoolWithDefault("exclude-exec", true);
             if (config.ContainsKey("include"))
@@ -89,8 +95,12 @@ namespace Di.Model
                     m.ExcludeGlob(e);
                 }
             }
-            files = m.MatchAll(Root).Select(f => new File(this, f)).ToList();
-            directories = Directory.GetAll(this).ToList();
+            IList<FileInfo> fileInfos;
+            IList<DirectoryInfo> dirInfos;
+            m.MatchAll(RootInfo, out fileInfos, out dirInfos);
+            files = fileInfos.Select(f => new File(this, f)).ToList();
+            directories = dirInfos.Select(d => Directory.Get(this, d)).ToList();
+            Root = Directory.Get(this, RootInfo);
             Files = new ReadOnlyCollection<File>(files);
             Directories = new ReadOnlyCollection<Directory>(directories);
 
