@@ -37,6 +37,12 @@ namespace Di.Controller
             set;
         }
 
+        public string LastError
+        {
+            get;
+            set;
+        }
+
         public Chooser(string _message)
         {
             Message = _message;

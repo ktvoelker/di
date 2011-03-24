@@ -1,25 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Di", "Di\Di.csproj", "{B7E42D49-B878-4E02-A30A-D4653BC3A847}"
 EndProject
 Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "Packages", "Packages.mdproj", "{1210A0FA-12B2-4B45-9140-922A9B15686D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B0169427-FDA2-485F-A1E2-280EE44D8F2D}"
-	ProjectSection(SolutionItems) = preProject
-		Controller.cs = Controller.cs
-		ControllerEvents.cs = ControllerEvents.cs
-		Main.cs = Main.cs
-		Model.cs = Model.cs
-		View.cs = View.cs
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ini", "Ini\Ini.csproj", "{8619C6C2-C719-4371-9F61-10A735FB8B99}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9AD86991-1B57-43B2-90EA-6243998DA089}"
-	ProjectSection(SolutionItems) = preProject
-		Di\Model\Language.cs = Di\Model\Language.cs
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,8 +23,6 @@ Global
 		{B7E42D49-B878-4E02-A30A-D4653BC3A847}.Debug|x86.Build.0 = Debug|x86
 		{B7E42D49-B878-4E02-A30A-D4653BC3A847}.Release|x86.ActiveCfg = Release|x86
 		{B7E42D49-B878-4E02-A30A-D4653BC3A847}.Release|x86.Build.0 = Release|x86
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Di\Di.csproj

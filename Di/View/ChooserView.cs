@@ -48,6 +48,16 @@ namespace Di.View
             topLevelBox.Homogeneous = false;
             topLevelBox.Spacing = 15;
             topLevelBox.PackStart(new Gtk.HBox(), false, false, 0);
+            if (ctl.LastError != null)
+            {
+                var error = new Gtk.Label(ctl.LastError);
+                error.ModifyBg(Gtk.StateType.Normal, new Gdk.Color(255, 0, 0));
+                error.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(255, 255, 255));
+                error.ModifyFont(new Font(14, FontFamily.SansSerif));
+                var errorAlign = new Gtk.Alignment(0, 0, 0, 0);
+                errorAlign.Add(error);
+                topLevelBox.PackStart(errorAlign, false, false, 0);
+            }
             var message = new Gtk.Label(string.Format("{0}:", ctl.Message));
             var messageAlign = new Gtk.Alignment(0, 0, 0, 0);
             messageAlign.Add(message);

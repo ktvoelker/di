@@ -237,22 +237,42 @@ namespace Di.Controller.Command
             b.Controller.BeginTask.Handler(chooser);
         }
 
-        public static void NewFile(Window b, Func<Window, Action<Model.File>> fileHandler, string initDirQuery = "")
+        public static void NewFileInDirectory(
+            Window b, Func<Window, Action<Model.File>> fileHandler, Model.Directory dir,
+            string initDirQuery = "", string initFileQuery = "", string lastError = null)
+        {
+            var fileChooser = new NewFileChooser(dir);
+            fileChooser.ChooseFile.Add(fileHandler(b));
+            fileChooser.Cancel.Add(() =>
+            {
+                NewFile(b, fileHandler, initDirQuery);
+            });
+            fileChooser.Query = initFileQuery;
+            fileChooser.LastError = lastError;
+            try
+            {
+                b.Controller.BeginTask.Handler(fileChooser);
+            }
+            catch (FileNotIncluded e)
+            {
+                NewFileInDirectory(b, fileHandler, dir, initDirQuery, fileChooser.Query, e.Message);
+            }
+        }
+
+        public static void NewFile(Window b, Func<Window, Action<Model.File>> fileHandler, string initDirQuery = "", string lastError = null)
         {
             var dirChooser = new FsChooser<Model.Directory>(() => b.Controller.Model.Directories, "Choose a directory");
-            Action<Model.Directory> dirHandler = dir =>
-            {
-                var fileChooser = new NewFileChooser(dir);
-                fileChooser.ChooseFile.Add(fileHandler(b));
-                fileChooser.Cancel.Add(() =>
-                {
-                    NewFile(b, fileHandler, dirChooser.Query);
-                });
-                b.Controller.BeginTask.Handler(fileChooser);
-            };
-            dirChooser.Choose.Add(dirHandler);
+            dirChooser.Choose.Add(dir => NewFileInDirectory(b, fileHandler, dir, dirChooser.Query));
             dirChooser.Query = initDirQuery;
-            b.Controller.BeginTask.Handler(dirChooser);
+            dirChooser.LastError = lastError;
+            try
+            {
+                b.Controller.BeginTask.Handler(dirChooser);
+            }
+            catch (DirectoryNotIncluded e)
+            {
+                NewFile(b, fileHandler, dirChooser.Query, e.Message);
+            }
         }
     }
 
