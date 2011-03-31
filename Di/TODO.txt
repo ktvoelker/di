@@ -2,14 +2,20 @@
 TODO
 ====
 
-Don't allow the creation of a file or directory that would not be included in the project
-under the current configuration
+Show an error message when the new file already exists or would not be included
+
+    This might involve adding an Event0 to the Event class which is triggered
+    when the enclosing event is cancelled.
 
 Make the directory chooser return a special "new directory" result if the "query"
 contains no spaces or metacharacters and is not the complete project-relative path
 of an existing directory.
 
+    Handle the same errors as for a new file, and in the same way.
+
 Return this special result last.
+
+Make the chooser not crash when there are no results and enter is pressed.
 
 Add commands:
     Move focus left or right

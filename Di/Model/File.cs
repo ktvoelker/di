@@ -25,6 +25,8 @@ namespace Di.Model
 {
     public class File : IFsQueryable
     {
+        public static bool MatchCheckEnabled = true;
+
         public Main Root
         {
             get;
@@ -67,6 +69,10 @@ namespace Di.Model
 
         public File(Main root, FileInfo file)
         {
+            if (MatchCheckEnabled && !root.Matcher.MatchFile(file))
+            {
+                throw new FileNotIncluded(file);
+            }
             Root = root;
             Info = file;
             Parent = Directory.Get(root, file.Directory);

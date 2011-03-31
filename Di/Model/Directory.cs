@@ -25,6 +25,7 @@ namespace Di.Model
 {
     public class Directory : IFsQueryable
     {
+        public static bool MatchCheckEnabled = true;
         private static readonly Language.Base LangInstance = new Language.Directory();
 
         public Main Root
@@ -78,6 +79,10 @@ namespace Di.Model
 
         private Directory(Main root, DirectoryInfo info)
         {
+            if (MatchCheckEnabled && !root.Matcher.MatchDir(info))
+            {
+                throw new DirectoryNotIncluded(info);
+            }
             Root = root;
             Info = info;
             Parent = info.FullName == root.RootInfo.FullName ? null : Get(root, info.Parent);

@@ -91,12 +91,12 @@ namespace Di
             return Include != null && Include.IsMatch(path) && (Exclude == null || !Exclude.IsMatch(path));
         }
 
-        private bool MatchDir(DirectoryInfo dir)
+        public bool MatchDir(DirectoryInfo dir)
         {
             return MatchDefaultInclude(dir.FullName + Path.DirectorySeparatorChar);
         }
 
-        private bool MatchFile(FileInfo file)
+        public bool MatchFile(FileInfo file)
         {
             return MatchDefaultExclude(file.FullName);
         }

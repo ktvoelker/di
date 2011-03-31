@@ -60,6 +60,8 @@ namespace Di.Model
             private set;
         }
 
+        public readonly FileMatcher Matcher;
+
         private readonly BindList<Buffer> buffers;
         public readonly ReadOnlyCollection<Buffer> Buffers;
 
@@ -79,28 +81,32 @@ namespace Di.Model
             }
             RootInfo = _dir;
             Ini.IniParser.Parse(Path.Combine(RootInfo.FullName, ConfigFileName), ref config);
-            var m = new FileMatcher();
-            m.ExcludeExecutableFiles = config[""].GetBoolWithDefault("exclude-exec", true);
+            Matcher = new FileMatcher();
+            Matcher.ExcludeExecutableFiles = config[""].GetBoolWithDefault("exclude-exec", true);
             if (config.ContainsKey("include"))
             {
                 foreach (var i in config["include"].Keys)
                 {
-                    m.IncludeGlob(i);
+                    Matcher.IncludeGlob(i);
                 }
             }
             if (config.ContainsKey("exclude"))
             {
                 foreach (var e in config["exclude"].Keys)
                 {
-                    m.ExcludeGlob(e);
+                    Matcher.ExcludeGlob(e);
                 }
             }
             IList<FileInfo> fileInfos;
             IList<DirectoryInfo> dirInfos;
-            m.MatchAll(RootInfo, out fileInfos, out dirInfos);
+            Matcher.MatchAll(RootInfo, out fileInfos, out dirInfos);
+            File.MatchCheckEnabled = false;
+            Directory.MatchCheckEnabled = false;
             files = fileInfos.Select(f => new File(this, f)).ToList();
             directories = dirInfos.Select(d => Directory.Get(this, d)).ToList();
             Root = Directory.Get(this, RootInfo);
+            File.MatchCheckEnabled = true;
+            Directory.MatchCheckEnabled = true;
             Files = new ReadOnlyCollection<File>(files);
             Directories = new ReadOnlyCollection<Directory>(directories);
 

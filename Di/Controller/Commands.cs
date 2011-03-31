@@ -237,9 +237,7 @@ namespace Di.Controller.Command
             b.Controller.BeginTask.Handler(chooser);
         }
 
-        public static void NewFileInDirectory(
-            Window b, Func<Window, Action<Model.File>> fileHandler, Model.Directory dir,
-            string initDirQuery = "", string initFileQuery = "", string lastError = null)
+        public static void NewFileInDirectory(Window b, Func<Window, Action<Model.File>> fileHandler, Model.Directory dir, string initDirQuery)
         {
             var fileChooser = new NewFileChooser(dir);
             fileChooser.ChooseFile.Add(fileHandler(b));
@@ -247,32 +245,15 @@ namespace Di.Controller.Command
             {
                 NewFile(b, fileHandler, initDirQuery);
             });
-            fileChooser.Query = initFileQuery;
-            fileChooser.LastError = lastError;
-            try
-            {
-                b.Controller.BeginTask.Handler(fileChooser);
-            }
-            catch (FileNotIncluded e)
-            {
-                NewFileInDirectory(b, fileHandler, dir, initDirQuery, fileChooser.Query, e.Message);
-            }
+            b.Controller.BeginTask.Handler(fileChooser);
         }
 
-        public static void NewFile(Window b, Func<Window, Action<Model.File>> fileHandler, string initDirQuery = "", string lastError = null)
+        public static void NewFile(Window b, Func<Window, Action<Model.File>> fileHandler, string initDirQuery)
         {
             var dirChooser = new FsChooser<Model.Directory>(() => b.Controller.Model.Directories, "Choose a directory");
-            dirChooser.Choose.Add(dir => NewFileInDirectory(b, fileHandler, dir, dirChooser.Query));
+            dirChooser.Choose.Add(EventPriority.ControllerHigh, dir => NewFileInDirectory(b, fileHandler, dir, dirChooser.Query));
             dirChooser.Query = initDirQuery;
-            dirChooser.LastError = lastError;
-            try
-            {
-                b.Controller.BeginTask.Handler(dirChooser);
-            }
-            catch (DirectoryNotIncluded e)
-            {
-                NewFile(b, fileHandler, dirChooser.Query, e.Message);
-            }
+            b.Controller.BeginTask.Handler(dirChooser);
         }
     }
 
@@ -296,7 +277,7 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            NewFile(b, InNewWindow);
+            NewFile(b, InNewWindow, "");
         }
     }
 
@@ -304,7 +285,7 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            NewFile(b, InFocusedWindow);
+            NewFile(b, InFocusedWindow, "");
         }
     }
 

@@ -50,11 +50,24 @@ namespace Di.Controller
         public NewFileChooser(Model.Directory _dir) : base("Name the new file")
         {
             dir = _dir;
-            Choose.Add(ignore =>
+            Choose.Add(EventPriority.ControllerHigh, ignore =>
             {
                 var info = new FileInfo(dir.FullName + Path.DirectorySeparatorChar + name);
+                if (info.Exists)
+                {
+                    Choose.Cancel();
+                    return;
+                }
                 info.CreateText().Close();
-                ChooseFile.Handler(new Model.File(dir.Root, info));
+                try
+                {
+                    ChooseFile.Handler(new Model.File(dir.Root, info));
+                }
+                catch (FileNotIncluded)
+                {
+                    Choose.Cancel();
+                    info.Delete();
+                }
             });
         }
 

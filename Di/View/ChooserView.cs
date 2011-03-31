@@ -48,9 +48,9 @@ namespace Di.View
             topLevelBox.Homogeneous = false;
             topLevelBox.Spacing = 15;
             topLevelBox.PackStart(new Gtk.HBox(), false, false, 0);
-            if (ctl.LastError != null)
+            if (false)
             {
-                var error = new Gtk.Label(ctl.LastError);
+                var error = new Gtk.Label("error!!!");
                 error.ModifyBg(Gtk.StateType.Normal, new Gdk.Color(255, 0, 0));
                 error.ModifyFg(Gtk.StateType.Normal, new Gdk.Color(255, 255, 255));
                 error.ModifyFont(new Font(14, FontFamily.SansSerif));

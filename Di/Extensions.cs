@@ -50,8 +50,6 @@ namespace Di
             throw new IndexOutOfRangeException();
         }
 
-        public delegate void Action<T>(T arg);
-
         public static void ForEach<T>(this IEnumerable<T> elems, Action<T> a)
         {
             foreach (T elem in elems)
@@ -115,6 +113,26 @@ namespace Di
         }
 
         public static Func<U, V, W> Apply<T, U, V, W>(this Func<T, U, V, W> f, T t)
+        {
+            return (u, v) => f(t, u, v);
+        }
+
+        public static Action Apply<T>(this Action<T> f, T t)
+        {
+            return () => f(t);
+        }
+
+        public static Action<U> Apply<T, U>(this Action<T, U> f, T t)
+        {
+            return (u) => f(t, u);
+        }
+
+        public static Action Apply<T, U>(this Action<T, U> f, T t, U u)
+        {
+            return () => f(t, u);
+        }
+
+        public static Action<U, V> Apply<T, U, V>(this Action<T, U, V> f, T t)
         {
             return (u, v) => f(t, u, v);
         }

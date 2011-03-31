@@ -1,5 +1,5 @@
 //  
-//  Chooser.cs
+//  CompareComparable.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -19,34 +19,19 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-namespace Di.Controller
+using System.Collections.Generic;
+namespace Di
 {
-    public abstract class Chooser<T> : Task
+    public class CompareComparable<T> : IComparer<T> where T : IComparable<T>
     {
-        public readonly string Message;
-
-        public readonly BindList<T> Candidates;
-
-        public readonly Event1<T> Choose = new Event1<T>();
-
-        public readonly Event0 Cancel = new Event0();
-
-        public abstract string Query
+        public CompareComparable()
         {
-            get;
-            set;
         }
 
-        public Chooser(string _message)
+        public int Compare(T x, T y)
         {
-            Message = _message;
-            Candidates = new BindList<T>();
-            Choose.Add(EventPriority.ControllerLow, choice => End.Handler());
-            Cancel.Add(() => End.Handler());
+            return x.CompareTo(y);
         }
-
-        public abstract string CandidateToString(T candidate);
-
     }
 }
 

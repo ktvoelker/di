@@ -19,36 +19,80 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 namespace Di
 {
-    public abstract class Event<T>
+    public enum EventPriority
     {
+        ControllerHigh,
+        ControllerLow,
+        View,
+        Default
+    }
+
+    public abstract class Event<T> where T : class
+    {
+        private struct PrioT : IComparable<PrioT>
+        {
+            public T elem;
+            public EventPriority prio;
+
+            public int CompareTo(PrioT other)
+            {
+                return prio < other.prio ? -1 : (prio > other.prio ? 1 : 0);
+            }
+        }
+
+        private SortedSet<PrioT> handlers = new SortedSet<PrioT>(new CompareComparable<PrioT>());
+
         public T Handler
         {
             get;
             protected set;
         }
 
-        public abstract void Add(T f);
+        private bool cancelled = false;
 
-        public abstract void Remove(T f);
+        public void BaseHandler(Func<T, Action> f)
+        {
+            cancelled = false;
+            foreach (var pt in handlers)
+            {
+                f(pt.elem)();
+                if (cancelled)
+                {
+                    cancelled = false;
+                    break;
+                }
+            }
+        }
+
+        public void Add(EventPriority p, T f)
+        {
+            handlers.Add(new PrioT() { elem = f, prio = p });
+        }
+
+        public void Add(T f)
+        {
+            Add(EventPriority.Default, f);
+        }
+
+        public void Remove(T f)
+        {
+            handlers.RemoveWhere(pt => pt.elem == f);
+        }
+
+        public void Cancel()
+        {
+            cancelled = true;
+        }
     }
 
     public class Event0 : Event<Action>
     {
         public Event0()
         {
-            Handler = () => { return; };
-        }
-
-        public override void Add(Action f)
-        {
-            Handler += f;
-        }
-
-        public override void Remove(Action f)
-        {
-            Handler -= f;
+            Handler = () => BaseHandler(a => a);
         }
     }
 
@@ -56,17 +100,7 @@ namespace Di
     {
         public Event1()
         {
-            Handler = (x) => { return; };
-        }
-
-        public override void Add(Action<T> f)
-        {
-            Handler += f;
-        }
-
-        public override void Remove(Action<T> f)
-        {
-            Handler -= f;
+            Handler = (x) => BaseHandler(a => a.Apply(x));
         }
     }
 
@@ -74,17 +108,7 @@ namespace Di
     {
         public Event2()
         {
-            Handler = (x, y) => { return; };
-        }
-
-        public override void Add(Action<T, U> f)
-        {
-            Handler += f;
-        }
-
-        public override void Remove(Action<T, U> f)
-        {
-            Handler -= f;
+            Handler = (x, y) => BaseHandler(a => a.Apply(x, y));
         }
     }
 
@@ -93,16 +117,6 @@ namespace Di
         public Event3()
         {
             Handler = (x, y, z) => { return; };
-        }
-
-        public override void Add(Action<T, U, V> f)
-        {
-            Handler += f;
-        }
-
-        public override void Remove(Action<T, U, V> f)
-        {
-            Handler -= f;
         }
     }
 }
