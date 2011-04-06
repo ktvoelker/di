@@ -2,20 +2,8 @@
 TODO
 ====
 
-Show an error message when the new file already exists or would not be included
-
-    This might involve adding an Event0 to the Event class which is triggered
-    when the enclosing event is cancelled.
-
-Make the directory chooser return a special "new directory" result if the "query"
-contains no spaces or metacharacters and is not the complete project-relative path
-of an existing directory.
-
-    Handle the same errors as for a new file, and in the same way.
-
-Return this special result last.
-
-Make the chooser not crash when there are no results and enter is pressed.
+Completeness of Basic Functionality
+-----------------------------------
 
 Add commands:
     Move focus left or right
@@ -30,7 +18,7 @@ Keep a list of project files sorted by most-recently-visible
     Prefer the most-recently-visible file over other matches
     Already-visible files should be least-preferred
 
-Write test suite for FileMatcher class
+Make the chooser not crash when there are no results and enter is pressed.
 
 Add support for "undo"
 
@@ -60,6 +48,60 @@ Add support for the pasting stack
     Pop-and-discard command
     Add to session
 
+Add more basic editing and movement commands
+
+Configuration support
+    $HOME/di-user.ini
+    $ETC/di-config.ini
+
+Make keybindings configurable
+
+    In the model, map keybindings to command names as strings.
+
+    Add an attribute to each command class that specifies its name as a string.
+
+    At startup, use reflection on our assembly to find all implementors of
+    ICommand which have the name attribute, and add them to a lookup table.
+
+    Eventually, there will be a configuration option allowing other assemblies
+    containing commands to be loaded dynamically and searched for commands.
+    
+    Also make the initial mode configurable
+
+    Allow sets of modes to be named for reuse in the configuration
+
+
+Basic Usability Improvements
+----------------------------
+
+Show an error message when the new file already exists or would not be included
+
+    This might involve adding an Event0 to the Event class which is triggered
+    when the enclosing event is cancelled.
+
+Make the directory chooser return a special "new directory" result if the "query"
+contains no spaces or metacharacters and is not the complete project-relative path
+of an existing directory.
+
+    Handle the same errors as for a new file, and in the same way.
+
+Return this special result last.
+
+Add a configurable list of files to always ignore
+    Put a nice long list of defaults in di-config.ini
+
+Add a side panel which shows the valid bindings in a menu mode
+    Don't show a binding if it has no description
+    Try making command mode be a menu mode
+
+Show the parser state in the statusbar
+
+Fix scrolling to show cursor even when it's at the start of the last, empty line of the file.
+
+
+Language-Oriented Improvements
+------------------------------
+
 Add support for language plug-ins, which will ultimately provide:
     Behavior for Return and Tab commands
         Tab should jump to the "correct" column if it is only preceded by whitespace on the line,
@@ -80,33 +122,8 @@ Add intelligent window layout
 
     Keep track of the focus history
 
-Configuration support
-    $HOME/di-user.ini
-    $ETC/di-config.ini
 
-Add a configurable list of files to always ignore
-    Put a nice long list of defaults in di-config.ini
+Testing
+-------
 
-Make keybindings configurable
-
-    In the model, map keybindings to command names as strings.
-
-    Add an attribute to each command class that specifies its name as a string.
-
-    At startup, use reflection on our assembly to find all implementors of
-    ICommand which have the name attribute, and add them to a lookup table.
-
-    Eventually, there will be a configuration option allowing other assemblies
-    containing commands to be loaded dynamically and searched for commands.
-    
-    Also make the initial mode configurable
-
-    Allow sets of modes to be named for reuse in the configuration
-
-Add a side panel which shows the valid bindings in a menu mode
-    Don't show a binding if it has no description
-    Try making command mode be a menu mode
-
-Show the parser state in the statusbar
-
-Fix scrolling to show cursor even when it's at the start of the last, empty line of the file.
+Write test suite for FileMatcher class
