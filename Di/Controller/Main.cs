@@ -80,6 +80,10 @@ namespace Di.Controller
                     mode.Name = section.Value.GetWithDefault<string, string>("display-name", modeKey);
                     mode.Hidden = section.Value.GetBoolWithDefault("hidden", false);
                     var map = new KeyMap();
+                    if (section.Value.ContainsKey("priority"))
+                    {
+                        map.Priority = sbyte.Parse(section.Value["priority"]);
+                    }
                     if (section.Value.ContainsKey("default"))
                     {
                         map.SetDefault(ParseCommands(section.Value["default"]));
@@ -113,92 +117,6 @@ namespace Di.Controller
 
             // Load default window modes from config file
             Model.Config[""]["default-modes"].Tokenize().ForEach(k => WindowModes[k].ForEach(Window.DefaultMode.Add));
-
-            // TODO remove old code until END (after putting these bindings into a config file)
-                        /*
-
-            // Command mode bindings (0)
-            var commandMode = new KeyMap() { Priority = 5 };
-            commandMode.Add(Key.i, new Command.ClearWindowMode(), new Command.AddWindowMode("Insert"));
-            commandMode.Add(Key.h, new Command.Down());
-            commandMode.Add(Key.t, new Command.Up());
-            commandMode.Add(Key.d, new Command.Left());
-            commandMode.Add(Key.n, new Command.Right());
-            commandMode.Add(Key.Down, new Command.Down());
-            commandMode.Add(Key.Up, new Command.Up());
-            commandMode.Add(Key.Left, new Command.Left());
-            commandMode.Add(Key.Right, new Command.Right());
-            commandMode.Add(Key.o, new Command.OpenFile());
-            commandMode.Add(Key.e, new Command.NewFile());
-            commandMode.Add(Key.w, new Command.ClearWindowMode(), new Command.AddWindowMode("Window"), new Command.AddWindowMode("Common"));
-            WindowModes.Add("Command", new WindowMode { Name = "Command", KeyMap = commandMode });
-            
-            // Insert mode bindings (1)
-            var insertMode = new KeyMap();
-            insertMode.SetDefault(new Command.InsertKey());
-            insertMode.Add(Key.Return, new Command.InsertChar('\n'));
-            insertMode.Add(Key.Escape,
-                           new Command.DiscardInput(),
-                           new Command.ClearWindowMode(),
-                           new Command.AddWindowMode("Command"),
-                           new Command.AddWindowMode("Number"),
-                           new Command.AddWindowMode("Common"));
-            insertMode.Add(Key.BackSpace, new Command.Delete(), new Command.Backspace());
-            insertMode.Add(Key.Tab, new Command.Tab());
-            insertMode.Add(Key.Down, new Command.Down());
-            insertMode.Add(Key.Up, new Command.Up());
-            insertMode.Add(Key.Left, new Command.Left());
-            insertMode.Add(Key.Right, new Command.Right());
-            insertMode.Add(Key.Delete, new Command.Delete(), new Command.Right());
-            WindowModes.Add("Insert", new WindowMode { Name = "Insert", KeyMap = insertMode });
-
-            // Number mode bindings (2)
-            var numberMode = new KeyMap();
-            numberMode.Add(Key.Key_0, new NumCommand());
-            numberMode.Add(Key.Key_1, new NumCommand());
-            numberMode.Add(Key.Key_2, new NumCommand());
-            numberMode.Add(Key.Key_3, new NumCommand());
-            numberMode.Add(Key.Key_4, new NumCommand());
-            numberMode.Add(Key.Key_5, new NumCommand());
-            numberMode.Add(Key.Key_6, new NumCommand());
-            numberMode.Add(Key.Key_7, new NumCommand());
-            numberMode.Add(Key.Key_8, new NumCommand());
-            numberMode.Add(Key.Key_9, new NumCommand());
-            WindowModes.Add("Number", new WindowMode { Name = "Number", Hidden = true, KeyMap = numberMode });
-
-            // Common bindings (3)
-            var commonMode = new KeyMap();
-            commonMode.Add(Key.Escape, new Command.DiscardInput());
-            WindowModes.Add("Common", new WindowMode { Name = "Common", Hidden = true, KeyMap = commonMode });
-
-            // Window mode bindings (4)
-            var windowMode = new KeyMap();
-            windowMode.Add(Key.a,
-                           new Command.OpenFileInNewWindow(),
-                           new Command.ClearWindowMode(),
-                           new Command.AddWindowMode("Command"),
-                           new Command.AddWindowMode("Number"),
-                           new Command.AddWindowMode("Common"));
-            windowMode.Add(Key.c,
-                           new Command.CloseWindow(),
-                           new Command.ClearWindowMode(),
-                           new Command.AddWindowMode("Command"),
-                           new Command.AddWindowMode("Number"),
-                           new Command.AddWindowMode("Common"));
-            windowMode.Add(Key.e,
-                           new Command.NewFileInNewWindow(),
-                           new Command.ClearWindowMode(),
-                           new Command.AddWindowMode("Command"),
-                           new Command.AddWindowMode("Number"),
-                           new Command.AddWindowMode("Common"));
-            WindowModes.Add("Window", new WindowMode { Name = "Window", KeyMap = windowMode });
-
-            Window.DefaultMode.Add(WindowModes["Command"]);
-            Window.DefaultMode.Add(WindowModes["Number"]);
-            Window.DefaultMode.Add(WindowModes["Common"]);
-
-            // END TODO
-            */
         
             Windows = new BindList<Window>();
             if (Model.Buffers.HasAny())
