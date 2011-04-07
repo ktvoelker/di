@@ -19,6 +19,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Linq;
 using System.Text;
 namespace Di.Controller.Command
 {
@@ -294,6 +295,30 @@ namespace Di.Controller.Command
         public override void Execute(Window b)
         {
             b.Controller.Windows.Remove(b);
+        }
+    }
+
+    public class FocusLeft : RepeatCommand
+    {
+        public override void Execute(Window b)
+        {
+            var focus = b.Controller.FocusedWindow;
+            b.Controller.Windows.WithPrevCircular().Where(pair => pair.Item2 == focus).ForEach(pair =>
+            {
+                focus.Value = pair.Item1;
+            });
+        }
+    }
+
+    public class FocusRight : RepeatCommand
+    {
+        public override void Execute(Window b)
+        {
+            var focus = b.Controller.FocusedWindow;
+            b.Controller.Windows.WithNextCircular().Where(pair => pair.Item1 == focus).ForEach(pair =>
+            {
+                focus.Value = pair.Item2;
+            });
         }
     }
 }

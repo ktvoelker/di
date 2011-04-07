@@ -58,6 +58,34 @@ namespace Di
             }
         }
 
+        public static IEnumerable<Tuple<T, T>> WithPrevCircular<T>(this IEnumerable<T> elems)
+        {
+            var list = elems.ToList();
+            if (list.Count == 0)
+            {
+                yield break;
+            }
+            T prev = list.Last();
+            foreach (var cur in list)
+            {
+                yield return new Tuple<T, T>(prev, cur);
+            }
+        }
+
+        public static IEnumerable<Tuple<T, T>> WithNextCircular<T>(this IEnumerable<T> elems)
+        {
+            var list = elems.ToList();
+            if (list.Count == 0)
+            {
+                yield break;
+            }
+            for (int i = 0; i < list.Count - 1; ++i)
+            {
+                yield return new Tuple<T, T>(list[i], list[i + 1]);
+            }
+            yield return new Tuple<T, T>(list.Last(), list.First());
+        }
+
         public static U FoldLeft<T, U>(this IEnumerable<T> elems, U zero, Func<U, T, U> func)
         {
             U result = zero;

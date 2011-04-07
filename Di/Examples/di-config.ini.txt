@@ -58,6 +58,8 @@ Escape = DiscardInput
 [mode window]
 display-name = Window
 Escape = macro command
-a = OpenFileInNewWindow; macro command
+o = OpenFileInNewWindow; macro command
 c = CloseWindow; macro command
 e = NewFileInNewWindow; macro command
+u = FocusLeft; macro command
+i = FocusRight; macro command

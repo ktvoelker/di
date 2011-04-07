@@ -75,6 +75,46 @@ namespace Di
             return obj.v;
         }
 
+        public override bool Equals(object o)
+        {
+            return o != null && o.GetType() == GetType() && this == ((Bind<V>) o);
+        }
+
+        public override int GetHashCode()
+        {
+            return v.GetHashCode();
+        }
+
+        public static bool operator ==(Bind<V> a, V b)
+        {
+            return a.v.Equals(b);
+        }
+
+        public static bool operator ==(V a, Bind<V> b)
+        {
+            return a.Equals(b.v);
+        }
+
+        public static bool operator ==(Bind<V> a, Bind<V> b)
+        {
+            return a.v.Equals(b.v);
+        }
+
+        public static bool operator !=(Bind<V> a, V b)
+        {
+            return !(a == b);
+        }
+
+        public static bool operator !=(V a, Bind<V> b)
+        {
+            return !(a == b);
+        }
+
+        public static bool operator !=(Bind<V> a, Bind<V> b)
+        {
+            return !(a == b);
+        }
+
         public IDisposable WithChange()
         {
             return new Actor(() => _changed(v));
