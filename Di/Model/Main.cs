@@ -27,7 +27,8 @@ namespace Di.Model
 {
     public class Main
     {
-        public const string ConfigFileName = "di-project.ini";
+        public const string ConfigFileName = "di-config.ini";
+        public const string ProjectMetaFileName = "di-project.ini";
 
         /// <summary>
         /// RootInfo is used by Directory to know where the root is before the Directory
@@ -37,11 +38,13 @@ namespace Di.Model
 
         public readonly Directory Root;
 
-        private Ini.IIniFile config = null;
+        public readonly Ini.IIniFile Config;
+
+        private Ini.IIniFile meta = null;
 
         public string Name
         {
-            get { return config[""].GetWithDefault("name", "Unnamed Project"); }
+            get { return meta[""].GetWithDefault("name", "Unnamed Project"); }
         }
 
         private IList<File> files;
@@ -67,6 +70,7 @@ namespace Di.Model
 
         public Main(DirectoryInfo _dir)
         {
+            Config = LoadConfig();
             while (!DirIsProjectRoot(_dir))
             {
                 _dir = _dir.Parent;
@@ -80,19 +84,19 @@ namespace Di.Model
                 }
             }
             RootInfo = _dir;
-            Ini.IniParser.Parse(Path.Combine(RootInfo.FullName, ConfigFileName), ref config);
+            Ini.IniParser.Parse(Path.Combine(RootInfo.FullName, ProjectMetaFileName), ref meta);
             Matcher = new FileMatcher();
-            Matcher.ExcludeExecutableFiles = config[""].GetBoolWithDefault("exclude-exec", true);
-            if (config.ContainsKey("include"))
+            Matcher.ExcludeExecutableFiles = meta[""].GetBoolWithDefault("exclude-exec", true);
+            if (meta.ContainsKey("include"))
             {
-                foreach (var i in config["include"].Keys)
+                foreach (var i in meta["include"].Keys)
                 {
                     Matcher.IncludeGlob(i);
                 }
             }
-            if (config.ContainsKey("exclude"))
+            if (meta.ContainsKey("exclude"))
             {
-                foreach (var e in config["exclude"].Keys)
+                foreach (var e in meta["exclude"].Keys)
                 {
                     Matcher.ExcludeGlob(e);
                 }
@@ -143,7 +147,26 @@ namespace Di.Model
 
         public static bool DirIsProjectRoot(DirectoryInfo dir)
         {
-            return dir.GetFiles().Where(file => file.Name == ConfigFileName).HasAny();
+            return dir.GetFiles().Where(file => file.Name == ProjectMetaFileName).HasAny();
+        }
+
+        private Ini.IIniFile LoadConfig()
+        {
+            var files = new List<string>();
+            var home = Environment.GetEnvironmentVariable("HOME");
+            if (!string.IsNullOrWhiteSpace(home))
+            {
+                files.Add(home + Path.DirectorySeparatorChar + "." + ConfigFileName);
+            }
+            Ini.IIniFile ini = Ini.IniParser.CreateEmptyIniFile();
+            foreach (var file in files)
+            {
+                if (new FileInfo(file).Exists)
+                {
+                    Ini.IniParser.Parse(file, ref ini);
+                }
+            }
+            return ini;
         }
     }
 }

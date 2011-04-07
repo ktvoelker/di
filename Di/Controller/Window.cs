@@ -32,6 +32,8 @@ namespace Di.Controller
 
         public readonly Bind<Model.Buffer> Model;
 
+        public static readonly IList<WindowMode> DefaultMode = new List<WindowMode>();
+
         public BindList<WindowMode> CurrentMode
         {
             get;
@@ -45,7 +47,7 @@ namespace Di.Controller
         static Window()
         {
             EmptyKeyMap = new KeyMap { Priority = sbyte.MinValue };
-            EmptyKeyMap.SetDefault(new Command.Ignore());
+            EmptyKeyMap.SetDefault(new ICommand[] { new Command.Ignore() });
         }
 
         private KeyMap CurrentKeyMap = EmptyKeyMap;
@@ -58,9 +60,7 @@ namespace Di.Controller
             Model = new Bind<Model.Buffer>(_model);
             CurrentMode = new BindList<WindowMode>();
             CurrentMode.Event.Changed += (list) => { CurrentKeyMap = list.FoldLeft(EmptyKeyMap, (a, b) => a + b.KeyMap); };
-            CurrentMode.Add(Controller.WindowModes[0]);
-            CurrentMode.Add(Controller.WindowModes[2]);
-            CurrentMode.Add(Controller.WindowModes[3]);
+            DefaultMode.ForEach(CurrentMode.Add);
             Parser = new CommandParser();
         }
 

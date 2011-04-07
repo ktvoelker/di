@@ -32,31 +32,31 @@ namespace Di.Controller.Command
 
     public class AddWindowMode : LoneCommand
     {
-        private int index;
+        private string key;
 
-        public AddWindowMode(int _index)
+        public AddWindowMode(string _key)
         {
-            index = _index;
+            key = _key;
         }
 
         public override void Execute(Window b)
         {
-            b.CurrentMode.Add(b.Controller.WindowModes[index]);
+            b.Controller.WindowModes[key].ForEach(b.CurrentMode.Add);
         }
     }
 
     public class RemoveWindowMode : LoneCommand
     {
-        private int index;
+        private string key;
 
-        public RemoveWindowMode(int _index)
+        public RemoveWindowMode(string _key)
         {
-            index = _index;
+            key = _key;
         }
 
         public override void Execute(Window b)
         {
-            b.CurrentMode.Remove(b.Controller.WindowModes[index]);
+            b.Controller.WindowModes[key].ForEach(m => { b.CurrentMode.Remove(m); });
         }
     }
 

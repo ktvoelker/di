@@ -97,6 +97,17 @@ namespace Di
             }
         }
 
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<IEnumerable<T>> xss)
+        {
+            foreach (var xs in xss)
+            {
+                foreach (var x in xs)
+                {
+                    yield return x;
+                }
+            }
+        }
+
         public static bool HasAny<T>(this IEnumerable<T> elems)
         {
             return elems.GetEnumerator().MoveNext();
@@ -230,6 +241,11 @@ namespace Di
         {
             var v = w as View.IContainFocus;
             (v == null ? w : v.FocusWidget).GrabFocus();
+        }
+
+        public static Ini.IIniSection GetSectionOrEmpty(this Ini.IIniFile ini, string name)
+        {
+            return ini.GetWithDefault(name, Ini.IniParser.CreateEmptyIniSection());
         }
     }
 }

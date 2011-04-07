@@ -5,6 +5,10 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
+Write a config file that encodes all the existing keybindings
+
+Test the new configurable keybinding code
+
 Add commands:
     Move focus left or right
 
@@ -50,26 +54,6 @@ Add support for the pasting stack
 
 Add more basic editing and movement commands
 
-Configuration support
-    $HOME/di-user.ini
-    $ETC/di-config.ini
-
-Make keybindings configurable
-
-    In the model, map keybindings to command names as strings.
-
-    Add an attribute to each command class that specifies its name as a string.
-
-    At startup, use reflection on our assembly to find all implementors of
-    ICommand which have the name attribute, and add them to a lookup table.
-
-    Eventually, there will be a configuration option allowing other assemblies
-    containing commands to be loaded dynamically and searched for commands.
-    
-    Also make the initial mode configurable
-
-    Allow sets of modes to be named for reuse in the configuration
-
 
 Basic Usability Improvements
 ----------------------------
@@ -98,11 +82,31 @@ Show the parser state in the statusbar
 
 Fix scrolling to show cursor even when it's at the start of the last, empty line of the file.
 
+Support runtime configuration changes, both through commands which modify the in-memory
+configuration, and through a command which reloads the configuration from disk.
+
+    Consider using a file-watching mechanism to load changes from disk automatically.
+
+Support a system-wide configuration file.
+    $ETC/di-config.ini on UNIX-like systems
+    Where on Windows?
+
+Make the user-specific configuration file come from the correct place on windows, and make its
+name not start with a dot.
+
+Add a simpler mechanism for specifying menu modes in the configuration file.
+
+Allow mode-sets to include other mode-sets.
+
+Provide friendlier responses to user errors such as:
+    Invalid syntax in configuration file
+    No project file found
+
 
 Language-Oriented Improvements
 ------------------------------
 
-Add support for language plug-ins, which will ultimately provide:
+Add support for languages, which will ultimately provide:
     Behavior for Return and Tab commands
         Tab should jump to the "correct" column if it is only preceded by whitespace on the line,
         and should otherwise begin automatic completion.
@@ -121,6 +125,13 @@ Add intelligent window layout
         Highlight name references in the source code in the same color as the directory containing the referent
 
     Keep track of the focus history
+
+
+Advanced Features
+-----------------
+
+Allow new languages and commands to be added via separate assemblies which are loaded
+and searched for relevant classes dynamically.
 
 
 Testing

@@ -77,6 +77,7 @@
     <Compile Include="EqUtils.cs" />
     <Compile Include="Exception.cs" />
     <Compile Include="CompareComparable.cs" />
+    <Compile Include="Tokenizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
@@ -98,6 +99,7 @@
   <ItemGroup>
     <None Include="TODO.txt" />
     <None Include="Conventions.txt" />
+    <None Include="Configuration.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ini\Ini.csproj">

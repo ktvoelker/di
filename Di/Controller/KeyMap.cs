@@ -75,19 +75,14 @@ namespace Di.Controller
             _map = new Dictionary<KeyInput, IEC>();
         }
 
-        public void SetDefault(params ICommand[] commands)
+        public void SetDefault(IEC commands)
         {
             Default = commands;
         }
 
-        public void Add(Key _base, ModifierType _modifiers, params ICommand[] commands)
+        public void Add(Key _base, ModifierType _modifiers, IEC commands)
         {
             _map[new KeyInput(_base, _modifiers)] = commands;
-        }
-
-        public void Add(Key _base, params ICommand[] commands)
-        {
-            Add(_base, ModifierType.None, commands);
         }
 
         public IEC Lookup(KeyInput key)

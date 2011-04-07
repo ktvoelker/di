@@ -36,4 +36,11 @@ namespace Di
         {
         }
     }
+
+    public class ConfigProblem : Exception
+    {
+        public ConfigProblem(string message) : base(message)
+        {
+        }
+    }
 }

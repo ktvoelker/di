@@ -1,0 +1,32 @@
+
+Configuration File Format
+=========================
+
+Uppercase tokens are non-terminals; lowercase are literals.
+
+[]
+default-modes = NAME+
+
+[mode NAME]
+display-name = TEXT
+hidden = BOOL
+default = CLASS ARG*
+# Dynamically look up the class and construct it using the args.
+# Arg types needed so far are string and char.
+# CLASS can also be the special keyword "macro".
+KEY = (CLASS ARG* (; CLASS ARG*)* ;?)?
+
+[mode-sets]
+NAME = NAME+
+
+[macros]
+NAME = (CLASS ARG* (; CLASS ARG*)* ;?)?
+
+
+Interesting Non-Terminals
+-------------------------
+
+# MOD will have "Mask" appended to it and then be treated
+# as a name in Gdk.ModifierType.
+# KEYBASE will be treated as a name in Gdk.Key.
+KEY := MOD* KEYBASE

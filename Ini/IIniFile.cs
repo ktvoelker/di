@@ -53,6 +53,18 @@ namespace Ini
 
         private delegate void AddProblem(string message);
 
+        public static IIniFile CreateEmptyIniFile()
+        {
+            IIniFile ini = null;
+            Parse(new StringReader(""), "", ref ini);
+            return ini;
+        }
+
+        public static IIniSection CreateEmptyIniSection()
+        {
+            return new IniSection();
+        }
+
         public static IList<Exception> Parse(string fileName, ref IIniFile dict)
         {
             return Parse(File.OpenText(fileName), fileName, ref dict);
