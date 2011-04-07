@@ -43,7 +43,7 @@ namespace Di.Controller
 
         private readonly IDictionary<string, IEnumerable<ICommand>> commandMacros = new Dictionary<string, IEnumerable<ICommand>>();
 
-        private static readonly Regex ModeSectionName = new Regex(@"^mode\s+(?<name>\w+)$");
+        private static readonly Regex ModeSectionName = new Regex(@"^mode\s+(?<name>\S+)$");
 
         private static readonly IDictionary<string, Gdk.ModifierType> ModifierNames = new Dictionary<string, Gdk.ModifierType>();
 
@@ -117,7 +117,7 @@ namespace Di.Controller
 
             // Load default window modes from config file
             Model.Config[""]["default-modes"].Tokenize().ForEach(k => WindowModes[k].ForEach(Window.DefaultMode.Add));
-        
+
             Windows = new BindList<Window>();
             if (Model.Buffers.HasAny())
             {
@@ -150,7 +150,7 @@ namespace Di.Controller
                 else
                 {
                     var types = Assembly.GetExecutingAssembly().GetTypes().
-                        Where(t => t.IsClass && t.IsSubclassOf(typeof(ICommand)) && t.Name == command).ToList();
+                        Where(t => t.IsClass && t.GetInterfaces().Contains(typeof(ICommand)) && t.Name == command).ToList();
                     if (types.Count == 0)
                     {
                         throw new ConfigProblem(string.Format("No command class named {0} found", command));

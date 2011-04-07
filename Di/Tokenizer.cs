@@ -25,7 +25,7 @@ namespace Di
 {
     public static class Tokenizer
     {
-        private static readonly Regex Pat = new Regex(@"^(?<token>\w+)(?:\s+(?<tail>.*))?$");
+        private static readonly Regex Pat = new Regex(@"^(?<token>\S+)(?:\s+(?<tail>.*))?$");
 
         public static IEnumerable<string> Tokenize(this string text)
         {

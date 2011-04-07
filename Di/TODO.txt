@@ -5,8 +5,6 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-Test the new configurable keybinding code
-
 Add commands:
     Move focus left or right
 
