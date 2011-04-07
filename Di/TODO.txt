@@ -5,8 +5,6 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-Write a config file that encodes all the existing keybindings
-
 Test the new configurable keybinding code
 
 Add commands:

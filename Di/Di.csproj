@@ -95,11 +95,13 @@
     <Folder Include="Controller\" />
     <Folder Include="View\" />
     <Folder Include="Model\Language\" />
+    <Folder Include="Examples\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TODO.txt" />
     <None Include="Conventions.txt" />
     <None Include="Configuration.txt" />
+    <None Include="Examples\di-config.ini.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ini\Ini.csproj">

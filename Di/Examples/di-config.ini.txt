@@ -1,0 +1,63 @@
+
+default-modes = command
+
+[macros]
+command = ClearWindowMode; AddWindowMode command
+
+[mode-sets]
+command = command-raw number common
+
+[mode command-raw]
+display-name = Command
+priority = 5
+i = ClearWindowMode; AddWindowMode insert
+h = Down
+t = Up
+d = Left
+n = Right
+Down = Down
+Up = Up
+Left = Left
+Right = Right
+o = OpenFile
+e = NewFile
+w = ClearWindowMode; AddWindowMode window
+
+[mode insert]
+display-name = Insert
+default = InsertKey
+Return = InsertChar \n
+Escape = DiscardInput; macro command
+BackSpace = Delete; Backspace
+Tab = Tab
+Down = Down
+Up = Up
+Left = Left
+Right = Right
+Delete = Delete; Right
+
+[mode number]
+display-name = Number
+hidden = yes
+0 = NumCommand
+1 = NumCommand
+2 = NumCommand
+3 = NumCommand
+4 = NumCommand
+5 = NumCommand
+6 = NumCommand
+7 = NumCommand
+8 = NumCommand
+9 = NumCommand
+
+[mode common]
+display-name = Common
+hidden = yes
+Escape = DiscardInput
+
+[mode window]
+display-name = Window
+Escape = macro command
+a = OpenFileInNewWindow; macro command
+c = CloseWindow; macro command
+e = NewFileInNewWindow; macro command
