@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -38,6 +38,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="Platform.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="View\Main.cs" />
     <Compile Include="Model\Main.cs" />
@@ -90,13 +91,7 @@
     <Reference Include="System">
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-    <Folder Include="Controller\" />
-    <Folder Include="View\" />
-    <Folder Include="Model\Language\" />
-    <Folder Include="Examples\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="TODO.txt" />
     <None Include="Conventions.txt" />

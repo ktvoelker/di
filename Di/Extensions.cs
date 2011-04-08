@@ -26,6 +26,11 @@ namespace Di
 {
     public static class Extensions
     {
+        public static IEnumerable<T> Force<T>(this IEnumerable<T> elems)
+        {
+            return elems.ToList();
+        }
+
         public static int Count<T>(this IEnumerable<T> elems)
         {
             int count = 0;
@@ -65,10 +70,10 @@ namespace Di
             {
                 yield break;
             }
-            T prev = list.Last();
-            foreach (var cur in list)
+            yield return new Tuple<T, T>(list.Last(), list.First());
+            for (int i = 1; i < list.Count; ++i)
             {
-                yield return new Tuple<T, T>(prev, cur);
+                yield return new Tuple<T, T>(list[i - 1], list[i]);
             }
         }
 

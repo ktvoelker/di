@@ -5,9 +5,6 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-Add commands:
-    Move focus left or right
-
 Add auto-save
     Flash a message in the status bar each time auto-save occurs
 
@@ -87,9 +84,6 @@ Support a system-wide configuration file.
     $ETC/di-config.ini on UNIX-like systems
     Where on Windows?
 
-Make the user-specific configuration file come from the correct place on windows, and make its
-name not start with a dot.
-
 Add a simpler mechanism for specifying menu modes in the configuration file.
 
 Allow mode-sets to include other mode-sets.
@@ -97,6 +91,8 @@ Allow mode-sets to include other mode-sets.
 Provide friendlier responses to user errors such as:
     Invalid syntax in configuration file
     No project file found
+
+Don't allow two instances of Di to run with the same project at the same time.
 
 
 Language-Oriented Improvements

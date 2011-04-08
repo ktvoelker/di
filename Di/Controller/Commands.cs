@@ -303,7 +303,7 @@ namespace Di.Controller.Command
         public override void Execute(Window b)
         {
             var focus = b.Controller.FocusedWindow;
-            b.Controller.Windows.WithPrevCircular().Where(pair => pair.Item2 == focus).ForEach(pair =>
+            b.Controller.Windows.WithPrevCircular().Where(pair => pair.Item2 == focus).Force().ForEach(pair =>
             {
                 focus.Value = pair.Item1;
             });
@@ -315,7 +315,7 @@ namespace Di.Controller.Command
         public override void Execute(Window b)
         {
             var focus = b.Controller.FocusedWindow;
-            b.Controller.Windows.WithNextCircular().Where(pair => pair.Item1 == focus).ForEach(pair =>
+            b.Controller.Windows.WithNextCircular().Where(pair => pair.Item1 == focus).Force().ForEach(pair =>
             {
                 focus.Value = pair.Item2;
             });

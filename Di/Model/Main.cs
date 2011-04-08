@@ -153,10 +153,9 @@ namespace Di.Model
         private Ini.IIniFile LoadConfig()
         {
             var files = new List<string>();
-            var home = Environment.GetEnvironmentVariable("HOME");
-            if (!string.IsNullOrWhiteSpace(home))
+            if (!string.IsNullOrWhiteSpace(Platform.UserConfigDirectory))
             {
-                files.Add(home + Path.DirectorySeparatorChar + "." + ConfigFileName);
+                files.Add(Platform.UserConfigDirectory.AppendFsPath(Platform.HiddenFilePrefix + ConfigFileName));
             }
             Ini.IIniFile ini = Ini.IniParser.CreateEmptyIniFile();
             foreach (var file in files)
