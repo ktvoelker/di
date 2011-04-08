@@ -302,10 +302,7 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            b.Controller.Windows.WithPrevCircular().Where(pair => pair.Item2 == b.Controller.Windows.Current).Force().ForEach(pair =>
-            {
-                b.Controller.Windows.Current = pair.Item1;
-            });
+            b.Controller.Windows.Previous();
         }
     }
 
@@ -313,10 +310,7 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            b.Controller.Windows.WithNextCircular().Where(pair => pair.Item1 == b.Controller.Windows.Current).Force().ForEach(pair =>
-            {
-                b.Controller.Windows.Current = pair.Item2;
-            });
+            b.Controller.Windows.Next();
         }
     }
 }
