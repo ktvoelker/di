@@ -32,18 +32,7 @@ namespace Di
 
     public abstract class Event<T> where T : class
     {
-        private struct PrioT : IComparable<PrioT>
-        {
-            public T elem;
-            public EventPriority prio;
-
-            public int CompareTo(PrioT other)
-            {
-                return prio < other.prio ? -1 : (prio > other.prio ? 1 : 0);
-            }
-        }
-
-        private SortedSet<PrioT> handlers = new SortedSet<PrioT>(new CompareComparable<PrioT>());
+        private PriorityQueue<T, EventPriority> handlers = new PriorityQueue<T, EventPriority>(p => (int) p);
 
         public T Handler
         {
@@ -58,7 +47,7 @@ namespace Di
             cancelled = false;
             foreach (var pt in handlers)
             {
-                f(pt.elem)();
+                f(pt)();
                 if (cancelled)
                 {
                     cancelled = false;
@@ -69,7 +58,7 @@ namespace Di
 
         public void Add(EventPriority p, T f)
         {
-            handlers.Add(new PrioT() { elem = f, prio = p });
+            handlers.Enqueue(f, p);
         }
 
         public void Add(T f)
@@ -79,7 +68,7 @@ namespace Di
 
         public void Remove(T f)
         {
-            handlers.RemoveWhere(pt => pt.elem == f);
+            handlers.Remove(f);
         }
 
         public void Cancel()

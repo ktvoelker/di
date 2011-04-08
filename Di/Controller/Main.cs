@@ -32,10 +32,7 @@ namespace Di.Controller
     {
         public readonly Model.Main Model;
 
-        public readonly BindList<Window> Windows;
-        public readonly BindList<Window>.Events WindowsEvents;
-
-        public readonly Bind<Window> FocusedWindow = new Bind<Window>(null);
+        public readonly BindListWithCurrent<Window> Windows;
 
         public readonly IDictionary<string, IEnumerable<WindowMode>> WindowModes;
 
@@ -118,14 +115,11 @@ namespace Di.Controller
             // Load default window modes from config file
             Model.Config[""]["default-modes"].Tokenize().ForEach(k => WindowModes[k].ForEach(Window.DefaultMode.Add));
 
-            Windows = new BindList<Window>();
+            Windows = new BindListWithCurrent<Window>();
             if (Model.Buffers.HasAny())
             {
-                var window = new Window(this, Model.Buffers.Item(0));
-                Windows.Add(window);
-                FocusedWindow.Value = window;
+                Windows.Add(new Window(this, Model.Buffers.Item(0)));
             }
-            WindowsEvents = Windows.Event;
         }
 
         private IEnumerable<ICommand> ParseCommandOrMacro(string text)

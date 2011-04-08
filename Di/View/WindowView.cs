@@ -69,11 +69,11 @@ namespace Di.View
             status = new Gtk.Statusbar();
             status.HasResizeGrip = false;
             status.Push(StatusbarMode, Window.CurrentMode.GetName());
-            Window.CurrentMode.Event.Changed += m =>
+            Window.CurrentMode.Changed.Add(() =>
             {
                 status.Pop(StatusbarMode);
                 status.Push(StatusbarMode, Window.CurrentMode.GetName());
-            };
+            });
             Window.Model.Changed += m =>
             {
                 textView.Buffer = m;
@@ -93,7 +93,7 @@ namespace Di.View
 
             textView.FocusInEvent += (object o, Gtk.FocusInEventArgs args) =>
             {
-                Window.Controller.FocusedWindow.Value = Window;
+                Window.Controller.Windows.Current = Window;
                 hlBox.ModifyBg(Gtk.StateType.Normal, HighlightColor);
             };
 

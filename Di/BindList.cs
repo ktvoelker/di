@@ -24,70 +24,31 @@ namespace Di
 {
     public class BindList<T> : IList<T>
     {
-        public delegate void ItemAdded(BindList<T> list, int index, T item);
-        public delegate void ItemRemoved(BindList<T> list, int index, T item);
-        public delegate void ListCleared(BindList<T> list);
-        public delegate void ListChanged(BindList<T> list);
-
-        private ListChanged changed;
-        private ItemAdded added;
-        private ItemRemoved removed;
-        private ListCleared cleared;
-
-        public class Events
-        {
-            BindList<T> list;
-
-            public event ItemAdded Added {
-                add { list.added += value; }
-                remove { list.added -= value; }
-            }
-
-            public event ItemRemoved Removed {
-                add { list.removed += value; }
-                remove { list.removed -= value; }
-            }
-
-            public event ListCleared Cleared {
-                add { list.cleared += value; }
-                remove { list.cleared -= value; }
-            }
-
-            public event ListChanged Changed {
-                add { list.changed += value; }
-                remove { list.changed -= value; }
-            }
-
-            public Events(BindList<T> _list)
-            {
-                list = _list;
-            }
-        }
-
-        public readonly Events Event;
+        public Event2<int, T> Added = new Event2<int, T>();
+        public Event2<int, T> Removed = new Event2<int, T>();
+        public Event0 Cleared = new Event0();
+        public Event0 Changed = new Event0();
 
         private readonly IList<T> list;
 
         public BindList()
         {
-            changed = l => { return; };
-            added = (l, i, t) => { changed(this); };
-            removed = (l, i, t) => { changed(this); };
-            cleared = l => { changed(this); };
-            Event = new Events(this);
+            Added.Add((i, t) => { Changed.Handler(); });
+            Removed.Add((i, t) => { Changed.Handler(); });
+            Cleared.Add(() => { Changed.Handler(); });
             list = new List<T>();
         }
 
         public void Add(T item)
         {
             list.Add(item);
-            added(this, list.Count - 1, item);
+            Added.Handler(list.Count - 1, item);
         }
 
         public void Clear()
         {
             list.Clear();
-            cleared(this);
+            Cleared.Handler();
         }
 
         public bool Contains(T item)
@@ -123,7 +84,7 @@ namespace Di
         public void Insert(int index, T item)
         {
             list.Insert(index, item);
-            added(this, index, item);
+            Added.Handler(index, item);
         }
 
         public bool IsReadOnly
@@ -138,8 +99,8 @@ namespace Di
             {
                 T old = list[index];
                 list[index] = value;
-                removed(this, index, old);
-                added(this, index, value);
+                Removed.Handler(index, old);
+                Added.Handler(index, value);
             }
         }
 
@@ -149,7 +110,7 @@ namespace Di
             bool result = list.Remove(item);
             if (result)
             {
-                removed(this, index, item);
+                Removed.Handler(index, item);
             }
             return result;
         }
@@ -158,7 +119,7 @@ namespace Di
         {
             T item = list[index];
             list.RemoveAt(index);
-            removed(this, index, item);
+            Removed.Handler(index, item);
         }
     }
 }

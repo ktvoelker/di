@@ -88,8 +88,9 @@ namespace Di.View
             var excessLabel = new Gtk.Statusbar();
             excessLabel.HasResizeGrip = false;
             PackStart(excessLabel, false, false, 0);
-            ctl.Candidates.Event.Changed += list =>
+            ctl.Candidates.Changed.Add(() =>
             {
+                var list = ctl.Candidates;
                 excessLabel.Pop(0);
                 if (list.Count > VisibleResults)
                 {
@@ -101,7 +102,7 @@ namespace Di.View
                     sb.AppendFormat("{0}. {1}\n", i + 1, ctl.CandidateToString(list[i]));
                 }
                 resultBox.Buffer.Text = sb.ToString();
-            };
+            });
         }
 
         [GLib.ConnectBefore]

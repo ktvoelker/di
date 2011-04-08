@@ -52,13 +52,13 @@ namespace Di.View
                 windowsBox.Add(view);
             }
             topLevelBox.PackStart(windowsBox, true, true, 0);
-            ctl.WindowsEvents.Added += (list, index, window) =>
+            ctl.Windows.Added.Add((index, window) =>
             {
                 var view = new WindowView(this, window);
                 windowsBox.Add(view);
                 windowsBox.ShowAll();
-            };
-            ctl.WindowsEvents.Removed += (list, index, window) =>
+            });
+            ctl.Windows.Removed.Add((index, window) =>
             {
                 var view = windowsBox.Children[index];
                 bool hadFocus = view.ContainsFocus();
@@ -67,15 +67,15 @@ namespace Di.View
                 {
                     windowsBox.Children[0].GiveFocus();
                 }
-            };
-            ctl.WindowsEvents.Cleared += list =>
+            });
+            ctl.Windows.Cleared.Add(() =>
             {
                 foreach (var view in windowsBox.Children)
                 {
                     windowsBox.Remove(view);
                 }
-            };
-            ctl.FocusedWindow.Changed += ApplyControllerFocus;
+            });
+            ctl.Windows.CurrentChanged.Add((idx, win) => ApplyControllerFocus(win));
             ctl.BeginTask.Add(task =>
             {
                 var sidebar = Sidebar.Create(task);
@@ -86,7 +86,7 @@ namespace Di.View
                     topLevelBox.Remove(sidebar);
                     if (hadFocus)
                     {
-                        ApplyControllerFocus(ctl.FocusedWindow);
+                        ApplyControllerFocus(ctl.Windows.Current);
                     }
                 });
                 sidebar.ShowAll();

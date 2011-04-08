@@ -211,7 +211,7 @@ namespace Di.Controller.Command
         {
             return file =>
             {
-                b.Controller.FocusedWindow.Value = b.Controller.FindOrCreateWindow(file);
+                b.Controller.Windows.Current = b.Controller.FindOrCreateWindow(file);
             };
         }
 
@@ -222,11 +222,11 @@ namespace Di.Controller.Command
                 var window = b.Controller.FindWindow(file);
                 if (window == null)
                 {
-                    b.Controller.FocusedWindow.Value.Model.Value = b.Controller.Model.FindOrCreateBuffer(file);
+                    b.Controller.Windows.Current.Model.Value = b.Controller.Model.FindOrCreateBuffer(file);
                 }
                 else
                 {
-                    b.Controller.FocusedWindow.Value = window;
+                    b.Controller.Windows.Current = window;
                 }
             };
         }
@@ -302,10 +302,9 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            var focus = b.Controller.FocusedWindow;
-            b.Controller.Windows.WithPrevCircular().Where(pair => pair.Item2 == focus).Force().ForEach(pair =>
+            b.Controller.Windows.WithPrevCircular().Where(pair => pair.Item2 == b.Controller.Windows.Current).Force().ForEach(pair =>
             {
-                focus.Value = pair.Item1;
+                b.Controller.Windows.Current = pair.Item1;
             });
         }
     }
@@ -314,10 +313,9 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            var focus = b.Controller.FocusedWindow;
-            b.Controller.Windows.WithNextCircular().Where(pair => pair.Item1 == focus).Force().ForEach(pair =>
+            b.Controller.Windows.WithNextCircular().Where(pair => pair.Item1 == b.Controller.Windows.Current).Force().ForEach(pair =>
             {
-                focus.Value = pair.Item2;
+                b.Controller.Windows.Current = pair.Item2;
             });
         }
     }
