@@ -19,6 +19,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.IO;
 using Gtk;
 namespace Di.Model
 {
@@ -26,19 +27,36 @@ namespace Di.Model
     {
         private static TextTagTable tags = new TextTagTable();
 
+        public bool HasUnsavedChanges
+        {
+            get;
+            private set;
+        }
+
         public File File
         {
             get;
             private set;
         }
 
+        private void Setup()
+        {
+            HasUnsavedChanges = false;
+            Changed += (o, a) =>
+            {
+                HasUnsavedChanges = true;
+            };
+        }
+
         public Buffer() : base(tags)
         {
+            Setup();
             File = null;
         }
 
         public Buffer(File _file) : base(tags)
         {
+            Setup();
             File = _file;
             var input = File.Info.OpenText();
             InsertAtCursor(input.ReadToEnd());
@@ -49,6 +67,17 @@ namespace Di.Model
         public void InsertAtCursor(char c)
         {
             InsertAtCursor(string.Format("{0}", c));
+        }
+
+        public void Save()
+        {
+            if (HasUnsavedChanges && File != null)
+            {
+                var output = new StreamWriter(File.Info.Open(FileMode.Truncate, FileAccess.Write));
+                output.Write(Text);
+                output.Close();
+                HasUnsavedChanges = false;
+            }
         }
     }
 }

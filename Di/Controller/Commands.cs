@@ -313,5 +313,13 @@ namespace Di.Controller.Command
             b.Controller.Windows.Next();
         }
     }
+
+    public class Save : LoneCommand
+    {
+        public override void Execute(Window b)
+        {
+            b.Controller.Save();
+        }
+    }
 }
 

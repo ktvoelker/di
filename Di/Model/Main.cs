@@ -167,6 +167,11 @@ namespace Di.Model
             }
             return ini;
         }
+
+        public void Save()
+        {
+            Buffers.ForEach(b => b.Save());
+        }
     }
 }
 

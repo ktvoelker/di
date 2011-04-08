@@ -39,6 +39,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="BindListWithCurrent.cs" />
+    <Compile Include="Controller\Idle.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Program.cs" />

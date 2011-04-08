@@ -5,11 +5,17 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-Add auto-save
-    Flash a message in the status bar each time auto-save occurs
+Don't start with an empty, fileless buffer
+
+Keep a flag in each Buffer indicating whether or not it has changed since the last save
+	Show this flag in the status bar of each visible buffer
 
 Add a quit command which triggers a final auto-save
     Hook this same command up to handle the kill signal
+
+Store session state alongside the controlling di-project.ini file
+    Window layout and position in each window
+    Undo and redo stacks
 
 Keep a list of project files sorted by most-recently-visible
     Prefer the most-recently-visible file over other matches
@@ -32,10 +38,6 @@ Add support for "undo"
     Call BeginUserAction and EndUserAction inside the key press handler
 
     Have event handlers which create chunks and sequence them automatically
-
-Store session state alongside the controlling di-project.ini file
-    Window layout and position in each window
-    Undo and redo stacks
 
 Add support for the pasting stack
     Visual support
@@ -88,9 +90,10 @@ Add a simpler mechanism for specifying menu modes in the configuration file.
 
 Allow mode-sets to include other mode-sets.
 
-Provide friendlier responses to user errors such as:
+Provide friendlier responses to errors such as:
     Invalid syntax in configuration file
     No project file found
+	I/O errors
 
 Don't allow two instances of Di to run with the same project at the same time.
 

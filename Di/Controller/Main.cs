@@ -24,6 +24,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Gdk;
 
 namespace Di.Controller
@@ -31,6 +32,8 @@ namespace Di.Controller
     public partial class Main
     {
         public readonly Model.Main Model;
+
+        public readonly IdleHandler Idle;
 
         public readonly BindListWithCurrent<Window> Windows;
 
@@ -57,6 +60,7 @@ namespace Di.Controller
         public Main(Model.Main m)
         {
             Model = m;
+            Idle = new IdleHandler(this);
             
             WindowModes = new Dictionary<string, IEnumerable<WindowMode>>();
 
@@ -120,6 +124,12 @@ namespace Di.Controller
             {
                 Windows.Add(new Window(this, Model.Buffers.Item(0)));
             }
+        }
+
+        public void Save()
+        {
+            Idle.LastSave = DateTime.Now;
+            new Thread(Model.Save) { IsBackground = true }.Start();
         }
 
         private IEnumerable<ICommand> ParseCommandOrMacro(string text)
