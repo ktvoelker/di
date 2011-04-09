@@ -24,10 +24,12 @@ namespace Di
 {
     public enum EventPriority
     {
+        Max,
         ControllerHigh,
         ControllerLow,
         View,
-        Default
+        Default,
+        Min
     }
 
     public abstract class Event<T> where T : class

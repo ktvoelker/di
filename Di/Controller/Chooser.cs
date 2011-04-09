@@ -37,12 +37,19 @@ namespace Di.Controller
             set;
         }
 
-        public Chooser(string _message)
+        public Chooser(string _message, bool allowEscape)
         {
             Message = _message;
             Candidates = new BindList<T>();
             Choose.Add(EventPriority.ControllerLow, choice => End.Handler());
-            Cancel.Add(() => End.Handler());
+            if (allowEscape)
+            {
+                Cancel.Add(() => End.Handler());
+            }
+            else
+            {
+                Cancel.Add(EventPriority.Max, () => { });
+            }
         }
 
         public abstract string CandidateToString(T candidate);

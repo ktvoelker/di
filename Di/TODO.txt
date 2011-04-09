@@ -5,13 +5,11 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-Don't start with an empty, fileless buffer
+Add a quit command which triggers a final auto-save
+    Hook this same command up to handle the kill signal
 
 Keep a flag in each Buffer indicating whether or not it has changed since the last save
 	Show this flag in the status bar of each visible buffer
-
-Add a quit command which triggers a final auto-save
-    Hook this same command up to handle the kill signal
 
 Store session state alongside the controlling di-project.ini file
     Window layout and position in each window

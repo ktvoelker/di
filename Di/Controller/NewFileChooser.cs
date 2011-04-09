@@ -47,7 +47,7 @@ namespace Di.Controller
             }
         }
 
-        public NewFileChooser(Model.Directory _dir) : base("Name the new file")
+        public NewFileChooser(Model.Directory _dir) : base("Name the new file", true)
         {
             dir = _dir;
             Choose.Add(EventPriority.ControllerHigh, ignore =>

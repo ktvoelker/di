@@ -47,6 +47,8 @@ namespace Di.Controller
 
         private static readonly IDictionary<string, Gdk.ModifierType> ModifierNames = new Dictionary<string, Gdk.ModifierType>();
 
+        public readonly Event0 Ready = new Event0();
+
         static Main()
         {
             ModifierNames.Add("C", Gdk.ModifierType.ControlMask);
@@ -124,6 +126,20 @@ namespace Di.Controller
             {
                 Windows.Add(new Window(this, Model.Buffers.Item(0)));
             }
+
+            Action openFile = () => Command.FileCommand.OpenFile(this, Command.FileCommand.InNewWindow, false);
+
+            // Open a file at startup (but it won't work until the view has attached itself to our events)
+            Ready.Add(openFile);
+
+            // Open a file whenever all other files have been closed
+            Windows.Changed.Add(() =>
+            {
+                if (Windows.Count == 0)
+                {
+                    openFile();
+                }
+            });
         }
 
         public void Save()
@@ -221,21 +237,14 @@ namespace Di.Controller
             return text.Split(';').Select(ParseCommandOrMacro).Flatten();
         }
 
-        private Window CreateWindow()
-        {
-            var window = new Window(this, Model.CreateBuffer());
-            Windows.Add(window);
-            return window;
-        }
-
-        private Window CreateWindow(Di.Model.File file)
+        private Window CreateWindow(Model.File file)
         {
             var window = new Window(this, Model.FindOrCreateBuffer(file));
             Windows.Add(window);
             return window;
         }
 
-        public Window FindWindow(Di.Model.File file)
+        public Window FindWindow(Model.File file)
         {
             foreach (var window in Windows)
             {
@@ -247,7 +256,7 @@ namespace Di.Controller
             return null;
         }
 
-        public Window FindOrCreateWindow(Di.Model.File file)
+        public Window FindOrCreateWindow(Model.File file)
         {
             var window = FindWindow(file);
             return window == null ? CreateWindow(file) : window;

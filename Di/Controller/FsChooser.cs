@@ -46,7 +46,7 @@ namespace Di.Controller
             }
         }
 
-        public FsChooser(Func<IEnumerable<T>> _getCandidates, string _message) : base(_message)
+        public FsChooser(Func<IEnumerable<T>> _getCandidates, string _message, bool _allowEscape) : base(_message, _allowEscape)
         {
             getCandidates = _getCandidates;
             query = new Di.Model.FsQuery<T>("");

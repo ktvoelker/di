@@ -207,54 +207,54 @@ namespace Di.Controller.Command
 
     public abstract class FileCommand : LoneCommand
     {
-        public static Action<Model.File> InNewWindow(Window b)
+        public static Action<Model.File> InNewWindow(Main ctl)
         {
             return file =>
             {
-                b.Controller.Windows.Current = b.Controller.FindOrCreateWindow(file);
+                ctl.Windows.Current = ctl.FindOrCreateWindow(file);
             };
         }
 
-        public static Action<Model.File> InFocusedWindow(Window b)
+        public static Action<Model.File> InFocusedWindow(Main ctl)
         {
             return file =>
             {
-                var window = b.Controller.FindWindow(file);
+                var window = ctl.FindWindow(file);
                 if (window == null)
                 {
-                    b.Controller.Windows.Current.Model.Value = b.Controller.Model.FindOrCreateBuffer(file);
+                    ctl.Windows.Current.Model.Value = ctl.Model.FindOrCreateBuffer(file);
                 }
                 else
                 {
-                    b.Controller.Windows.Current = window;
+                    ctl.Windows.Current = window;
                 }
             };
         }
 
-        public static void OpenFile(Window b, Func<Window, Action<Model.File>> handler)
+        public static void OpenFile(Main ctl, Func<Main, Action<Model.File>> handler, bool allowEscape)
         {
-            var chooser = new FsChooser<Model.File>(() => b.Controller.Model.Files, "Choose a file");
-            chooser.Choose.Add(handler(b));
-            b.Controller.BeginTask.Handler(chooser);
+            var chooser = new FsChooser<Model.File>(() => ctl.Model.Files, "Choose a file", allowEscape);
+            chooser.Choose.Add(handler(ctl));
+            ctl.BeginTask.Handler(chooser);
         }
 
-        public static void NewFileInDirectory(Window b, Func<Window, Action<Model.File>> fileHandler, Model.Directory dir, string initDirQuery)
+        public static void NewFileInDirectory(Main ctl, Func<Main, Action<Model.File>> fileHandler, Model.Directory dir, string initDirQuery)
         {
             var fileChooser = new NewFileChooser(dir);
-            fileChooser.ChooseFile.Add(fileHandler(b));
+            fileChooser.ChooseFile.Add(fileHandler(ctl));
             fileChooser.Cancel.Add(() =>
             {
-                NewFile(b, fileHandler, initDirQuery);
+                NewFile(ctl, fileHandler, initDirQuery);
             });
-            b.Controller.BeginTask.Handler(fileChooser);
+            ctl.BeginTask.Handler(fileChooser);
         }
 
-        public static void NewFile(Window b, Func<Window, Action<Model.File>> fileHandler, string initDirQuery)
+        public static void NewFile(Main ctl, Func<Main, Action<Model.File>> fileHandler, string initDirQuery)
         {
-            var dirChooser = new FsChooser<Model.Directory>(() => b.Controller.Model.Directories, "Choose a directory");
-            dirChooser.Choose.Add(EventPriority.ControllerHigh, dir => NewFileInDirectory(b, fileHandler, dir, dirChooser.Query));
+            var dirChooser = new FsChooser<Model.Directory>(() => ctl.Model.Directories, "Choose a directory", true);
+            dirChooser.Choose.Add(EventPriority.ControllerHigh, dir => NewFileInDirectory(ctl, fileHandler, dir, dirChooser.Query));
             dirChooser.Query = initDirQuery;
-            b.Controller.BeginTask.Handler(dirChooser);
+            ctl.BeginTask.Handler(dirChooser);
         }
     }
 
@@ -262,7 +262,7 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            OpenFile(b, InNewWindow);
+            OpenFile(b.Controller, InNewWindow, true);
         }
     }
 
@@ -270,7 +270,7 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            OpenFile(b, InFocusedWindow);
+            OpenFile(b.Controller, InFocusedWindow, true);
         }
     }
 
@@ -278,7 +278,7 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            NewFile(b, InNewWindow, "");
+            NewFile(b.Controller, InNewWindow, "");
         }
     }
 
@@ -286,7 +286,7 @@ namespace Di.Controller.Command
     {
         public override void Execute(Window b)
         {
-            NewFile(b, InFocusedWindow, "");
+            NewFile(b.Controller, InFocusedWindow, "");
         }
     }
 

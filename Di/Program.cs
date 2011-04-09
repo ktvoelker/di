@@ -46,7 +46,11 @@ namespace Di
                 rootPath = args[0];
             }
             Application.Init();
-            new View.Main(new Controller.Main(new Model.Main(new DirectoryInfo(rootPath)))).ShowAll();
+            var model = new Model.Main(new DirectoryInfo(rootPath));
+            var ctl = new Controller.Main(model);
+            var view = new View.Main(ctl);
+            view.ShowAll();
+            ctl.Ready.Handler();
             Application.Run();
         }
     }

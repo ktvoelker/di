@@ -115,15 +115,7 @@ namespace Di.Model
             Directories = new ReadOnlyCollection<Directory>(directories);
 
             buffers = new BindList<Buffer>();
-            buffers.Add(new Buffer());
             Buffers = new ReadOnlyCollection<Buffer>(buffers);
-        }
-
-        public Buffer CreateBuffer()
-        {
-            var buffer = new Buffer();
-            buffers.Add(buffer);
-            return buffer;
         }
 
         private Buffer CreateBuffer(File file)
