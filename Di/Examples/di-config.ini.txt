@@ -22,6 +22,14 @@ Right = Right
 o = OpenFile
 e = NewFile
 w = ClearWindowMode; AddWindowMode window
+q = ClearWindowMode; AddWindowMode quit
+a = Save
+
+[mode quit]
+display-name = Quit?
+priority = 100
+default = macro command
+q = Quit
 
 [mode insert]
 display-name = Insert

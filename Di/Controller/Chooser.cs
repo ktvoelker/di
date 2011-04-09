@@ -37,7 +37,7 @@ namespace Di.Controller
             set;
         }
 
-        public Chooser(string _message, bool allowEscape)
+        public Chooser(Main ctl, string _message, bool allowEscape)
         {
             Message = _message;
             Candidates = new BindList<T>();
@@ -48,7 +48,7 @@ namespace Di.Controller
             }
             else
             {
-                Cancel.Add(EventPriority.Max, () => { });
+                Cancel.Add(EventPriority.Max, ctl.Quit);
             }
         }
 

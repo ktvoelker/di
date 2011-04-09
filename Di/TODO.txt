@@ -5,9 +5,6 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-Add a quit command which triggers a final auto-save
-    Hook this same command up to handle the kill signal
-
 Keep a flag in each Buffer indicating whether or not it has changed since the last save
 	Show this flag in the status bar of each visible buffer
 
@@ -46,6 +43,30 @@ Add support for the pasting stack
     Add to session
 
 Add more basic editing and movement commands
+
+Add configurable end-of-line character handling
+	Option 1: Detect and mimic the end-of-line characters found in a file
+	Options 2-4: always use \n, \r\n, or whatever that old MacOS one is
+
+Add configurable tab support
+
+Both the line ending and tab configurations are evidence that we need to allow
+a project-specific config file that overrides the user config file. Add that.
+
+	But first consider alternatives such as merging the two configurations
+	or simply adding specific support for certain bits of configuration to
+	appear in the project config.
+
+	Merging the configs clearly doesn't make sense for all keys (like project name).
+
+	Allowing an enumerated subset to appear in the project config would be good,
+	since some config options might be used nefariously if distributed with a
+	project.
+
+		Perhaps we should add support for "filtering" in the INI module:
+			Give it two IIniFiles A and B.
+			The result should be B intersect A (matching section names and keys) with the
+			values taken from B.
 
 
 Basic Usability Improvements
@@ -94,6 +115,8 @@ Provide friendlier responses to errors such as:
 	I/O errors
 
 Don't allow two instances of Di to run with the same project at the same time.
+
+Add support for numeric escapes in parsing char-valued arguments to commands in the config.
 
 
 Language-Oriented Improvements

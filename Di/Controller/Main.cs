@@ -148,6 +148,12 @@ namespace Di.Controller
             new Thread(Model.Save) { IsBackground = true }.Start();
         }
 
+        public void Quit()
+        {
+            Save();
+            Gtk.Application.Quit();
+        }
+
         private IEnumerable<ICommand> ParseCommandOrMacro(string text)
         {
             var tokens = text.Tokenize();
@@ -220,6 +226,18 @@ namespace Di.Controller
             }
             else if (type == typeof(char))
             {
+                if (text.Length == 2 && text[0] == '\\')
+                {
+                    switch (text[1])
+                    {
+                        case 'n': return '\n';
+                        case 'r': return '\r';
+                        case 'f': return '\f';
+                        case 'v': return '\v';
+                        case 't': return '\t';
+                        case '\\': return '\\';
+                    }
+                }
                 return char.Parse(text);
             }
             else if (type == typeof(int))

@@ -108,7 +108,7 @@ namespace Di.View
 
         protected void OnDeleteEvent(object sender, Gtk.DeleteEventArgs a)
         {
-            Gtk.Application.Quit();
+            ctl.Quit();
             a.RetVal = true;
         }
     }

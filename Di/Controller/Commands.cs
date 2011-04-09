@@ -233,14 +233,14 @@ namespace Di.Controller.Command
 
         public static void OpenFile(Main ctl, Func<Main, Action<Model.File>> handler, bool allowEscape)
         {
-            var chooser = new FsChooser<Model.File>(() => ctl.Model.Files, "Choose a file", allowEscape);
+            var chooser = new FsChooser<Model.File>(ctl, () => ctl.Model.Files, "Choose a file", allowEscape);
             chooser.Choose.Add(handler(ctl));
             ctl.BeginTask.Handler(chooser);
         }
 
         public static void NewFileInDirectory(Main ctl, Func<Main, Action<Model.File>> fileHandler, Model.Directory dir, string initDirQuery)
         {
-            var fileChooser = new NewFileChooser(dir);
+            var fileChooser = new NewFileChooser(ctl, dir);
             fileChooser.ChooseFile.Add(fileHandler(ctl));
             fileChooser.Cancel.Add(() =>
             {
@@ -251,7 +251,7 @@ namespace Di.Controller.Command
 
         public static void NewFile(Main ctl, Func<Main, Action<Model.File>> fileHandler, string initDirQuery)
         {
-            var dirChooser = new FsChooser<Model.Directory>(() => ctl.Model.Directories, "Choose a directory", true);
+            var dirChooser = new FsChooser<Model.Directory>(ctl, () => ctl.Model.Directories, "Choose a directory", true);
             dirChooser.Choose.Add(EventPriority.ControllerHigh, dir => NewFileInDirectory(ctl, fileHandler, dir, dirChooser.Query));
             dirChooser.Query = initDirQuery;
             ctl.BeginTask.Handler(dirChooser);
@@ -319,6 +319,14 @@ namespace Di.Controller.Command
         public override void Execute(Window b)
         {
             b.Controller.Save();
+        }
+    }
+
+    public class Quit : LoneCommand
+    {
+        public override void Execute(Window b)
+        {
+            b.Controller.Quit();
         }
     }
 }
