@@ -50,6 +50,7 @@ namespace Di.Controller
         {
             getCandidates = _getCandidates;
             query = new Di.Model.FsQuery<T>("");
+            queryString = "";
             Update();
         }
 
