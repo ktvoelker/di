@@ -27,10 +27,12 @@ namespace Di.View
         public readonly Main View;
 
         private const uint StatusbarMode = 1;
+        private const uint StatusbarSaved = 2;
+        private const uint StatusbarName = 3;
 
         public readonly Controller.Window Window;
         private Gtk.ScrolledWindow scroll;
-        private Gtk.Statusbar status;
+        private MultiStatusbar status;
         private WindowTextView textView;
 
         public Gtk.Widget FocusWidget
@@ -66,19 +68,17 @@ namespace Di.View
                 textView.ScrollToIter(i.GtkIter, 0, false, 0, 0);
             });
             topLevelBox.PackStart(scroll, true, true, 0);
-            status = new Gtk.Statusbar();
-            status.HasResizeGrip = false;
-            status.Push(StatusbarMode, Window.CurrentMode.GetName());
-            Window.CurrentMode.Changed.Add(() =>
-            {
-                status.Pop(StatusbarMode);
-                status.Push(StatusbarMode, Window.CurrentMode.GetName());
-            });
+
+            status = new MultiStatusbar();
+            status.Add(StatusbarItem.Create(100, () => Window.CurrentMode.GetName(), Window.CurrentMode.Changed));
+            status.Add(StatusbarItem.Create(50, Window.Model.Value.HasUnsavedChanges, b => b ? "" : "Saved"));
+            status.AddLast(StatusbarItem.Create(400, Window.Model.Value.File.ProjectRelativeFullName()));
+            topLevelBox.PackStart(status, false, false, 0);
+
             Window.Model.Changed += m =>
             {
                 textView.Buffer = m;
             };
-            topLevelBox.PackStart(status, false, false, 0);
 
             // Wrap the topLevelBox with borders on the left and right
             var hlBox = new Gtk.DrawingArea();

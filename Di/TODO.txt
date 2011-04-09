@@ -5,9 +5,6 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-Keep a flag in each Buffer indicating whether or not it has changed since the last save
-	Show this flag in the status bar of each visible buffer
-
 Store session state alongside the controlling di-project.ini file
     Window layout and position in each window
     Undo and redo stacks

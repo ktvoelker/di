@@ -40,6 +40,8 @@
   <ItemGroup>
     <Compile Include="BindListWithCurrent.cs" />
     <Compile Include="Controller\Idle.cs" />
+    <Compile Include="Either.cs" />
+    <Compile Include="MultiStatusbar.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Program.cs" />

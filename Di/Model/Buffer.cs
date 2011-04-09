@@ -27,11 +27,7 @@ namespace Di.Model
     {
         private static TextTagTable tags = new TextTagTable();
 
-        public bool HasUnsavedChanges
-        {
-            get;
-            private set;
-        }
+        public readonly Bind<bool> HasUnsavedChanges = new Bind<bool>(false);
 
         public File File
         {
@@ -39,29 +35,17 @@ namespace Di.Model
             private set;
         }
 
-        private void Setup()
-        {
-            HasUnsavedChanges = false;
-            Changed += (o, a) =>
-            {
-                HasUnsavedChanges = true;
-            };
-        }
-
-        public Buffer() : base(tags)
-        {
-            Setup();
-            File = null;
-        }
-
         public Buffer(File _file) : base(tags)
         {
-            Setup();
             File = _file;
             var input = File.Info.OpenText();
             InsertAtCursor(input.ReadToEnd());
             input.Close();
             PlaceCursor(GetIterAtOffset(0));
+            Changed += (o, a) =>
+            {
+                HasUnsavedChanges.Value = true;
+            };
         }
 
         public void InsertAtCursor(char c)
@@ -76,7 +60,7 @@ namespace Di.Model
                 var output = new StreamWriter(File.Info.Open(FileMode.Truncate, FileAccess.Write));
                 output.Write(Text);
                 output.Close();
-                HasUnsavedChanges = false;
+                HasUnsavedChanges.Value = false;
             }
         }
     }

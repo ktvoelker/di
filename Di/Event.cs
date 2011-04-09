@@ -32,9 +32,20 @@ namespace Di
         Min
     }
 
-    public abstract class Event<T> where T : class
+    public interface IEvent
     {
-        private PriorityQueue<T, EventPriority> handlers = new PriorityQueue<T, EventPriority>(p => (int) p);
+        void AddNullary(EventPriority p, Action a);
+
+        void AddNullary(Action a);
+
+        void RemoveNullary(Action f);
+
+        void Cancel();
+    }
+
+    public abstract class Event<T> : IEvent where T : class
+    {
+        private PriorityQueue<Either<Action, T>, EventPriority> handlers = new PriorityQueue<Either<Action, T>, EventPriority>(p => (int) p);
 
         public T Handler
         {
@@ -49,7 +60,7 @@ namespace Di
             cancelled = false;
             foreach (var pt in handlers)
             {
-                f(pt)();
+                pt.Apply(x => x, f)();
                 if (cancelled)
                 {
                     cancelled = false;
@@ -60,7 +71,7 @@ namespace Di
 
         public void Add(EventPriority p, T f)
         {
-            handlers.Enqueue(f, p);
+            handlers.Enqueue(new Right<Action, T>(f), p);
         }
 
         public void Add(T f)
@@ -68,9 +79,24 @@ namespace Di
             Add(EventPriority.Default, f);
         }
 
+        public void AddNullary(EventPriority p, Action a)
+        {
+            handlers.Enqueue(new Left<Action, T>(a), p);
+        }
+
+        public void AddNullary(Action a)
+        {
+            AddNullary(EventPriority.Default, a);
+        }
+
         public void Remove(T f)
         {
-            handlers.Remove(f);
+            handlers.Remove(new Right<Action, T>(f));
+        }
+
+        public void RemoveNullary(Action f)
+        {
+            handlers.Remove(new Left<Action, T>(f));
         }
 
         public void Cancel()
