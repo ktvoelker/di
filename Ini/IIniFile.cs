@@ -77,8 +77,11 @@ namespace Ini
                 dict = new IniFile();
             }
             string line = null;
-            var curSection = new IniSection();
-            dict[""] = curSection;
+            if (!dict.ContainsKey(""))
+            {
+                dict[""] = new IniSection();
+            }
+            var curSection = dict[""];
             var problems = new List<Exception>();
             uint lineNumber = 1;
             AddProblem addProblem = message =>
@@ -99,8 +102,11 @@ namespace Ini
                         addProblem("Missing right bracket");
                         line = line.Substring(1, line.Length - 1);
                     }
-                    curSection = new IniSection();
-                    dict[line] = curSection;
+                    if (!dict.ContainsKey(line))
+                    {
+                        dict[line] = new IniSection();
+                    }
+                    curSection = dict[line];
                 }
                 else if (line.Length > 0)
                 {

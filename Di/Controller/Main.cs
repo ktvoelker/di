@@ -49,6 +49,8 @@ namespace Di.Controller
 
         public readonly Event0 Ready = new Event0();
 
+        public readonly Event0 Saving = new Event0();
+
         static Main()
         {
             ModifierNames.Add("C", Gdk.ModifierType.ControlMask);
@@ -80,6 +82,7 @@ namespace Di.Controller
                 {
                     var modeKey = match.Groups["name"].Value;
                     var mode = new WindowMode();
+                    mode.Key = modeKey;
                     mode.Name = section.Value.GetWithDefault<string, string>("display-name", modeKey);
                     mode.Hidden = section.Value.GetBoolWithDefault("hidden", false);
                     var map = new KeyMap();
@@ -146,6 +149,7 @@ namespace Di.Controller
         {
             Idle.LastSave = DateTime.Now;
             new Thread(Model.Save) { IsBackground = true }.Start();
+            Saving.Handler();
         }
 
         public void Quit()

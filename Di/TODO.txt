@@ -5,9 +5,17 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-Store session state alongside the controlling di-project.ini file
-    Window layout and position in each window
-    Undo and redo stacks
+Fix known bugs with sessions
+
+    Don't show the file chooser at startup if there are windows open
+
+    Don't add modes to a window that it already has
+        Ideally, turn the mode list into a set
+            If that works, turn the corresponding session list into a set, too
+
+    Change the quit command binding to first remove the quit mode from the window
+
+Make sure that pressing the close button triggers a save
 
 Keep a list of project files sorted by most-recently-visible
     Prefer the most-recently-visible file over other matches
@@ -30,6 +38,8 @@ Add support for "undo"
     Call BeginUserAction and EndUserAction inside the key press handler
 
     Have event handlers which create chunks and sequence them automatically
+
+    Store in the session state
 
 Add support for the pasting stack
     Visual support

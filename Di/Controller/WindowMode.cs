@@ -24,6 +24,12 @@ namespace Di.Controller
 {
     public class WindowMode
     {
+        public string Key
+        {
+            get;
+            set;
+        }
+
         public string Name
         {
             get;

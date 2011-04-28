@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -84,6 +84,7 @@
     <Compile Include="Exception.cs" />
     <Compile Include="CompareComparable.cs" />
     <Compile Include="Tokenizer.cs" />
+    <Compile Include="Session\Session.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
@@ -108,5 +109,9 @@
       <Project>{8619C6C2-C719-4371-9F61-10A735FB8B99}</Project>
       <Name>Ini</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Session\" />
+    <Folder Include="Controller\" />
   </ItemGroup>
 </Project>

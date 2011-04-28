@@ -59,12 +59,6 @@ namespace Di
             }
         }
 
-        public bool ExcludeExecutableFiles
-        {
-            get;
-            set;
-        }
-
         public FileMatcher()
         {
         }

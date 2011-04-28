@@ -27,8 +27,9 @@ namespace Di.Model
 {
     public class Main
     {
-        public const string ConfigFileName = "di-config.ini";
-        public const string ProjectMetaFileName = "di-project.ini";
+        private const string ConfigFileName = "di-config.ini";
+        private const string ProjectMetaFileName = "di-project.ini";
+        private const string SessionFileName = "di-session.bin";
 
         /// <summary>
         /// RootInfo is used by Directory to know where the root is before the Directory
@@ -45,6 +46,11 @@ namespace Di.Model
         public string Name
         {
             get { return meta[""].GetWithDefault("name", "Unnamed Project"); }
+        }
+
+        public FileInfo SessionFile
+        {
+            get { return new FileInfo(RootInfo.FullName.AppendFsPath(Platform.HiddenFilePrefix + SessionFileName)); }
         }
 
         private IList<File> files;
@@ -86,7 +92,6 @@ namespace Di.Model
             RootInfo = _dir;
             Ini.IniParser.Parse(Path.Combine(RootInfo.FullName, ProjectMetaFileName), ref meta);
             Matcher = new FileMatcher();
-            Matcher.ExcludeExecutableFiles = meta[""].GetBoolWithDefault("exclude-exec", true);
             if (meta.ContainsKey("include"))
             {
                 foreach (var i in meta["include"].Keys)
