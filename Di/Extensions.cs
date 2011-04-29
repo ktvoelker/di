@@ -200,7 +200,7 @@ namespace Di
 
         public static string GetName(this IEnumerable<Controller.WindowMode> mode)
         {
-            return string.Join("-", mode.Where(m => !m.Hidden).OrderByDescending(m => m.KeyMap.Priority).Select(m => m.Name).ToArray());
+            return string.Join("-", mode.Where(m => !m.Hidden).OrderByDescending(m => m.Priority).Select(m => m.Name).ToArray());
         }
 		
 		public static Gdk.Size GetSize(this Pango.FontDescription font)

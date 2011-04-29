@@ -42,6 +42,12 @@ namespace Di.Controller
             set;
         }
 
+        public sbyte Priority
+        {
+            get;
+            set;
+        }
+
         public KeyMap KeyMap
         {
             get;

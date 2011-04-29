@@ -53,41 +53,72 @@ namespace Di.Controller
         }
     }
 
+    public class PrioCommand
+    {
+        public readonly sbyte Priority;
+
+        public readonly IEC Command;
+
+        public PrioCommand(sbyte p, IEC c)
+        {
+            Priority = p;
+            Command = c;
+        }
+
+        public static PrioCommand operator +(PrioCommand a, PrioCommand b)
+        {
+            if (a == null && b == null)
+            {
+                return null;
+            }
+            else if (a == null)
+            {
+                return b;
+            }
+            else if (b == null)
+            {
+                return a;
+            }
+            else if (a.Priority > b.Priority)
+            {
+                return a;
+            }
+            else
+            {
+                return b;
+            }
+        }
+    }
+
     public class KeyMap
     {
-        public sbyte Priority
+        public PrioCommand Default
         {
             get;
             set;
         }
 
-        public IEC Default
-        {
-            get;
-            set;
-        }
-
-        private IDictionary<KeyInput, IEC> _map;
+        private IDictionary<KeyInput, PrioCommand> _map;
 
         public KeyMap()
         {
-            Default = new ICommand[] { new Command.Ignore() };
-            _map = new Dictionary<KeyInput, IEC>();
+            Default = new PrioCommand(sbyte.MinValue, new ICommand[] { new Command.Ignore() });
+            _map = new Dictionary<KeyInput, PrioCommand>();
         }
 
-        public void SetDefault(IEC commands)
+        public void SetDefault(sbyte priority, IEC commands)
         {
-            Default = commands;
+            Default = new PrioCommand(priority, commands);
         }
 
-        public void Add(Key _base, ModifierType _modifiers, IEC commands)
+        public void Add(Key _base, ModifierType _modifiers, sbyte priority, IEC command)
         {
-            _map[new KeyInput(_base, _modifiers)] = commands;
+            _map[new KeyInput(_base, _modifiers)] = new PrioCommand(priority, command);
         }
 
         public IEC Lookup(KeyInput key)
         {
-            return _map.ContainsKey(key) ? _map[key] : Default;
+            return _map.ContainsKey(key) ? _map[key].Command : Default.Command;
         }
 
         public IEC Lookup(EventKey e)
@@ -97,17 +128,9 @@ namespace Di.Controller
 
         public static KeyMap operator +(KeyMap a, KeyMap b)
         {
-            if (a.Priority < b.Priority)
-            {
-                var tmp = b;
-                b = a;
-                a = tmp;
-            }
             KeyMap result = new KeyMap();
-            result.Priority = a.Priority;
-            result.Default = a.Default;
-            a._map.ForEach(kv => result._map.Add(kv.Key, kv.Value));
-            b._map.Where(kv => !a._map.ContainsKey(kv.Key)).ForEach(kv => result._map.Add(kv.Key, kv.Value));
+            result.Default = a.Default + b.Default;
+            a._map.Keys.Union(b._map.Keys).ForEach(k => result._map[k] = a._map.GetWithDefault(k, null) + b._map.GetWithDefault(k, null));
             return result;
         }
     }

@@ -86,13 +86,15 @@ namespace Di.Controller
                     mode.Name = section.Value.GetWithDefault<string, string>("display-name", modeKey);
                     mode.Hidden = section.Value.GetBoolWithDefault("hidden", false);
                     var map = new KeyMap();
+                    sbyte prio = 0;
                     if (section.Value.ContainsKey("priority"))
                     {
-                        map.Priority = sbyte.Parse(section.Value["priority"]);
+                        prio = sbyte.Parse(section.Value["priority"]);
+                        mode.Priority = prio;
                     }
                     if (section.Value.ContainsKey("default"))
                     {
-                        map.SetDefault(ParseCommands(section.Value["default"]));
+                        map.SetDefault(prio, ParseCommands(section.Value["default"]));
                     }
                     foreach (var entry in section.Value)
                     {
@@ -108,7 +110,7 @@ namespace Di.Controller
                         {
                             mod |= ModifierNames[modName];
                         }
-                        map.Add(key, mod, ParseCommands(entry.Value));
+                        map.Add(key, mod, prio, ParseCommands(entry.Value));
                     }
                     mode.KeyMap = map;
                     WindowModes.Add(modeKey, new WindowMode[] { mode });
@@ -130,19 +132,19 @@ namespace Di.Controller
                 Windows.Add(new Window(this, Model.Buffers.Item(0)));
             }
 
-            Action openFile = () => Command.FileCommand.OpenFile(this, Command.FileCommand.InNewWindow, false);
+            Action openFile = () =>
+            {
+                if (Windows.Count == 0)
+                {
+                    Command.FileCommand.OpenFile(this, Command.FileCommand.InNewWindow, false);
+                }
+            };
 
             // Open a file at startup (but it won't work until the view has attached itself to our events)
             Ready.Add(openFile);
 
             // Open a file whenever all other files have been closed
-            Windows.Changed.Add(() =>
-            {
-                if (Windows.Count == 0)
-                {
-                    openFile();
-                }
-            });
+            Windows.Changed.Add(openFile);
         }
 
         public void Save()

@@ -37,8 +37,6 @@ namespace Di.Session
 
             public string projectRelativeFileName;
 
-            public IList<string> mode;
-
             public int visibleOffset;
 
             public int cursorOffset;
@@ -47,7 +45,6 @@ namespace Di.Session
             {
                 ctl = _ctl;
                 projectRelativeFileName = _ctl.Model.Value.File.ProjectRelativeFullName();
-                mode = _ctl.CurrentMode.Select(m => m.Key).ToList();
                 // TODO get visible offset
                 cursorOffset = _ctl.Model.Value.GetCursorIter().GtkIter.Offset;
                 AddHandlers();
@@ -55,8 +52,6 @@ namespace Di.Session
 
             public void AddHandlers()
             {
-                ctl.CurrentMode.Added.Add((n, m) => mode.Add(m.Key));
-                ctl.CurrentMode.Removed.Add((n, m) => mode.Remove(m.Key));
                 ctl.Model.Value.MarkSet += (o, a) =>
                 {
                     cursorOffset = ctl.Model.Value.GetCursorIter().GtkIter.Offset;
@@ -105,7 +100,6 @@ namespace Di.Session
                 var cWin = ctl.FindOrCreateWindow(
                     new Model.File(model, new FileInfo(model.Root.FullName.AppendFsPath(w.projectRelativeFileName))));
                 w.ctl = cWin;
-                w.mode.ForEach(ms => ctl.WindowModes[ms].ForEach(m => cWin.CurrentMode.Add(m)));
                 cWin.Model.Value.PlaceCursor(cWin.Model.Value.GetIterAtOffset(w.cursorOffset));
                 // TODO set visible offset
                 w.AddHandlers();

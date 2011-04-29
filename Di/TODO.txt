@@ -5,22 +5,6 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-Fix known bugs with sessions
-
-    Don't show the file chooser at startup if there are windows open
-
-    Don't add modes to a window that it already has
-        Ideally, turn the mode list into a set
-            If that works, turn the corresponding session list into a set, too
-
-    Change the quit command binding to first remove the quit mode from the window
-
-Make sure that pressing the close button triggers a save
-
-Keep a list of project files sorted by most-recently-visible
-    Prefer the most-recently-visible file over other matches
-    Already-visible files should be least-preferred
-
 Make the chooser not crash when there are no results and enter is pressed.
 
 Add support for "undo"
@@ -50,6 +34,12 @@ Add support for the pasting stack
     Add to session
 
 Add more basic editing and movement commands
+
+Implement the real file query algorithm
+
+Keep a list of project files sorted by most-recently-visible
+    Prefer the most-recently-visible file over other matches
+    Already-visible files should be least-preferred
 
 Add configurable end-of-line character handling
 	Option 1: Detect and mimic the end-of-line characters found in a file

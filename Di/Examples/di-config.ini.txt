@@ -9,7 +9,7 @@ command = command-raw number common
 
 [mode command-raw]
 display-name = Command
-priority = 5
+priority = 50
 i = ClearWindowMode; AddWindowMode insert
 h = Down
 t = Up
@@ -33,6 +33,7 @@ q = Quit
 
 [mode insert]
 display-name = Insert
+priority = 50
 default = InsertKey
 Return = InsertChar \n
 Escape = DiscardInput; macro command
@@ -47,6 +48,7 @@ Delete = Delete; Right
 [mode number]
 display-name = Number
 hidden = yes
+priority = 40
 0 = NumCommand
 1 = NumCommand
 2 = NumCommand
@@ -61,10 +63,12 @@ hidden = yes
 [mode common]
 display-name = Common
 hidden = yes
+priority = 5
 Escape = DiscardInput
 
 [mode window]
 display-name = Window
+priority = 50
 Escape = macro command
 o = OpenFileInNewWindow; macro command
 c = CloseWindow; macro command
