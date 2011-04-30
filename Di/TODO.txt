@@ -5,11 +5,23 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-Make the chooser not crash when there are no results and enter is pressed.
-
 Add support for "undo"
 
     Keep separate "undo" and "redo" stacks for each file in the project
+
+        This isn't quite right: there should be separate stacks for each window,
+        even if two windows are showing the same file.
+
+        But, we also want to remember undo/redo information for files which don't have any open view.
+
+            If there have been multiple views of a file, then some are closed and another view on the file is opened,
+            what stacks should it start with?
+
+        Here's what we should do:
+
+            1. For now, just have one stack per file. Multiple views of the same file share the same stack.
+            2. Once language support is implemented, allow smaller syntactic units to work with a filtered view of the
+               file's stack that only shows edits within that unit.
 
     An undo entry can be a checkpoint, a chunk, a sequence of chunks
 
@@ -25,6 +37,29 @@ Add support for "undo"
 
     Store in the session state
 
+    Interface:
+
+        Besides the basic "undo/redo", have a sidebar that shows the stack
+
+        When viewing the sidebar, there are options that can be enabled and disabled to manipulate the view of the stack.
+
+            When the undo or redo command is issued, use the current view of the stack rather than the real stack.
+
+        Example changes to the view:
+
+            Combine adjacent edits
+            Combine edits on the same line
+            Combine edits in the same syntactic unit (show units supported by the language)
+            Combine edits made close together in time
+            Combine simple insertions (changes made with the command used by insert mode)
+            Filter by a search over the text added or removed
+            Filter to show only:
+                Strict additions
+                Strict removals
+                Additions (which might also have involved removal)
+                Removals (which might also have involved additions)
+                Strict replacements (which have both additions and removals)
+
 Add support for the pasting stack
     Visual support
     Delete-and-push command
@@ -32,6 +67,12 @@ Add support for the pasting stack
     Pop-and-paste command
     Pop-and-discard command
     Add to session
+
+    Share a common interface or superclass with undo/redo stacks
+
+        The general ability to produce a view over a stack should reside here
+
+        The specific ability to filter by content should reside here
 
 Add more basic editing and movement commands
 

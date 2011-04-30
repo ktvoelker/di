@@ -110,7 +110,10 @@ namespace Di.View
         {
             if (e.Event.Key == Gdk.Key.Return)
             {
-                ctl.Choose.Handler(ctl.Candidates[0]);
+                if (ctl.Candidates.Count > 0)
+                {
+                    ctl.Choose.Handler(ctl.Candidates[0]);
+                }
             }
             else if (e.Event.Key == Gdk.Key.Escape)
             {
