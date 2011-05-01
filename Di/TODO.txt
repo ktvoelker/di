@@ -5,6 +5,50 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
+SOLVE THIS PROBLEM:
+
+    In the case of an undo stack, applying an element that isn't on the top of the stack is difficult.
+
+        But it's not really that hard: text added or removed before the insertion point by edits higher on the
+        stack must simply be added or subtracted from the starting position.
+
+            This means that, when being applied, an UndoElem needs to see the whole stack above it.
+
+                Given that there is an underlying assumption of "stackiness", it seems reasonable that when the
+                typical operation of a stack is violated (by popping from the interior), the handler code ought to
+                be aware of it.
+
+                Thus, make the entire stack above the popped element be an argument to Apply.
+
+                    Provide this as an actual CLR Stack.
+
+                    This is a little bit dangerous: Apply could call Apply on other elements, breaking the position information.
+
+                        Oh well.
+
+Implement the concept of a view over a TextStack
+
+    Functions in TextStack create views
+
+    The type of a view is TextStack<ViewElem<Elem>, Param>
+
+        But not quite...because Push should take an Elem, not a ViewElem<Elem>.
+
+            Create an interface where the parameter type of Push is a separate type parameter.
+
+    A ViewElem references a set of one or more elems in the underlying stack by position
+
+        Watch change events on the underlying stack to keep the indices up-to-date
+
+            This means the underlying stack will become a BindList
+
+            Write a support class, BindListPointer, that refers to a particular element of a BindList by index,
+            automatically updating that index based on BindList events
+
+                From BindListPointer, expose an Event0 Removed
+
+        The ViewElem passes the Apply call down to its children from top to bottom
+
 Add support for "undo"
 
     Keep separate "undo" and "redo" stacks for each file in the project
