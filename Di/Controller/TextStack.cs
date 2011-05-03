@@ -27,22 +27,33 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Di.Controller
 {
-    public interface TextStackElem<T>
+    public interface ITextStackElem<Elem, Param> where Elem : class, ITextStackElem<Elem, Param>
     {
         int Size
         {
             get;
         }
 
-        void Apply(T param);
+        void Apply(Param param);
+
+        void SwapWithNeighborAbove(Elem other);
+    }
+
+    public interface ITextStack<Elem, Param> where Elem : class, ITextStackElem<Elem, Param>
+    {
+        void PopAndApply(Param p);
+
+        void PopAndDiscard();
+
+        void Push(Elem elem);
     }
 
     [Serializable]
-    public class TextStack<Elem, Param> where Elem : TextStackElem<Param>
+    public class TextStack<Elem, Param> : ITextStack<Elem, Param> where Elem : class, ITextStackElem<Elem, Param>
     {
         public const int MaxSize = 128 * 1024;
 
-        private readonly IList<Elem> stack = new List<Elem>();
+        private readonly BindList<Elem> stack = new BindList<Elem>();
 
         private int size = 0;
 
@@ -50,14 +61,9 @@ namespace Di.Controller
         {
         }
 
-        public Elem Peek()
-        {
-            return stack.Last();
-        }
-
         public void PopAndApply(Param p)
         {
-            Peek().Apply(p);
+            stack.Last().Apply(p);
             PopAndDiscard();
         }
 
@@ -80,41 +86,11 @@ namespace Di.Controller
             }
         }
 
-        private static FileInfo GetFile(DirectoryInfo dir, string key)
+        public TextStackView<Elem, Param> Filter(Func<Elem, bool> pred)
         {
-            key = string.Format("{0}{1}{1}{1}{2}", key, Path.DirectorySeparatorChar, typeof(Elem).FullName);
-            var keyArray = new byte[key.Length];
-            for (int i = 0; i < key.Length; ++i)
-            {
-                keyArray[i] = (byte) (Char.ConvertToUtf32(key, i));
-            }
-            return new FileInfo(dir.FullName.AppendFsPath(string.Format("{0}{1}.bin", Platform.HiddenFilePrefix,
-                    SHA1.Create().ComputeHash(keyArray).Select(b => string.Format("{0:x}", b)).FoldLeft1((a, b) => a + b))));
-        }
-
-        /// <summary>
-        /// Save this stack to disk.
-        /// </summary>
-        /// <param name="dir">
-        /// The directory in which to save the file.
-        /// </param>
-        /// <param name="key">
-        /// A key which identifies this stack. The key must be unique among stacks with the same Elem type.
-        /// </param>
-        public void Save(DirectoryInfo dir, string key)
-        {
-            using (var file = GetFile(dir, key).OpenWrite())
-            {
-                new BinaryFormatter().Serialize(file, this);
-            }
-        }
-
-        public static TextStack<Elem, Param> Load(DirectoryInfo dir, string key)
-        {
-            using (var file = GetFile(dir, key).OpenRead())
-            {
-                return (TextStack<Elem, Param>) (new BinaryFormatter().Deserialize(file));
-            }
+            Func<BindListPointer<Elem>, bool> pointerPred = p => pred(p.Value);
+            return new TextStackView<Elem, Param>(stack.Add,
+                () => stack.Pointers().Where(pointerPred).Select(p => new ViewElem<Elem, Param>(stack, p.AsSingleton())));
         }
     }
 }

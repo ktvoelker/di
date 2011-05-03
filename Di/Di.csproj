@@ -88,6 +88,8 @@
     <Compile Include="BindSet.cs" />
     <Compile Include="Controller\TextStack.cs" />
     <Compile Include="Controller\UndoElem.cs" />
+    <Compile Include="Controller\TextStackView.cs" />
+    <Compile Include="BindListPointer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />

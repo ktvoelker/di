@@ -19,12 +19,27 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Collections.Generic;
 namespace Di.Controller
 {
-    public class UndoElem : TextStackElem<Model.Buffer>
+    public class UndoElem : ITextStackElem<UndoElem, Model.Buffer>
     {
-        public UndoElem()
+        public int Size
         {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public void Apply(Model.Buffer param)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SwapWithNeighborAbove(UndoElem other)
+        {
+            throw new NotImplementedException();
         }
     }
 }

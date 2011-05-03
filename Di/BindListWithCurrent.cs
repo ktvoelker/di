@@ -5,12 +5,14 @@ using System.Text;
 
 namespace Di
 {
+    [Serializable]
     public enum RemovePolicy
     {
         PreviousBecomesCurrent,
         NextBecomesCurrent
     }
 
+    [Serializable]
     public enum UnknownSetPolicy
     {
         AddToStart,
@@ -19,6 +21,7 @@ namespace Di
         Error
     }
 
+    [Serializable]
     public enum WrapPolicy
     {
         Wrap,
@@ -33,8 +36,10 @@ namespace Di
     /// If the list is not empty, this[CurrentIndex] == Current.
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    [Serializable]
     public class BindListWithCurrent<T> : BindList<T> where T : class
     {
+        [NonSerialized]
         public readonly Event2<int, T> CurrentChanged = new Event2<int, T>();
 
         public RemovePolicy RemovePolicy = RemovePolicy.NextBecomesCurrent;

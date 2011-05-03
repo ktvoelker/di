@@ -31,6 +31,16 @@ namespace Di
             return elems.ToList();
         }
 
+        public static IEnumerable<int> Indices<T>(this IEnumerable<T> elems)
+        {
+            int index = 0;
+            foreach (var elem in elems)
+            {
+                yield return index;
+                ++index;
+            }
+        }
+
         public static int Count<T>(this IEnumerable<T> elems)
         {
             int count = 0;
@@ -279,6 +289,19 @@ namespace Di
         public static Ini.IIniSection GetSectionOrEmpty(this Ini.IIniFile ini, string name)
         {
             return ini.GetWithDefault(name, Ini.IniParser.CreateEmptyIniSection());
+        }
+
+        public static IEnumerable<BindListPointer<T>> Pointers<T>(this BindList<T> list) where T : class
+        {
+            foreach (var i in list.Indices())
+            {
+                yield return new BindListPointer<T>(list, i);
+            }
+        }
+
+        public static IEnumerable<T> AsSingleton<T>(this T elem)
+        {
+            yield return elem;
         }
     }
 }

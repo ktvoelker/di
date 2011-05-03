@@ -23,11 +23,19 @@ using System.Collections.Generic;
 using System.Linq;
 namespace Di
 {
+    [Serializable]
     public class BindList<T> : IList<T>
     {
+        [NonSerialized]
         public Event2<int, T> Added = new Event2<int, T>();
+
+        [NonSerialized]
         public Event2<int, T> Removed = new Event2<int, T>();
+
+        [NonSerialized]
         public Event0 Cleared = new Event0();
+
+        [NonSerialized]
         public Event0 Changed = new Event0();
 
         private readonly IList<T> list;

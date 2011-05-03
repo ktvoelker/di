@@ -5,81 +5,26 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-SOLVE THIS PROBLEM:
-
-    In the case of an undo stack, applying an element that isn't on the top of the stack is difficult.
-
-        But it's not really that hard: text added or removed before the insertion point by edits higher on the
-        stack must simply be added or subtracted from the starting position.
-
-            This means that, when being applied, an UndoElem needs to see the whole stack above it.
-
-                Given that there is an underlying assumption of "stackiness", it seems reasonable that when the
-                typical operation of a stack is violated (by popping from the interior), the handler code ought to
-                be aware of it.
-
-                Thus, make the entire stack above the popped element be an argument to Apply.
-
-                    Provide this as an actual CLR Stack.
-
-                    This is a little bit dangerous: Apply could call Apply on other elements, breaking the position information.
-
-                        Oh well.
-
-Implement the concept of a view over a TextStack
-
-    Functions in TextStack create views
-
-    The type of a view is TextStack<ViewElem<Elem>, Param>
-
-        But not quite...because Push should take an Elem, not a ViewElem<Elem>.
-
-            Create an interface where the parameter type of Push is a separate type parameter.
-
-    A ViewElem references a set of one or more elems in the underlying stack by position
-
-        Watch change events on the underlying stack to keep the indices up-to-date
-
-            This means the underlying stack will become a BindList
-
-            Write a support class, BindListPointer, that refers to a particular element of a BindList by index,
-            automatically updating that index based on BindList events
-
-                From BindListPointer, expose an Event0 Removed
-
-        The ViewElem passes the Apply call down to its children from top to bottom
-
 Add support for "undo"
 
-    Keep separate "undo" and "redo" stacks for each file in the project
+    1. Implement UndoElem fundamentals
+    2. Add stacks to each Buffer
+    3. Add event handlers to keep stacks up-to-date
+    4. Add basic undo/redo commands using the stacks
+    5. Load and save stacks via the Session
+    6. Add a more advanced interface for viewing and filtering the stacks
 
-        This isn't quite right: there should be separate stacks for each window,
-        even if two windows are showing the same file.
+    Keep separate "undo" and "redo" stacks for each Buffer in the project
 
-        But, we also want to remember undo/redo information for files which don't have any open view.
+        They should be stored in the session
 
-            If there have been multiple views of a file, then some are closed and another view on the file is opened,
-            what stacks should it start with?
-
-        Here's what we should do:
-
-            1. For now, just have one stack per file. Multiple views of the same file share the same stack.
-            2. Once language support is implemented, allow smaller syntactic units to work with a filtered view of the
-               file's stack that only shows edits within that unit.
-
-    An undo entry can be a checkpoint, a chunk, a sequence of chunks
-
-    A checkpoint is a clone of the buffer
-
-    A chunk either adds or removes sequential text (but not both)
+    An UndoElem either adds or removes sequential text (or both)
         Add specifies start point and length
         Remove specifies start point and text
 
     Call BeginUserAction and EndUserAction inside the key press handler
 
-    Have event handlers which create chunks and sequence them automatically
-
-    Store in the session state
+        Have event handlers which create one chunk per user action
 
     Interface:
 
