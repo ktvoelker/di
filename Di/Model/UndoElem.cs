@@ -95,6 +95,90 @@ namespace Di.Model
                 position,
                 actionType == UndoElem.ActionType.Add ? UndoElem.ActionType.Remove : UndoElem.ActionType.Add);
         }
+
+        /// <summary>
+        /// Merge another UndoElem into this one, if possible.
+        /// This method assumes that the other UndoElem is the immediate chronological successor of this one.
+        /// </summary>
+        /// <param name="other">
+        /// The UndoElem to merge into this one.
+        /// </param>
+        /// <returns>
+        /// True iff the merge occurred.
+        /// </returns>
+        public bool MergeWith(UndoElem other)
+        {
+            if (actionType == UndoElem.ActionType.Add && other.actionType == UndoElem.ActionType.Add)
+            {
+                if (other.position >= position && other.position <= position + text.Length)
+                {
+                    // contiguous additions
+                    int diff = other.position - position;
+                    text = text.Substring(0, diff) + other.text + text.Substring(diff);
+                    return true;
+                }
+                else
+                {
+                    // disjoint additions
+                    return false;
+                }
+            }
+            else if (actionType == UndoElem.ActionType.Remove && other.actionType == UndoElem.ActionType.Remove)
+            {
+                if (position >= other.position && position <= other.position + other.text.Length)
+                {
+                    // contiguous removals
+                    int diff = position - other.position;
+                    text = other.text.Substring(0, diff) + text + other.text.Substring(diff);
+                    position = other.position;
+                    return true;
+                }
+                else
+                {
+                    // disjoint removals
+                    return false;
+                }
+            }
+            else if (actionType == UndoElem.ActionType.Add && other.actionType == UndoElem.ActionType.Remove)
+            {
+                if (other.position >= position && other.position + other.text.Length <= position + text.Length)
+                {
+                    // removal of a subsequence of an addition
+                    int diff = other.position - position;
+                    text = text.Substring(0, diff) + text.Substring(diff + other.text.Length);
+                    return true;
+                }
+                else
+                {
+                    // removal outside the addition
+                    return false;
+                }
+            }
+            else if (actionType == UndoElem.ActionType.Remove && other.actionType == UndoElem.ActionType.Add)
+            {
+                if (other.position == position && other.text.Length <= text.Length && other.text == text.Substring(0, other.text.Length))
+                {
+                    // addition of a prefix of a removal
+                    text = text.Substring(other.text.Length);
+                    position += other.text.Length;
+                    return true;
+                }
+                else if (other.position + other.text.Length == position + text.Length && other.position >= position
+                    && other.text == text.Substring(text.Length - other.text.Length))
+                {
+                    // addition of a suffix of a removal
+                    text = text.Substring(0, text.Length - other.text.Length);
+                    return true;
+                }
+                else
+                {
+                    // addition of text other than that which was removed, or which is a proper infix of that which was removed
+                    return false;
+                }
+            }
+            // impossible
+            throw new InvalidOperationException();
+        }
     }
 }
 

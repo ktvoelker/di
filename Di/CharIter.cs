@@ -65,6 +65,11 @@ namespace Di
             _iter = i;
         }
 
+        public static implicit operator CharIter(TextIter i)
+        {
+            return new CharIter(i);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is CharIter)

@@ -329,5 +329,21 @@ namespace Di.Controller.Command
             b.Controller.Quit();
         }
     }
+
+    public class Undo : RepeatCommand
+    {
+        public override void Execute(Window b)
+        {
+            b.Model.Value.UndoStack.PopAndApply(b.Model.Value);
+        }
+    }
+
+    public class Redo : RepeatCommand
+    {
+        public override void Execute(Window b)
+        {
+            b.Model.Value.RedoStack.PopAndApply(b.Model.Value);
+        }
+    }
 }
 

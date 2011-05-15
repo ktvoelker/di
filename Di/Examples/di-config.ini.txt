@@ -24,6 +24,8 @@ e = NewFile
 w = ClearWindowMode; AddWindowMode window
 q = ClearWindowMode; AddWindowMode quit
 a = Save
+u = Undo
+U = Redo
 
 [mode quit]
 display-name = Quit?

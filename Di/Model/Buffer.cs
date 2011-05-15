@@ -66,28 +66,12 @@ namespace Di.Model
             RedoStack = _redo;
             UndoStack.Applied.Add(RedoStack.Push);
             RedoStack.Applied.Add(UndoStack.Push);
-            Changed += delegate(object sender, EventArgs e) {
-                if (userAction != null)
-                {
-                    if (CombineUserAction(e))
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        UndoStack.Push(userAction);
-                        userAction = null;
-                    }
-                }
-                var v = CreateUndoElem(e);
-                if (userActionDepth > 0)
-                {
-                    userAction = v;
-                }
-                else
-                {
-                    UndoStack.Push(v);
-                }
+            InsertText += delegate(object o, InsertTextArgs args)
+            {
+                AddUndoElem(new UndoElem(args.Text, new CharIter(args.Pos) - args.Text.Length, UndoElem.ActionType.Add));
+            };
+            DeleteRange += delegate(object o, DeleteRangeArgs args) {
+                AddUndoElem(new UndoElem(new Range(args.Start, args.End).Chars, args.Start, UndoElem.ActionType.Remove));
             };
         }
 
@@ -133,14 +117,28 @@ namespace Di.Model
             }
         }
 
-        private bool CombineUserAction(EventArgs e)
+        private void AddUndoElem(UndoElem v)
         {
-            throw new NotImplementedException();
-        }
-
-        private UndoElem CreateUndoElem(EventArgs e)
-        {
-            throw new NotImplementedException();
+            if (userAction != null)
+            {
+                if (userAction.MergeWith(v))
+                {
+                    return;
+                }
+                else
+                {
+                    UndoStack.Push(userAction);
+                    userAction = null;
+                }
+            }
+            if (userActionDepth > 0)
+            {
+                userAction = v;
+            }
+            else
+            {
+                UndoStack.Push(v);
+            }
         }
     }
 }

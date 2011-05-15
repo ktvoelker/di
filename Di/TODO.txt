@@ -5,10 +5,16 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
+Fix bugs in existing undo/redo code
+
+    Undo of a single character insertion works
+
+    Sequential undo of multiple single character insertions causes a crash
+
+    Redo of an undone single character insertion produces no visible effect
+
 Add support for "undo"
 
-    2. Add event handlers to keep stacks up-to-date
-    3. Add basic undo/redo commands using the stacks
     4. Load and save stacks via the Session
     5. Add a more advanced interface for viewing and filtering the stacks
     6. Implement UndoElem.SwapWithNeighborAbove
@@ -61,6 +67,13 @@ Add support for the pasting stack
         The specific ability to filter by content should reside here
 
 Add more basic editing and movement commands
+
+    Include visual selection manipulation
+
+        Make this work with the mouse, too: perhaps there should be configuration options for:
+            The modeset to enter when a selection is made (other than by Di commands).
+            Whether or not the command parser should be reset when a selection is made.
+            Whether or not is should even be possible to make selections (or move the cursor) with the mouse.
 
 Implement the real file query algorithm
 
