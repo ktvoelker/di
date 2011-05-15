@@ -21,11 +21,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-namespace Di.Controller
+namespace Di.Model
 {
-    public class ViewElem<T, P> where T : class, ITextStackElem<T, P>
+    public class ViewElem<T, P> where T : TextStackElem<T, P>
     {
         private readonly BindList<T> stack;
+
+        private readonly Event1<T> applied;
 
         private IEnumerable<BindListPointer<T>> elems;
 
@@ -40,8 +42,9 @@ namespace Di.Controller
             }
         }
 
-        public ViewElem(BindList<T> _stack, IEnumerable<BindListPointer<T>> _elems)
+        public ViewElem(Event1<T> _applied, BindList<T> _stack, IEnumerable<BindListPointer<T>> _elems)
         {
+            applied = _applied;
             stack = _stack;
             elems = _elems;
         }
@@ -55,14 +58,18 @@ namespace Di.Controller
                 {
                     var next = elem.Next();
                     var elemValue = elem.Value;
-                    var nextValue = next.Value;
                     var index = elem.Index;
-                    elemValue.SwapWithNeighborAbove(nextValue);
+                    var nextValue = next.Value;
+                    var extraValue = elemValue.SwapWithNeighborAbove(nextValue);
                     next.Remove();
                     elem.Remove();
-                    stack.Insert(index, nextValue);
                     stack.Insert(index, elemValue);
                     newElems.Add(new BindListPointer<T>(stack, index));
+                    if (extraValue != null)
+                    {
+                        stack.Insert(index, extraValue);
+                    }
+                    stack.Insert(index, nextValue);
                 }
             }
             elems = newElems;
@@ -73,8 +80,10 @@ namespace Di.Controller
             MoveAllToTop();
             foreach (var elem in elems.OrderByDescending(e => e.Index))
             {
-                elem.Value.Apply(param);
+                var v = elem.Value;
+                v.Apply(param);
                 elem.Remove();
+                applied.Handler(v);
             }
         }
 
@@ -88,7 +97,7 @@ namespace Di.Controller
         }
     }
 
-    public class TextStackView<Elem, Param> : ITextStack<Elem, Param> where Elem : class, ITextStackElem<Elem, Param>
+    public class TextStackView<Elem, Param> : ITextStack<Elem, Param> where Elem : TextStackElem<Elem, Param>
     {
         private readonly Action<Elem> push;
         private readonly Func<IEnumerable<ViewElem<Elem, Param>>> view;

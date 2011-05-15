@@ -208,6 +208,12 @@ namespace Di
             buffer.DeleteInteractive(ref start, ref end, true);
         }
 
+        public static void Insert(this Gtk.TextBuffer buffer, CharIter c, string text)
+        {
+            var ti = c.GtkIter;
+            buffer.Insert(ref ti, text);
+        }
+
         public static string GetName(this IEnumerable<Controller.WindowMode> mode)
         {
             return string.Join("-", mode.Where(m => !m.Hidden).OrderByDescending(m => m.Priority).Select(m => m.Name).ToArray());

@@ -21,8 +21,11 @@
 using System;
 using System.IO;
 using Gtk;
+
 namespace Di.Model
 {
+    using UndoStack = TextStack<UndoElem, Buffer>;
+
     public class Buffer : TextBuffer
     {
         private static TextTagTable tags = new TextTagTable();
@@ -35,8 +38,17 @@ namespace Di.Model
             private set;
         }
 
-        public Buffer(File _file) : base(tags)
+        public readonly UndoStack UndoStack, RedoStack;
+
+        private int userActionDepth = 0;
+
+        private UndoElem userAction = null;
+
+        public Buffer(File _file, UndoStack _undo, UndoStack _redo) : base(tags)
         {
+            /**
+             * Read the file.
+             */
             File = _file;
             var input = File.Info.OpenText();
             InsertAtCursor(input.ReadToEnd());
@@ -46,6 +58,42 @@ namespace Di.Model
             {
                 HasUnsavedChanges.Value = true;
             };
+
+            /**
+             * Prepare for undo/redo.
+             */
+            UndoStack = _undo;
+            RedoStack = _redo;
+            UndoStack.Applied.Add(RedoStack.Push);
+            RedoStack.Applied.Add(UndoStack.Push);
+            Changed += delegate(object sender, EventArgs e) {
+                if (userAction != null)
+                {
+                    if (CombineUserAction(e))
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        UndoStack.Push(userAction);
+                        userAction = null;
+                    }
+                }
+                var v = CreateUndoElem(e);
+                if (userActionDepth > 0)
+                {
+                    userAction = v;
+                }
+                else
+                {
+                    UndoStack.Push(v);
+                }
+            };
+        }
+
+        public Buffer(File _file) : this(_file, new UndoStack(), new UndoStack())
+        {
+            // empty
         }
 
         public void InsertAtCursor(char c)
@@ -62,6 +110,37 @@ namespace Di.Model
                 output.Close();
                 HasUnsavedChanges.Value = false;
             }
+        }
+
+        public void IncrUserAction()
+        {
+            if (userActionDepth < Int32.MaxValue)
+            {
+                ++userActionDepth;
+            }
+        }
+
+        public void DecrUserAction()
+        {
+            if (userActionDepth > 0)
+            {
+                --userActionDepth;
+            }
+            if (userActionDepth == 0 && userAction != null)
+            {
+                UndoStack.Push(userAction);
+                userAction = null;
+            }
+        }
+
+        private bool CombineUserAction(EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private UndoElem CreateUndoElem(EventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

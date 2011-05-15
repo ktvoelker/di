@@ -7,24 +7,19 @@ Completeness of Basic Functionality
 
 Add support for "undo"
 
-    1. Implement UndoElem fundamentals
-    2. Add stacks to each Buffer
-    3. Add event handlers to keep stacks up-to-date
-    4. Add basic undo/redo commands using the stacks
-    5. Load and save stacks via the Session
-    6. Add a more advanced interface for viewing and filtering the stacks
+    2. Add event handlers to keep stacks up-to-date
+    3. Add basic undo/redo commands using the stacks
+    4. Load and save stacks via the Session
+    5. Add a more advanced interface for viewing and filtering the stacks
+    6. Implement UndoElem.SwapWithNeighborAbove
 
     Keep separate "undo" and "redo" stacks for each Buffer in the project
 
         They should be stored in the session
 
-    An UndoElem either adds or removes sequential text (or both)
-        Add specifies start point and length
-        Remove specifies start point and text
-
     Call BeginUserAction and EndUserAction inside the key press handler
 
-        Have event handlers which create one chunk per user action
+        Have event handlers which create a minimal number of chunks
 
     Interface:
 
@@ -48,6 +43,8 @@ Add support for "undo"
                 Additions (which might also have involved removal)
                 Removals (which might also have involved additions)
                 Strict replacements (which have both additions and removals)
+
+Add a Boolean option "combine-undo" to window modes
 
 Add support for the pasting stack
     Visual support

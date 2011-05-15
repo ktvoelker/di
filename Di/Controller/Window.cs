@@ -71,7 +71,15 @@ namespace Di.Controller
             Parser.Parse(CurrentKeyMap.Lookup(e).Select(a => { return new UnparsedCommand(a, e.KeyValue); }));
             // TODO alert the user if there were any invalid sequences
             // TODO indicate the current state somewhere
-            Parser.Commands.ForEach(c => c.Execute(this));
+            Model.Value.IncrUserAction();
+            try
+            {
+                Parser.Commands.ForEach(c => c.Execute(this));
+            }
+            finally
+            {
+                Model.Value.DecrUserAction();
+            }
             Parser.Commands.Clear();
         }
 

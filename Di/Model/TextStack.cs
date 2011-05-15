@@ -25,21 +25,31 @@ using System.Security.Cryptography;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Di.Controller
+namespace Di.Model
 {
-    public interface ITextStackElem<Elem, Param> where Elem : class, ITextStackElem<Elem, Param>
+    public abstract class TextStackElem<Elem, Param> where Elem : TextStackElem<Elem, Param>
     {
-        int Size
+        public abstract int Size
         {
             get;
         }
 
-        void Apply(Param param);
+        public abstract void Apply(Param param);
 
-        void SwapWithNeighborAbove(Elem other);
+        /// <summary>
+        /// Given an element which is currently above this one on the stack, change the values of both
+        /// this element and the other so that this should be above the other on the stack.
+        /// </summary>
+        /// <param name="other">
+        /// The other element
+        /// </param>
+        /// <returns>
+        /// A new element which should be inserted between this and the other on the stack, or null.
+        /// </returns>
+        public abstract Elem SwapWithNeighborAbove(Elem other);
     }
 
-    public interface ITextStack<Elem, Param> where Elem : class, ITextStackElem<Elem, Param>
+    public interface ITextStack<Elem, Param> where Elem : TextStackElem<Elem, Param>
     {
         void PopAndApply(Param p);
 
@@ -49,11 +59,13 @@ namespace Di.Controller
     }
 
     [Serializable]
-    public class TextStack<Elem, Param> : ITextStack<Elem, Param> where Elem : class, ITextStackElem<Elem, Param>
+    public class TextStack<Elem, Param> : ITextStack<Elem, Param> where Elem : TextStackElem<Elem, Param>
     {
         public const int MaxSize = 128 * 1024;
 
         private readonly BindList<Elem> stack = new BindList<Elem>();
+
+        public readonly Event1<Elem> Applied = new Event1<Elem>();
 
         private int size = 0;
 
@@ -63,8 +75,10 @@ namespace Di.Controller
 
         public void PopAndApply(Param p)
         {
-            stack.Last().Apply(p);
+            var v = stack.Last();
+            v.Apply(p);
             PopAndDiscard();
+            Applied.Handler(v);
         }
 
         public void PopAndDiscard()
@@ -90,7 +104,7 @@ namespace Di.Controller
         {
             Func<BindListPointer<Elem>, bool> pointerPred = p => pred(p.Value);
             return new TextStackView<Elem, Param>(stack.Add,
-                () => stack.Pointers().Where(pointerPred).Select(p => new ViewElem<Elem, Param>(stack, p.AsSingleton())));
+                () => stack.Pointers().Where(pointerPred).Select(p => new ViewElem<Elem, Param>(Applied, stack, p.AsSingleton())));
         }
     }
 }
