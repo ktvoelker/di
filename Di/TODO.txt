@@ -7,11 +7,11 @@ Completeness of Basic Functionality
 
 Fix bugs in existing undo/redo code
 
-    Undo of a single character insertion works
+    Undo of a single and multiple character insertion works
 
-    Sequential undo of multiple single character insertions causes a crash
+    Undo of a single character deletion has no visible effect
 
-    Redo of an undone single character insertion produces no visible effect
+    Redo is untested
 
 Add support for "undo"
 
@@ -50,7 +50,9 @@ Add support for "undo"
                 Removals (which might also have involved additions)
                 Strict replacements (which have both additions and removals)
 
-Add a Boolean option "combine-undo" to window modes
+Add an option "combine-undo" to window modes
+
+    Values are: "no" (or any Boolean false string), "insert", and "insert-line" (or "line")
 
 Add support for the pasting stack
     Visual support

@@ -20,15 +20,14 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.IO;
-using Gtk;
 
 namespace Di.Model
 {
     using UndoStack = TextStack<UndoElem, Buffer>;
 
-    public class Buffer : TextBuffer
+    public class Buffer : Gtk.TextBuffer
     {
-        private static TextTagTable tags = new TextTagTable();
+        private static Gtk.TextTagTable tags = new Gtk.TextTagTable();
 
         public readonly Bind<bool> HasUnsavedChanges = new Bind<bool>(false);
 
@@ -43,6 +42,8 @@ namespace Di.Model
         private int userActionDepth = 0;
 
         private UndoElem userAction = null;
+
+        private bool ignoreChanges = false;
 
         public Buffer(File _file, UndoStack _undo, UndoStack _redo) : base(tags)
         {
@@ -66,12 +67,18 @@ namespace Di.Model
             RedoStack = _redo;
             UndoStack.Applied.Add(RedoStack.Push);
             RedoStack.Applied.Add(UndoStack.Push);
-            InsertText += delegate(object o, InsertTextArgs args)
+            InsertText += delegate(object o, Gtk.InsertTextArgs args)
             {
-                AddUndoElem(new UndoElem(args.Text, new CharIter(args.Pos) - args.Text.Length, UndoElem.ActionType.Add));
+                if (!ignoreChanges)
+                {
+                    AddUndoElem(new UndoElem(args.Text, new CharIter(args.Pos) - args.Text.Length, UndoElem.ActionType.Add));
+                }
             };
-            DeleteRange += delegate(object o, DeleteRangeArgs args) {
-                AddUndoElem(new UndoElem(new Range(args.Start, args.End).Chars, args.Start, UndoElem.ActionType.Remove));
+            DeleteRange += delegate(object o, Gtk.DeleteRangeArgs args) {
+                if (!ignoreChanges)
+                {
+                    AddUndoElem(new UndoElem(new Range(args.Start, args.End).Chars, args.Start, UndoElem.ActionType.Remove));
+                }
             };
         }
 
@@ -138,6 +145,20 @@ namespace Di.Model
             else
             {
                 UndoStack.Push(v);
+            }
+        }
+
+        public void IgnoreChanges(Action a)
+        {
+            var prev = ignoreChanges;
+            ignoreChanges = true;
+            try
+            {
+                a();
+            }
+            finally
+            {
+                ignoreChanges = prev;
             }
         }
     }

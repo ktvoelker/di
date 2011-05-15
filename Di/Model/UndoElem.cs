@@ -32,7 +32,7 @@ namespace Di.Model
 
         private string text;
 
-        private CharIter position;
+        private int position;
 
         private ActionType actionType;
 
@@ -44,26 +44,35 @@ namespace Di.Model
             }
         }
 
-        public UndoElem(string _text, CharIter _position, ActionType _actionType)
+        private UndoElem(string _text, int _position, ActionType _actionType)
         {
             text = _text;
             position = _position;
             actionType = _actionType;
         }
 
+        public UndoElem(string _text, CharIter _position, ActionType _actionType) : this(_text, _position.GtkIter.Offset, _actionType)
+        {
+            // empty
+        }
+
         public override void Apply(Buffer param)
         {
-            switch (actionType)
+            param.IgnoreChanges(() =>
             {
-                case ActionType.Add:
-                    param.Delete(new Range(position, text.Length));
-                    break;
-                case ActionType.Remove:
-                    param.Insert(position, text);
-                    break;
-                default:
-                    throw new InvalidOperationException();
-            }
+                var iter = param.GetIterAtOffset(position);
+                switch (actionType)
+                {
+                    case ActionType.Add:
+                        param.Delete(new Range(iter, text.Length));
+                        break;
+                    case ActionType.Remove:
+                        param.Insert(ref iter, text);
+                        break;
+                    default:
+                        throw new InvalidOperationException();
+                }
+            });
         }
 
         public override UndoElem SwapWithNeighborAbove(UndoElem other)
