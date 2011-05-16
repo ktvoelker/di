@@ -7,8 +7,32 @@ Completeness of Basic Functionality
 
 Why does the session have to meticulously make little serializable clones of everything and keep them up-to-date?
 
+	After some consideration and investigation, it seems that there is more state which is not serialized than which is.
+	Therefore, it makes sense to keep the current implementation of sessions.
+
     Things to do before implementing this change:
     1. Look through all classes for uses of closures (other than as event handlers), Gtk objects, or other impediments.
+	   Known good sections (assuming "inductively" that all our other code will become good):
+	     Model.Language
+	   Sections whose caveats are completely enumerated:
+
+	     Model.Buffer
+
+			Related to the fact that this is a subclass of a Gtk object is the fact that it contains the entire current
+			text of the file. Since this text already has to be stored in the file itself, it obviously shouldn't be
+			included in the serialized session.
+
+			ignoreChanges shouldn't be serialized. (More generally, all state related to user input should be transient.)
+
+			userAction shouldn't be serialized, but should be pushed onto the undo stack before serialization.
+
+		Model.Directory and Model.File
+
+			There is a problem which affects Model.Buffer indirectly: the user may change what files or directories exist
+			between executions of the system. This suggests that Model.Directory and Model.File should not be serialized at
+			all, and that buffers (and corresponding windows) should, during their initialization, somehow destroy themselves
+			if the corresponding files have disappeared.
+
     2. Make a git branch for the conversion.
 
     The Model.Buffer class is a subclass of Gtk.TextBuffer, which is almost certainly not serializable. This arrangement
