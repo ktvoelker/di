@@ -173,20 +173,9 @@ Some new ideas:
     2. Every language is assumed to use that general-purpose lexer.
     3. Every language provides a function which divides a token sequence into chunks. Each chunk can be displayed in a separate window.
        A chunk has a name, some arbitrary metadata, and its token sequence.
-    4. Provide a general-purpose parser for chunks. It may not be usable by all languages, but should be by most. It supports regular
-       languages plus delimiter-matching. That is, it supports languages definable via grammars with rules of these forms:
-         B -> a
-         B -> aC
-         B -> epsilon
-         B -> dCe, where d and e are each unique among all symbols appearing in any instance of this rule form in the grammar,
-                   including each other (note that d and e come from an alphabet disjoint with the alphabet of a)
-       These parsers would have the same built-in ability to parse only
-
-       Things that would be nice to prove about these languages:
-       * There are infinitely many of them which are non-regular (should be trivial).
-       * There are infinitely many context-free languages which do not fall into this set.
-       * A regular expression-like mechanism for specifying these grammars.
-       * A fast, greedy algorithm for parsing.
+    4. Provide a general-purpose parser for chunks that uses visibly pushdown languages. Include features in this parser like the lexer:
+       given an old parse, a token sequence, and a change description, if the change only affected one chunk, it should be able to
+       determine this without parsing any other chunks but that one. The parser should be specified as a visibly pushdown grammar.
 
 Add support for languages, which will ultimately provide:
     Behavior for Return and Tab commands
