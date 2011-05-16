@@ -7,11 +7,7 @@ Completeness of Basic Functionality
 
 Fix bugs in existing undo/redo code
 
-    Undo of a single and multiple character insertion works
-
-    Undo of a single character deletion has no visible effect
-
-    Redo is untested
+    Redo doesn't have any visible effect
 
 Add support for "undo"
 
@@ -160,6 +156,29 @@ Add support for numeric escapes in parsing char-valued arguments to commands in 
 
 Language-Oriented Improvements
 ------------------------------
+
+Some new ideas:
+    1. Provide a general-purpose lexer all languages can use. It will be able efficiently "relex" after a change is made.
+       (It will start lexing at the first token boundary at or before the beginning of the change, and keep lexing until
+        it is at or past the end of the change and it finds a boundary which matches an old boundary.) The general-purpose
+       lexer should be flexible enough that it can work with indentation-sensitive languages.
+    2. Every language is assumed to use that general-purpose lexer.
+    3. Every language provides a function which divides a token sequence into chunks. Each chunk can be displayed in a separate window.
+       A chunk has a name, some arbitrary metadata, and its token sequence.
+    4. Provide a general-purpose parser for chunks. It may not be usable by all languages, but should be by most. It supports regular
+       languages plus delimiter-matching. That is, it supports languages definable via grammars with rules of these forms:
+         B -> a
+         B -> aC
+         B -> epsilon
+         B -> dCe, where d and e are each unique among all symbols appearing in any instance of this rule form in the grammar,
+                   including each other (note that d and e come from an alphabet disjoint with the alphabet of a)
+       These parsers would have the same built-in ability to parse only
+
+       Things that would be nice to prove about these languages:
+       * There are infinitely many of them which are non-regular (should be trivial).
+       * There are infinitely many context-free languages which do not fall into this set.
+       * A regular expression-like mechanism for specifying these grammars.
+       * A fast, greedy algorithm for parsing.
 
 Add support for languages, which will ultimately provide:
     Behavior for Return and Tab commands

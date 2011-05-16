@@ -48,38 +48,43 @@ namespace Di.Model
         public Buffer(File _file, UndoStack _undo, UndoStack _redo) : base(tags)
         {
             /**
-             * Read the file.
-             */
-            File = _file;
-            var input = File.Info.OpenText();
-            InsertAtCursor(input.ReadToEnd());
-            input.Close();
-            PlaceCursor(GetIterAtOffset(0));
-            Changed += (o, a) =>
-            {
-                HasUnsavedChanges.Value = true;
-            };
-
-            /**
              * Prepare for undo/redo.
              */
             UndoStack = _undo;
             RedoStack = _redo;
             UndoStack.Applied.Add(RedoStack.Push);
             RedoStack.Applied.Add(UndoStack.Push);
-            InsertText += delegate(object o, Gtk.InsertTextArgs args)
+
+            /**
+             * Read the file.
+             */
+            File = _file;
+            var input = File.Info.OpenText();
+            IgnoreChanges(() => InsertAtCursor(input.ReadToEnd()));
+            input.Close();
+            PlaceCursor(GetIterAtOffset(0));
+            Changed += (o, a) =>
             {
-                if (!ignoreChanges)
-                {
-                    AddUndoElem(new UndoElem(args.Text, new CharIter(args.Pos) - args.Text.Length, UndoElem.ActionType.Add));
-                }
+                HasUnsavedChanges.Value = true;
             };
-            DeleteRange += delegate(object o, Gtk.DeleteRangeArgs args) {
-                if (!ignoreChanges)
-                {
-                    AddUndoElem(new UndoElem(new Range(args.Start, args.End).Chars, args.Start, UndoElem.ActionType.Remove));
-                }
-            };
+        }
+
+        protected override void OnInsertText(Gtk.TextIter pos, string text)
+        {
+            if (!ignoreChanges)
+            {
+                AddUndoElem(new UndoElem(text, new CharIter(pos), UndoElem.ActionType.Add));
+            }
+            base.OnInsertText(pos, text);
+        }
+
+        protected override void OnDeleteRange(Gtk.TextIter start, Gtk.TextIter end)
+        {
+            if (!ignoreChanges)
+            {
+                AddUndoElem(new UndoElem(new Range(start, end).Chars, start, UndoElem.ActionType.Remove));
+            }
+            base.OnDeleteRange(start, end);
         }
 
         public Buffer(File _file) : this(_file, new UndoStack(), new UndoStack())
