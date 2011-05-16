@@ -5,9 +5,52 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
+Why does the session have to meticulously make little serializable clones of everything and keep them up-to-date?
+
+    Things to do before implementing this change:
+    1. Look through all classes for uses of closures (other than as event handlers), Gtk objects, or other impediments.
+    2. Make a git branch for the conversion.
+
+    The Model.Buffer class is a subclass of Gtk.TextBuffer, which is almost certainly not serializable. This arrangement
+    should be changed to one based on composition, although the need to override certain methods of Gtk.TextBuffer means
+    Model.Buffer will actually have to be composed with a simpler custom subclass of Gtk.TextBuffer.
+
+    Gtk.TextIters (and our CharIters which wrap them) can't be serialized. See if there are any of them laying around.
+
+    Functions can't be serialized, so every event handler is a problem.
+
+        It seems the simplest solution is to never use closures for event handlers, instead using Java-style Listener
+        interfaces. (This is effectively making the closure capture explicit, which allows for serialization.)
+
+    Certain things are serializable but should not be serialized (like the configuration and project metadata).
+
+        These can be marked as non-serialized. The trickier part is that, if these things were initialized in constructors,
+        that code needs to be moved to a separately-callable initializer. (Or maybe just into a nullary constructor? What
+        are the semantics of deserialization w.r.t. constructors?)
+
+    Right now, the top-level initialization is that the Model and Controller are created, and then the session is loaded,
+    populating sub-objects of those two. The new top-level initialization will be to immediately load the session, or
+    create Model and Controller objects if there is no session, and then call the initialization functions on those objects
+    (if necessary).
+
+        Since the Controller references the Model, and not vice-versa, the Controller will be loaded and saved.
+
+    The view can't be serialized. This shouldn't be much of a problem, since almost nothing about the view is included
+    in the current serialization, except the window size. Unlike the present code, the view should not be created until
+    after the session has been loaded. The view constructors should already contain the necessary code to examine the
+    current state of the controller and model and build widgets accordingly, but some parts of the view may have erroneously
+    assumed an empty initial state.
+
+    The session load/save code should be moved out of the Di.Session namespace and into the Di namespace.
+
+Cursor position doesn't seem to be correctly saved in the session
+
 Add support for "undo"
 
     4. Load and save stacks via the Session
+       a. Make sure the stacks are serializable
+       b. Break off a Session.Buffer class from Session.Window
+       c. Add the stacks to Session.Buffer (by reference, not copying)
     5. Add a more advanced interface for viewing and filtering the stacks
     6. Implement UndoElem.SwapWithNeighborAbove
 
