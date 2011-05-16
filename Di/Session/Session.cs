@@ -29,65 +29,32 @@ namespace Di.Session
     [Serializable]
     public class Main
     {
-        [Serializable]
-        private class Window
-        {
-            [NonSerialized]
-            public Controller.Window ctl;
-
-            public string projectRelativeFileName;
-
-            public int visibleOffset;
-
-            public int cursorOffset;
-
-            public Window(Controller.Window _ctl)
-            {
-                ctl = _ctl;
-                projectRelativeFileName = _ctl.Model.Value.File.ProjectRelativeFullName();
-                // TODO get visible offset
-                cursorOffset = _ctl.Model.Value.GetCursorIter().GtkIter.Offset;
-                AddHandlers();
-            }
-
-            public void AddHandlers()
-            {
-                ctl.Model.Value.MarkSet += (o, a) =>
-                {
-                    cursorOffset = ctl.Model.Value.GetCursorIter().GtkIter.Offset;
-                };
-                // TODO add handler to watch visible offset
-            }
-        }
+        [NonSerialized]
+        private FileInfo file;
 
         private int gtkWidth;
 
         private int gtkHeight;
 
-        private IList<Window> windows;
+        private IList<Buffer> buffers;
 
-        [NonSerialized]
-        private FileInfo file;
+        private IList<Window> windows;
 
         private Main(Controller.Main ctl, View.Main view)
         {
-            windows = new List<Controller.Window>(ctl.Windows).Select(cWin => new Window(cWin)).ToList();
+            var model = ctl.Model;
+            buffers = model.Buffers.Select(mBuf => new Buffer(mBuf)).ToList();
+            windows = new List<Controller.Window>(ctl.Windows).Select(cWin => new Window(FindBuffer(cWin), cWin)).ToList();
             int w, h;
             view.GetSize(out w, out h);
             gtkWidth = w;
             gtkHeight = h;
+            AddHandlers(ctl, view);
         }
 
-        private void AddHandlers(Controller.Main ctl, View.Main view)
+        private Buffer FindBuffer(Controller.Window win)
         {
-            ctl.Windows.Added.Add((n, cWin) => windows.Add(new Window(cWin)));
-            ctl.Windows.Removed.Add((n, cWin) => windows.Where(win => win.ctl == cWin).ToList().ForEach(win => { windows.Remove(win); }));
-            view.SizeAllocated += delegate(object o, Gtk.SizeAllocatedArgs args)
-            {
-                gtkWidth = args.Allocation.Width;
-                gtkHeight = args.Allocation.Height;
-            };
-            ctl.Saving.Add(Save);
+            return buffers.Where(b => b.buf == win.Model.Value).First();
         }
 
         private void Restore(Controller.Main ctl, View.Main view)
@@ -95,15 +62,48 @@ namespace Di.Session
             var model = ctl.Model;
             view.WidthRequest = gtkWidth;
             view.HeightRequest = gtkHeight;
-            foreach (var w in windows)
+            buffers = buffers.Where(b =>
             {
-                var cWin = ctl.FindOrCreateWindow(
-                    new Model.File(model, new FileInfo(model.Root.FullName.AppendFsPath(w.projectRelativeFileName))));
-                w.ctl = cWin;
-                cWin.Model.Value.PlaceCursor(cWin.Model.Value.GetIterAtOffset(w.cursorOffset));
-                // TODO set visible offset
-                w.AddHandlers();
-            }
+                try
+                {
+                    b.Restore(model);
+                }
+                catch (CannotRestore)
+                {
+                    return false;
+                }
+                return true;
+            }).ToList();
+            windows = windows.Where(w =>
+            {
+                try
+                {
+                    w.Restore(model, ctl);
+                }
+                catch (CannotRestore)
+                {
+                    return false;
+                }
+                return true;
+            }).ToList();
+            AddHandlers(ctl, view);
+        }
+
+        private void AddHandlers(Controller.Main ctl, View.Main view)
+        {
+            var model = ctl.Model;
+            model.Buffers.Added.Add((n, mBuf) => buffers.Add(new Buffer(mBuf)));
+            model.Buffers.Removed.Add((n, mBuf) => buffers.Where(b => b.buf == mBuf).ToList().ForEach(b => { buffers.Remove(b); }));
+            model.Buffers.Cleared.Add(buffers.Clear);
+            ctl.Windows.Added.Add((n, cWin) => windows.Add(new Window(FindBuffer(cWin), cWin)));
+            ctl.Windows.Removed.Add((n, cWin) => windows.Where(win => win.win == cWin).ToList().ForEach(win => { windows.Remove(win); }));
+            ctl.Windows.Cleared.Add(windows.Clear);
+            view.SizeAllocated += delegate(object o, Gtk.SizeAllocatedArgs args)
+            {
+                gtkWidth = args.Allocation.Width;
+                gtkHeight = args.Allocation.Height;
+            };
+            ctl.Saving.Add(Save);
         }
 
         public static Main Load(FileInfo file, Controller.Main ctl, View.Main view)
@@ -122,7 +122,6 @@ namespace Di.Session
             {
                 session = new Main(ctl, view) { file = file };
             }
-            session.AddHandlers(ctl, view);
             return session;
         }
 

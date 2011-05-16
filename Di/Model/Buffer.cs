@@ -87,11 +87,6 @@ namespace Di.Model
             base.OnDeleteRange(start, end);
         }
 
-        public Buffer(File _file) : this(_file, new UndoStack(), new UndoStack())
-        {
-            // empty
-        }
-
         public void InsertAtCursor(char c)
         {
             InsertAtCursor(string.Format("{0}", c));

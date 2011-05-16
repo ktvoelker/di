@@ -5,14 +5,19 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
+The cursor position should be in the Buffer part of the Session, not the Window
+
 Cursor position doesn't seem to be correctly saved in (or perhaps restored from) the session
+
+	This is either not reproducible on Windows, or I was imagining it.
+
+	Another weird thing has just happened reproducibly related to the cursor: go into insert mode,
+	type a few characters, leave insert mode, and immediately quit. The cursor is restored to where
+	it was before insert mode.
 
 Add support for "undo"
 
-    4. Load and save stacks via the Session
-       a. Make sure the stacks are serializable
-       b. Break off a Session.Buffer class from Session.Window
-       c. Add the stacks to Session.Buffer (by reference, not copying)
+	4. Test session support for undo/redo stacks: the stacks seem to come back empty
     5. Add a more advanced interface for viewing and filtering the stacks
     6. Implement UndoElem.SwapWithNeighborAbove
 
@@ -75,6 +80,7 @@ Keep a list of project files sorted by most-recently-visible
 Add configurable end-of-line character handling
 	Option 1: Detect and mimic the end-of-line characters found in a file
 	Options 2-4: always use \n, \r\n, or whatever that old MacOS one is
+	Note: internally, \n must be used, because otherwise the Gtk TextView widget behaves undesirably.
 
 Add configurable tab support
 
@@ -165,6 +171,9 @@ Fix the way shifted keybindings are matched.
         If the string name of the key is one character long and it is a lowercase character under Unicode
         but the binding is shifted, and if there is a key whose name is the uppercase character, match
         the uppercase one instead.
+
+Don't crash when the serialized session can't be loaded because it's from an older version.
+	Inform the user, asking whether to move the old file somewhere else or delete it.
 
 
 Language-Oriented Improvements

@@ -23,10 +23,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 
 namespace Di.Model
 {
+    [Serializable]
     public abstract class TextStackElem<Elem, Param> where Elem : TextStackElem<Elem, Param>
     {
         public abstract int Size
@@ -59,12 +60,13 @@ namespace Di.Model
     }
 
     [Serializable]
-    public class TextStack<Elem, Param> : ITextStack<Elem, Param> where Elem : TextStackElem<Elem, Param>
+    public class TextStack<Elem, Param> : ISerializable, ITextStack<Elem, Param> where Elem : TextStackElem<Elem, Param>
     {
         public const int MaxSize = 128 * 1024;
 
         private readonly BindList<Elem> stack = new BindList<Elem>();
 
+        [NonSerialized]
         public readonly Event1<Elem> Applied = new Event1<Elem>();
 
         private int size = 0;
@@ -73,17 +75,35 @@ namespace Di.Model
         {
         }
 
+        protected TextStack(SerializationInfo info, StreamingContext context)
+        {
+            stack = (BindList<Elem>) info.GetValue("stack", typeof(BindList<Elem>));
+            size = info.GetInt32("size");
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("stack", stack);
+            info.AddValue("size", size);
+        }
+
         public void PopAndApply(Param p)
         {
-            var v = stack.Last();
-            v.Apply(p);
-            PopAndDiscard();
-            Applied.Handler(v);
+            if (stack.Count > 0)
+            {
+                var v = stack.Last();
+                v.Apply(p);
+                PopAndDiscard();
+                Applied.Handler(v);
+            }
         }
 
         public void PopAndDiscard()
         {
-            stack.RemoveAt(stack.Count - 1);
+            if (stack.Count > 0)
+            {
+                stack.RemoveAt(stack.Count - 1);
+            }
         }
 
         public void Push(Elem elem)

@@ -22,8 +22,10 @@ using System;
 using System.Collections.Generic;
 namespace Di.Model
 {
+    [Serializable]
     public class UndoElem : TextStackElem<UndoElem, Buffer>
     {
+        [Serializable]
         public enum ActionType
         {
             Add,

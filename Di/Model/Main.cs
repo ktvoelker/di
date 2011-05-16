@@ -71,8 +71,7 @@ namespace Di.Model
 
         public readonly FileMatcher Matcher;
 
-        private readonly BindList<Buffer> buffers;
-        public readonly ReadOnlyCollection<Buffer> Buffers;
+        public readonly BindList<Buffer> Buffers;
 
         public Main(DirectoryInfo _dir)
         {
@@ -119,18 +118,22 @@ namespace Di.Model
             Files = new ReadOnlyCollection<File>(files);
             Directories = new ReadOnlyCollection<Directory>(directories);
 
-            buffers = new BindList<Buffer>();
-            Buffers = new ReadOnlyCollection<Buffer>(buffers);
+            Buffers = new BindList<Buffer>();
         }
 
-        private Buffer CreateBuffer(File file)
+        private Buffer CreateBuffer(File file, TextStack<UndoElem, Buffer> undo, TextStack<UndoElem, Buffer> redo)
         {
-            var buffer = new Buffer(file);
-            buffers.Add(buffer);
+            var buffer = new Buffer(file, undo, redo);
+            Buffers.Add(buffer);
             return buffer;
         }
 
         public Buffer FindOrCreateBuffer(File file)
+        {
+            return FindOrCreateBuffer(file, new TextStack<UndoElem, Buffer>(), new TextStack<UndoElem, Buffer>());
+        }
+
+        public Buffer FindOrCreateBuffer(File file, TextStack<UndoElem, Buffer> undo, TextStack<UndoElem, Buffer> redo)
         {
             foreach (var buffer in Buffers)
             {
@@ -139,7 +142,7 @@ namespace Di.Model
                     return buffer;
                 }
             }
-            return CreateBuffer(file);
+            return CreateBuffer(file, undo, redo);
         }
 
         public static bool DirIsProjectRoot(DirectoryInfo dir)

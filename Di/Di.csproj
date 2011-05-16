@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -45,6 +45,9 @@
     <Compile Include="Platform.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Session\Buffer.cs" />
+    <Compile Include="Session\CannotRestore.cs" />
+    <Compile Include="Session\Window.cs" />
     <Compile Include="View\Main.cs" />
     <Compile Include="Model\Main.cs" />
     <Compile Include="Controller\Main.cs" />
@@ -115,8 +118,5 @@
       <Name>Ini</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Session\" />
-    <Folder Include="Controller\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
