@@ -52,8 +52,8 @@ namespace Di.Model
              */
             UndoStack = _undo;
             RedoStack = _redo;
-            UndoStack.Applied.Add(RedoStack.Push);
-            RedoStack.Applied.Add(UndoStack.Push);
+            UndoStack.Applied.Add(e => RedoStack.Push(e.Invert()));
+            RedoStack.Applied.Add(e => UndoStack.Push(e.Invert()));
 
             /**
              * Read the file.

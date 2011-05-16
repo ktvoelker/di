@@ -42,11 +42,24 @@ namespace Di.Controller
 
         private static readonly KeyMap EmptyKeyMap;
 
+        private static readonly ISet<Gdk.Key> IgnoreKeys;
+
         public Event1<CharIter> CursorMovedByCommand = new Event1<CharIter>();
 
         static Window()
         {
             EmptyKeyMap = new KeyMap();
+            IgnoreKeys = new HashSet<Gdk.Key>();
+            IgnoreKeys.Add(Gdk.Key.Shift_L);
+            IgnoreKeys.Add(Gdk.Key.Shift_R);
+            IgnoreKeys.Add(Gdk.Key.Shift_Lock);
+            IgnoreKeys.Add(Gdk.Key.Meta_L);
+            IgnoreKeys.Add(Gdk.Key.Meta_R);
+            IgnoreKeys.Add(Gdk.Key.Control_L);
+            IgnoreKeys.Add(Gdk.Key.Control_R);
+            IgnoreKeys.Add(Gdk.Key.Super_L);
+            IgnoreKeys.Add(Gdk.Key.Super_R);
+            IgnoreKeys.Add(Gdk.Key.Menu);
         }
 
         private KeyMap CurrentKeyMap = EmptyKeyMap;
@@ -68,19 +81,22 @@ namespace Di.Controller
 
         public void KeyPressedHandler(EventKey e)
         {
-            Parser.Parse(CurrentKeyMap.Lookup(e).Select(a => { return new UnparsedCommand(a, e.KeyValue); }));
-            // TODO alert the user if there were any invalid sequences
-            // TODO indicate the current state somewhere
-            Model.Value.IncrUserAction();
-            try
+            if (!IgnoreKeys.Contains(e.Key))
             {
-                Parser.Commands.ForEach(c => c.Execute(this));
+                Parser.Parse(CurrentKeyMap.Lookup(e).Select(a => { return new UnparsedCommand(a, e.KeyValue); }));
+                // TODO alert the user if there were any invalid sequences
+                // TODO indicate the current state somewhere
+                Model.Value.IncrUserAction();
+                try
+                {
+                    Parser.Commands.ForEach(c => c.Execute(this));
+                }
+                finally
+                {
+                    Model.Value.DecrUserAction();
+                }
+                Parser.Commands.Clear();
             }
-            finally
-            {
-                Model.Value.DecrUserAction();
-            }
-            Parser.Commands.Clear();
         }
 
         public void PlaceCursorKeepVisible(CharIter i)

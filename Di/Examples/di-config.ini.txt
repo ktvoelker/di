@@ -25,7 +25,7 @@ w = ClearWindowMode; AddWindowMode window
 q = ClearWindowMode; AddWindowMode quit
 a = Save
 u = Undo
-U = Redo
+S U = Redo
 
 [mode quit]
 display-name = Quit?

@@ -5,25 +5,13 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-Fix bugs in existing undo/redo code
-
-    Redo doesn't have any visible effect
-
 Add support for "undo"
 
     4. Load and save stacks via the Session
     5. Add a more advanced interface for viewing and filtering the stacks
     6. Implement UndoElem.SwapWithNeighborAbove
 
-    Keep separate "undo" and "redo" stacks for each Buffer in the project
-
-        They should be stored in the session
-
-    Call BeginUserAction and EndUserAction inside the key press handler
-
-        Have event handlers which create a minimal number of chunks
-
-    Interface:
+    Advanced interface:
 
         Besides the basic "undo/redo", have a sidebar that shows the stack
 
@@ -152,6 +140,26 @@ Provide friendlier responses to errors such as:
 Don't allow two instances of Di to run with the same project at the same time.
 
 Add support for numeric escapes in parsing char-valued arguments to commands in the config.
+
+Fix the way shifted keybindings are matched.
+
+    For example, when entering a capital letter, this is encoded both in the modifier state (ShiftMask)
+    and in the key value itself (because the capital letter has a different code than the corresponding
+    lowercase letter).
+
+    Presumably, for those keys which don't have anything special associated with their shifted state,
+    the key value is the same as it would be unshifted, while only the modifier state is different.
+
+    The right way to solve this is to find a function which maps from a key value with implicit shiftedness
+    to the key value for the same key unshifted. (This depends on the key map.) This function could then be
+    used both to allow shifted keys to match even if "shift" wasn't specified in the binding, as well as
+    to allow a binding to specify "shift" and the unshifted form of the key in order to match the shifted
+    form.
+
+    If this can't be solved the right way, it might be good to use an approximate solution like this:
+        If the string name of the key is one character long and it is a lowercase character under Unicode
+        but the binding is shifted, and if there is a key whose name is the uppercase character, match
+        the uppercase one instead.
 
 
 Language-Oriented Improvements
