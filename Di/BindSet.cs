@@ -66,30 +66,30 @@ namespace Di
             return elems.Contains(item);
         }
 
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            elems.CopyTo(array, arrayIndex);
-        }
-
         public int Count
         {
             get { return elems.Count; }
         }
+		
+		public bool IsReadOnly
+		{
+			get { return elems.IsReadOnly; }
+		}
 
         public IEnumerator<T> GetEnumerator()
         {
             return elems.GetEnumerator();
         }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return elems.GetEnumerator();
-        }
-
-        public bool IsReadOnly
-        {
-            get { return elems.IsReadOnly; }
-        }
+		
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return elems.GetEnumerator();
+		}
+		
+		public void CopyTo(T[] array, int arrayIndex)
+		{
+			elems.CopyTo(array, arrayIndex);
+		}
 
         public bool Remove(T item)
         {

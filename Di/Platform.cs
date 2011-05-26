@@ -40,6 +40,7 @@ namespace Di
                 UserConfigDirectory = string.Format("{0}{1}{2}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create), Path.DirectorySeparatorChar, "Di");
                 SystemConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System, Environment.SpecialFolderOption.Create);
                 HiddenFilePrefix = "";
+				throw new NotImplementedException();
             }
             else
             {

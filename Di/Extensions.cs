@@ -33,12 +33,11 @@ namespace Di
 
         public static IEnumerable<int> Indices<T>(this IEnumerable<T> elems)
         {
-            int index = 0;
-            foreach (var elem in elems)
-            {
-                yield return index;
-                ++index;
-            }
+			int c = elems.Count();
+			for (int i = 0; i < c; ++i)
+			{
+				yield return i;
+			}
         }
 
         public static int Count<T>(this IEnumerable<T> elems)

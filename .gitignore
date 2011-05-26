@@ -4,5 +4,5 @@ bin
 *.userprefs
 test-results
 *.suo
-*.csproj.user
+*.user
 obj
