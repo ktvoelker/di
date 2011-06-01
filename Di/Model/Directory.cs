@@ -23,87 +23,23 @@ using System.Collections.Generic;
 using System.IO;
 namespace Di.Model
 {
-    public class Directory : IFsQueryable
+    public class Directory : FsQueryable<System.IO.DirectoryInfo>
     {
         public static bool MatchCheckEnabled = true;
         private static readonly Language.Base LangInstance = new Language.Directory();
 
-        public Main Root
+        public Directory(int safetyCheck, Main root, DirectoryInfo info) : base(root, info)
         {
-            get;
-            private set;
-        }
-
-        public Directory Parent
-        {
-            get;
-            private set;
-        }
-
-        public DirectoryInfo Info
-        {
-            get;
-            private set;
-        }
-
-        public Language.Base Lang
-        {
-            get
-            {
-                return LangInstance;
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return Info.Name;
-            }
-        }
-
-        public string FullName
-        {
-            get
-            {
-                return Info.FullName;
-            }
-        }
-
-        private static IDictionary<Main, IDictionary<DirWrapper, Directory>> Directories;
-
-        static Directory()
-        {
-            Directories = new Dictionary<Main, IDictionary<DirWrapper, Directory>>();
-        }
-
-        private Directory(Main root, DirectoryInfo info)
-        {
+			if (safetyCheck != 42)
+			{
+				throw new InvalidOperationException();
+			}
             if (MatchCheckEnabled && !root.Matcher.MatchDir(info))
             {
                 throw new DirectoryNotIncluded(info);
             }
-            Root = root;
-            Info = info;
-            Parent = info.FullName == root.RootInfo.FullName ? null : Get(root, info.Parent);
-        }
-
-        public static Directory Get(Main root, DirectoryInfo info)
-        {
-            if (!Directories.ContainsKey(root))
-            {
-                Directories[root] = new Dictionary<DirWrapper, Directory>();
-            }
-            if (!Directories[root].ContainsKey(info))
-            {
-                Directories[root][info] = new Directory(root, info);
-            }
-            return Directories[root][info];
-        }
-
-        public static IEnumerable<Directory> GetAll(Main root)
-        {
-            return Directories[root].Values;
+            Parent = info.FullName == root.RootInfo.FullName ? null : Fs.Directory.Get(root, info.Parent);
+			Lang = LangInstance;
         }
     }
 }

@@ -110,9 +110,9 @@ namespace Di.Model
             Matcher.MatchAll(RootInfo, out fileInfos, out dirInfos);
             File.MatchCheckEnabled = false;
             Directory.MatchCheckEnabled = false;
-            files = fileInfos.Select(f => new File(this, f)).ToList();
-            directories = dirInfos.Select(d => Directory.Get(this, d)).ToList();
-            Root = Directory.Get(this, RootInfo);
+            files = fileInfos.Select(f => Fs.File.Get(this, f)).ToList();
+            directories = dirInfos.Select(d => Fs.Directory.Get(this, d)).ToList();
+            Root = Fs.Directory.Get(this, RootInfo);
             File.MatchCheckEnabled = true;
             Directory.MatchCheckEnabled = true;
             Files = new ReadOnlyCollection<File>(files);

@@ -61,7 +61,7 @@ namespace Di.Controller
                 info.CreateText().Close();
                 try
                 {
-                    ChooseFile.Handler(new Model.File(dir.Root, info));
+					ChooseFile.Handler(Model.Fs.File.Get(dir.Root, info));
                 }
                 catch (FileNotIncluded)
                 {

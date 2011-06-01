@@ -21,33 +21,116 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 namespace Di.Model
 {
-    public interface IFsQueryable
+	public class Fs
+	{
+		public static readonly FsCache<System.IO.FileInfo, File> File = new FsCache<System.IO.FileInfo, File>((m, i) => new File(42, m, i));
+		
+		public static readonly FsCache<System.IO.DirectoryInfo, Directory> Directory = new FsCache<System.IO.DirectoryInfo, Directory>((m, i) => new Directory(42, m, i));
+	}
+	
+	public class FsCache<K, V> where K : System.IO.FileSystemInfo where V : FsQueryable<K>
+	{
+		private readonly IDictionary<Main, IDictionary<FsWrapper<K>, V>> Items = new Dictionary<Main, IDictionary<FsWrapper<K>, V>>();
+		
+		private readonly Func<Main, K, V> Create;
+		
+		public FsCache(Func<Main, K, V> create)
+		{
+			Create = create;
+		}
+		
+        public V Get(Main root, K info)
+        {
+            if (!Items.ContainsKey(root))
+            {
+                Items[root] = new Dictionary<FsWrapper<K>, V>();
+            }
+            if (!Items[root].ContainsKey(info))
+            {
+                Items[root][info] = Create(root, info);
+            }
+            return Items[root][info];
+        }
+
+        public IEnumerable<V> GetAll(Main root)
+        {
+            return Items[root].Values;
+        }
+	}
+	
+	public interface IFsQueryable
+	{
+		Main Root
+		{
+			get;
+		}
+		
+		Directory Parent
+		{
+			get;
+		}
+		
+		Language.Base Lang
+		{
+			get;
+		}
+		
+		string Name
+		{
+			get;
+		}
+		
+		string FullName
+		{
+			get;
+		}
+	}
+	
+    public abstract class FsQueryable<I> : IFsQueryable where I : System.IO.FileSystemInfo
     {
-        Main Root
+        public Main Root
+		{
+			get;
+			private set;
+		}
+		
+		public readonly I Info;
+		
+		public FsQueryable(Main root, I info)
+		{
+			Root = root;
+			Info = info;
+		}
+
+        public Directory Parent
         {
             get;
+			protected set;
         }
 
-        Directory Parent
+        public Language.Base Lang
         {
             get;
+			protected set;
         }
 
-        Language.Base Lang
+        public string Name
         {
-            get;
+            get
+			{
+				return Info.Name;
+			}
         }
 
-        string Name
+        public string FullName
         {
-            get;
-        }
-
-        string FullName
-        {
-            get;
+            get
+			{
+				return Info.FullName;
+			}
         }
     }
 

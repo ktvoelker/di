@@ -26,47 +26,47 @@ namespace Di
     /// A wrapper for a System.IO.DirectoryInfo which performs equality comparison
     /// and hashing based on the full name.
     /// </summary>
-    public class DirWrapper
+    public class FsWrapper<T> where T : FileSystemInfo
     {
-        private DirectoryInfo dir;
+        private T info;
 
-        public DirWrapper(DirectoryInfo _dir)
+        public FsWrapper(T _info)
         {
-            dir = _dir;
+            info = _info;
         }
 
-        public static implicit operator DirectoryInfo(DirWrapper w)
+        public static implicit operator T(FsWrapper<T> w)
         {
-            return w.dir;
+            return w.info;
         }
 
-        public static implicit operator DirWrapper(DirectoryInfo dir)
+        public static implicit operator FsWrapper<T>(T info)
         {
-            return new DirWrapper(dir);
+            return new FsWrapper<T>(info);
         }
 
         public override bool Equals(object o)
         {
-            var other = o as DirWrapper;
+            var other = o as FsWrapper<T>;
             return object.ReferenceEquals(other, null) ? false : this == other;
         }
 
         public override int GetHashCode()
         {
-            return dir.FullName.GetHashCode();
+            return info.FullName.GetHashCode();
         }
 
         public override string ToString()
         {
-            return dir.ToString();
+            return info.ToString();
         }
 
-        public static bool operator ==(DirWrapper a, DirWrapper b)
+        public static bool operator ==(FsWrapper<T> a, FsWrapper<T> b)
         {
-            return EqUtils.EqOpByProjection<DirWrapper, string>(a, b, w => w.dir.FullName);
+            return EqUtils.EqOpByProjection<FsWrapper<T>, string>(a, b, w => w.info.FullName);
         }
 
-        public static bool operator !=(DirWrapper a, DirWrapper b)
+        public static bool operator !=(FsWrapper<T> a, FsWrapper<T> b)
         {
             return !(a == b);
         }

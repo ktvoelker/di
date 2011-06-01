@@ -5,15 +5,9 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-The cursor position should be in the Buffer part of the Session, not the Window
+Session.Window.Restore creates new Model.File objects
 
-Cursor position doesn't seem to be correctly saved in (or perhaps restored from) the session
-
-	This is either not reproducible on Windows, or I was imagining it.
-
-	Another weird thing has just happened reproducibly related to the cursor: go into insert mode,
-	type a few characters, leave insert mode, and immediately quit. The cursor is restored to where
-	it was before insert mode.
+	This should be fixed now. Get rid of the old session before testing.
 
 Add support for "undo"
 

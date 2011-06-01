@@ -23,59 +23,21 @@ using System.Collections.Generic;
 using System.IO;
 namespace Di.Model
 {
-    public class File : IFsQueryable
+    public class File : FsQueryable<System.IO.FileInfo>
     {
         public static bool MatchCheckEnabled = true;
 
-        public Main Root
+        public File(int safetyCheck, Main root, FileInfo file) : base(root, file)
         {
-            get;
-            private set;
-        }
-
-        public Directory Parent
-        {
-            get;
-            private set;
-        }
-
-        public FileInfo Info
-        {
-            get;
-            private set;
-        }
-
-        public Language.Base Lang
-        {
-            get;
-            private set;
-        }
-
-        public string Name
-        {
-            get
-            {
-                return Info.Name;
-            }
-        }
-
-        public string FullName
-        {
-            get
-            {
-                return Info.FullName;
-            }
-        }
-
-        public File(Main root, FileInfo file)
-        {
+			if (safetyCheck != 42)
+			{
+				throw new InvalidOperationException();
+			}
             if (MatchCheckEnabled && !root.Matcher.MatchFile(file))
             {
                 throw new FileNotIncluded(file);
             }
-            Root = root;
-            Info = file;
-            Parent = Directory.Get(root, file.Directory);
+            Parent = Fs.Directory.Get(root, file.Directory);
             Lang = new Language.Plain();
         }
     }

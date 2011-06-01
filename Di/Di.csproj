@@ -21,6 +21,11 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <ConsolePause>false</ConsolePause>
+    <EnvironmentVariables>
+      <EnvironmentVariables>
+        <Variable name="DI_PROJECT" value="/Users/kvoelker/Projects/test-project" />
+      </EnvironmentVariables>
+    </EnvironmentVariables>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -40,7 +45,6 @@
     <Compile Include="BindSet.cs" />
     <Compile Include="CharIter.cs" />
     <Compile Include="CompareComparable.cs" />
-    <Compile Include="DirWrapper.cs" />
     <Compile Include="Either.cs" />
     <Compile Include="EqUtils.cs" />
     <Compile Include="Event.cs" />
@@ -88,6 +92,7 @@
     <Compile Include="View\Main.cs" />
     <Compile Include="View\Sidebar.cs" />
     <Compile Include="View\WindowView.cs" />
+    <Compile Include="FsWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Configuration.txt" />

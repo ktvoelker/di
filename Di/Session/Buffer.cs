@@ -14,6 +14,8 @@ namespace Di.Session
         public string projectRelativeFileName;
 
         public Model.TextStack<Model.UndoElem, Model.Buffer> undoStack, redoStack;
+		
+		public int cursorOffset;
 
         public Buffer(Model.Buffer _buf)
         {
@@ -21,6 +23,7 @@ namespace Di.Session
             projectRelativeFileName = _buf.File.ProjectRelativeFullName();
             undoStack = buf.UndoStack;
             redoStack = buf.RedoStack;
+            cursorOffset = buf.GetCursorIter().GtkIter.Offset;
             AddHandlers();
         }
 
@@ -32,12 +35,16 @@ namespace Di.Session
                 throw new CannotRestore();
             }
             buf = model.FindOrCreateBuffer(file, undoStack, redoStack);
+            buf.PlaceCursor(buf.GetIterAtOffset(cursorOffset));
             AddHandlers();
         }
 
         public void AddHandlers()
         {
-            // empty
+            buf.MarkSet += (o, a) =>
+            {
+                cursorOffset = buf.GetCursorIter().GtkIter.Offset;
+            };
         }
     }
 }
