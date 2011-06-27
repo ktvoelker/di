@@ -7,7 +7,7 @@ Completeness of Basic Functionality
 
 Session.Window.Restore creates new Model.File objects
 
-	This should be fixed now. Get rid of the old session before testing.
+	This is either not fixed, or something else is preventing proper cursor restoration.
 
 Add support for "undo"
 
