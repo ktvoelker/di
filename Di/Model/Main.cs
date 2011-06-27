@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using Karl;
 namespace Di.Model
 {
     public class Main
@@ -35,7 +36,7 @@ namespace Di.Model
         /// RootInfo is used by Directory to know where the root is before the Directory
         /// object tree has been created.
         /// </summary>
-        public readonly DirectoryInfo RootInfo;
+        public readonly Karl.Fs.Directory RootInfo;
 
         public readonly Directory Root;
 
@@ -69,11 +70,11 @@ namespace Di.Model
             private set;
         }
 
-        public readonly FileMatcher Matcher;
+        public readonly Karl.Fs.Matcher Matcher;
 
         public readonly BindList<Buffer> Buffers;
 
-        public Main(DirectoryInfo _dir)
+        public Main(Karl.Fs.Directory _dir)
         {
             Config = LoadConfig();
             while (!DirIsProjectRoot(_dir))
@@ -90,7 +91,7 @@ namespace Di.Model
             }
             RootInfo = _dir;
             Ini.IniParser.Parse(Path.Combine(RootInfo.FullName, ProjectMetaFileName), ref meta);
-            Matcher = new FileMatcher();
+            Matcher = new Karl.Fs.Matcher();
             if (meta.ContainsKey("include"))
             {
                 foreach (var i in meta["include"].Keys)
@@ -105,8 +106,8 @@ namespace Di.Model
                     Matcher.ExcludeGlob(e);
                 }
             }
-            IList<FileInfo> fileInfos;
-            IList<DirectoryInfo> dirInfos;
+            IList<Karl.Fs.File> fileInfos;
+            IList<Karl.Fs.Directory> dirInfos;
             Matcher.MatchAll(RootInfo, out fileInfos, out dirInfos);
             File.MatchCheckEnabled = false;
             Directory.MatchCheckEnabled = false;
@@ -145,7 +146,7 @@ namespace Di.Model
             return CreateBuffer(file, undo, redo);
         }
 
-        public static bool DirIsProjectRoot(DirectoryInfo dir)
+        public static bool DirIsProjectRoot(Karl.Fs.Directory dir)
         {
             return dir.GetFiles().Where(file => file.Name == ProjectMetaFileName).HasAny();
         }

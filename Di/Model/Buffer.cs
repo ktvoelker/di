@@ -19,7 +19,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.IO;
+using Karl;
 
 namespace Di.Model
 {
@@ -96,7 +96,7 @@ namespace Di.Model
         {
             if (HasUnsavedChanges && File != null)
             {
-                var output = new StreamWriter(File.Info.Open(FileMode.Truncate, FileAccess.Write));
+                var output = new System.IO.StreamWriter(File.Info.Open(System.IO.FileMode.Truncate, System.IO.FileAccess.Write));
                 output.Write(Text);
                 output.Close();
                 HasUnsavedChanges.Value = false;

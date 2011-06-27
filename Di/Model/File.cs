@@ -23,11 +23,11 @@ using System.Collections.Generic;
 using System.IO;
 namespace Di.Model
 {
-    public class File : FsQueryable<System.IO.FileInfo>
+    public class File : FsQueryable<Karl.Fs.File>
     {
         public static bool MatchCheckEnabled = true;
 
-        public File(int safetyCheck, Main root, FileInfo file) : base(root, file)
+        public File(int safetyCheck, Main root, Karl.Fs.File file) : base(root, file)
         {
 			if (safetyCheck != 42)
 			{

@@ -1,5 +1,5 @@
 //  
-//  CompareComparable.cs
+//  Equality.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -19,18 +19,26 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-namespace Di
+namespace Karl
 {
-    public class CompareComparable<T> : IComparer<T> where T : IComparable<T>
+    public static class Equality
     {
-        public CompareComparable()
+        public static bool EqOpByProjection<T, U>(T a, T b, Func<T, U> f) where T : class where U : class
         {
-        }
-
-        public int Compare(T x, T y)
-        {
-            return x.CompareTo(y);
+            bool aNull = object.ReferenceEquals(a, null);
+            bool bNull = object.ReferenceEquals(b, null);
+            if (aNull && bNull)
+            {
+                return true;
+            }
+            else if (aNull || bNull)
+            {
+                return false;
+            }
+            else
+            {
+                return f(a).Equals(f(b));
+            }
         }
     }
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace FileSystem
+namespace Karl.Fs
 {
-    public class File
+    public class Entry
     {
         private Directory parent = null;
 
@@ -43,6 +43,22 @@ namespace FileSystem
             }
         }
 
+        public Directory Directory
+        {
+            get
+            {
+                return Parent;
+            }
+        }
+
+        public string FullName
+        {
+            get
+            {
+                return AbsolutePath;
+            }
+        }
+
         private static IDictionary<string, WeakReference> cache = new Dictionary<string, WeakReference>();
 
         private static object cacheLock = new object();
@@ -51,7 +67,7 @@ namespace FileSystem
 
         internal static int CacheMisses = 0;
 
-        protected File(string absolutePath)
+        protected Entry(string absolutePath)
         {
             AbsolutePath = absolutePath;
             var info = new System.IO.FileInfo(absolutePath);
@@ -66,7 +82,7 @@ namespace FileSystem
             return new System.IO.FileInfo(path).FullName;
         }
 
-        protected static T Get<T>(string path, Func<string, T> maker) where T : File
+        protected static T Get<T>(string path, Func<string, T> maker) where T : Entry
         {
             string absolutePath = Canonicalize(path);
             T result = null;

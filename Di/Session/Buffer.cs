@@ -46,5 +46,10 @@ namespace Di.Session
                 cursorOffset = buf.GetCursorIter().GtkIter.Offset;
             };
         }
+
+        public void Poll()
+        {
+            cursorOffset = buf.GetCursorIter().GtkIter.Offset;
+        }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Di
+namespace Karl
 {
     public class PriorityQueue<T, P> : IEnumerable<T>
     {

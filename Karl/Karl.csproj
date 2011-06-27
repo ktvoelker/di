@@ -8,8 +8,8 @@
     <ProjectGuid>{3F226BC4-9141-4629-9E4E-F7C64708986A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FileSystem</RootNamespace>
-    <AssemblyName>FileSystem</AssemblyName>
+    <RootNamespace>Karl</RootNamespace>
+    <AssemblyName>Karl</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -37,11 +37,24 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Directory.cs" />
-    <Compile Include="File.cs" />
+    <Compile Include="Bind.cs" />
+    <Compile Include="BindList.cs" />
+    <Compile Include="BindListPointer.cs" />
+    <Compile Include="BindListWithCurrent.cs" />
+    <Compile Include="BindSet.cs" />
+    <Compile Include="CompareComparable.cs" />
+    <Compile Include="Either.cs" />
+    <Compile Include="Equality.cs" />
+    <Compile Include="Event.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Fs\Directory.cs" />
+    <Compile Include="Fs\Entry.cs" />
+    <Compile Include="Fs\Matcher.cs" />
+    <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegularFile.cs" />
-    <Compile Include="Tests.cs" />
+    <Compile Include="Fs\File.cs" />
+    <Compile Include="Fs\Tests.cs" />
+    <Compile Include="Tokenizer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

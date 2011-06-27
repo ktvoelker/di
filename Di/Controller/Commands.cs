@@ -21,6 +21,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using Karl;
 namespace Di.Controller.Command
 {
     public class DiscardInput : InterruptCommand

@@ -25,14 +25,14 @@ namespace Di
 {
     public class DirectoryNotIncluded : Exception
     {
-        public DirectoryNotIncluded(DirectoryInfo info) : base(string.Format("The directory `{0}' is not included by the project.", info.FullName))
+        public DirectoryNotIncluded(Karl.Fs.Directory info) : base(string.Format("The directory `{0}' is not included by the project.", info.FullName))
         {
         }
     }
 
     public class FileNotIncluded : Exception
     {
-        public FileNotIncluded(FileInfo info) : base(string.Format("The file `{0}' is not included by the project.", info.FullName))
+        public FileNotIncluded(Karl.Fs.File info) : base(string.Format("The file `{0}' is not included by the project.", info.FullName))
         {
         }
     }

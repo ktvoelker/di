@@ -46,7 +46,7 @@ namespace Di
                 rootPath = args[0];
             }
             Application.Init();
-            var model = new Model.Main(new DirectoryInfo(rootPath));
+            var model = new Model.Main(Karl.Fs.Directory.Get(rootPath));
             var ctl = new Controller.Main(model);
             var view = new View.Main(ctl);
             Session.Main.Load(model.SessionFile, ctl, view);

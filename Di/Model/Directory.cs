@@ -23,12 +23,12 @@ using System.Collections.Generic;
 using System.IO;
 namespace Di.Model
 {
-    public class Directory : FsQueryable<System.IO.DirectoryInfo>
+    public class Directory : FsQueryable<Karl.Fs.Directory>
     {
         public static bool MatchCheckEnabled = true;
         private static readonly Language.Base LangInstance = new Language.Directory();
 
-        public Directory(int safetyCheck, Main root, DirectoryInfo info) : base(root, info)
+        public Directory(int safetyCheck, Main root, Karl.Fs.Directory info) : base(root, info)
         {
 			if (safetyCheck != 42)
 			{

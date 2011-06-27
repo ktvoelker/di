@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-namespace Di
+namespace Karl
 {
     public static class Tokenizer
     {

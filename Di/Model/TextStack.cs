@@ -24,6 +24,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.IO;
 using System.Runtime.Serialization;
+using Karl;
 
 namespace Di.Model
 {

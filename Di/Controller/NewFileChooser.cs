@@ -19,7 +19,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.IO;
+using Karl;
 namespace Di.Controller
 {
     public class NewFileChooser : Chooser<string>
@@ -42,7 +42,7 @@ namespace Di.Controller
                 Candidates.Clear();
                 if (name != string.Empty)
                 {
-                    Candidates.Add(string.Format("[new] {0}{1}{2}", dir.ProjectRelativeFullName(), Path.DirectorySeparatorChar, name));
+                    Candidates.Add(string.Format("[new] {0}{1}{2}", dir.ProjectRelativeFullName(), Karl.Fs.Directory.SeparatorChar, name));
                 }
             }
         }
@@ -52,7 +52,7 @@ namespace Di.Controller
             dir = _dir;
             Choose.Add(EventPriority.ControllerHigh, ignore =>
             {
-                var info = new FileInfo(dir.FullName + Path.DirectorySeparatorChar + name);
+                var info = Karl.Fs.File.Get(dir.FullName + Karl.Fs.Directory.SeparatorChar + name);
                 if (info.Exists)
                 {
                     Choose.Cancel();

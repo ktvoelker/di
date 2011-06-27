@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Karl;
 namespace Di.Model
 {
     public class ViewElem<T, P> where T : TextStackElem<T, P>

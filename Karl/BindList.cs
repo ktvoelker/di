@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-namespace Di
+namespace Karl
 {
     [Serializable]
     public class BindList<T> : IList<T>

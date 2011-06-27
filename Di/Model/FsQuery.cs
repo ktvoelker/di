@@ -26,14 +26,14 @@ namespace Di.Model
 {
 	public class Fs
 	{
-		public static readonly FsCache<System.IO.FileInfo, File> File = new FsCache<System.IO.FileInfo, File>((m, i) => new File(42, m, i));
+		public static readonly FsCache<Karl.Fs.File, File> File = new FsCache<Karl.Fs.File, File>((m, i) => new File(42, m, i));
 		
-		public static readonly FsCache<System.IO.DirectoryInfo, Directory> Directory = new FsCache<System.IO.DirectoryInfo, Directory>((m, i) => new Directory(42, m, i));
+		public static readonly FsCache<Karl.Fs.Directory, Directory> Directory = new FsCache<Karl.Fs.Directory, Directory>((m, i) => new Directory(42, m, i));
 	}
 	
-	public class FsCache<K, V> where K : System.IO.FileSystemInfo where V : FsQueryable<K>
+	public class FsCache<K, V> where K : Karl.Fs.Entry where V : FsQueryable<K>
 	{
-		private readonly IDictionary<Main, IDictionary<FsWrapper<K>, V>> Items = new Dictionary<Main, IDictionary<FsWrapper<K>, V>>();
+		private readonly IDictionary<Main, IDictionary<K, V>> Items = new Dictionary<Main, IDictionary<K, V>>();
 		
 		private readonly Func<Main, K, V> Create;
 		
@@ -46,7 +46,7 @@ namespace Di.Model
         {
             if (!Items.ContainsKey(root))
             {
-                Items[root] = new Dictionary<FsWrapper<K>, V>();
+                Items[root] = new Dictionary<K, V>();
             }
             if (!Items[root].ContainsKey(info))
             {
@@ -89,7 +89,7 @@ namespace Di.Model
 		}
 	}
 	
-    public abstract class FsQueryable<I> : IFsQueryable where I : System.IO.FileSystemInfo
+    public abstract class FsQueryable<I> : IFsQueryable where I : Karl.Fs.Entry
     {
         public Main Root
 		{

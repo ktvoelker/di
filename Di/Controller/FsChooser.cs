@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using Karl;
 namespace Di.Controller
 {
     public class FsChooser<T> : Chooser<T> where T : Model.IFsQueryable

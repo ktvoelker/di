@@ -5,9 +5,33 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-Session.Window.Restore creates new Model.File objects
+Generalize the caching scheme used in the FileSystem project.
 
-	This is either not fixed, or something else is preventing proper cursor restoration.
+	The generalization is any situation in which some set of entities have an equivalence relation,
+	and the set of objects which models them should only have one object per equivalence class,
+	although some classes may not be realized at all at any particular point in time.
+
+	The generalization should support inheritance heirarchies.
+
+		This is the tricky part.
+
+	Ideally, there should be no need to write any boilerplate code.
+
+		Any boilerplate that is necessary should only be necessary once per object class, and the
+		necessity of that code's existence should be statically enforced.
+
+	This might be useful for:
+
+		FileSystem.File
+
+		Di.Model.File
+
+		Di.Model.Buffer
+
+		Di.Controller.Window
+
+	Keep in mind that some kind of equality test will have to be supplied, since we can't use ==
+	when generics are involved.
 
 Add support for "undo"
 

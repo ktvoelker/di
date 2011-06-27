@@ -1,5 +1,5 @@
 //  
-//  Regex.cs
+//  Matcher.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -20,12 +20,11 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-namespace Di
+namespace Karl.Fs
 {
-    public class FileMatcher
+    public class Matcher
     {
         private string includePattern = null;
 
@@ -59,7 +58,7 @@ namespace Di
             }
         }
 
-        public FileMatcher()
+        public Matcher()
         {
         }
 
@@ -85,24 +84,24 @@ namespace Di
             return Include != null && Include.IsMatch(path) && (Exclude == null || !Exclude.IsMatch(path));
         }
 
-        public bool MatchDir(DirectoryInfo dir)
+        public bool MatchDir(Directory dir)
         {
-            return MatchDefaultInclude(dir.FullName + Path.DirectorySeparatorChar);
+            return MatchDefaultInclude(dir.FullName + Directory.SeparatorChar);
         }
 
-        public bool MatchFile(FileInfo file)
+        public bool MatchFile(File file)
         {
             return MatchDefaultExclude(file.FullName);
         }
 
-        public void MatchAll(DirectoryInfo root, out IList<FileInfo> fileMatches, out IList<DirectoryInfo> dirMatches)
+        public void MatchAll(Directory root, out IList<File> fileMatches, out IList<Directory> dirMatches)
         {
-            fileMatches = new List<FileInfo>();
-            dirMatches = new List<DirectoryInfo>();
+            fileMatches = new List<File>();
+            dirMatches = new List<Directory>();
             MatchAllImpl(root, ref fileMatches, ref dirMatches);
         }
 
-        private void MatchAllImpl(DirectoryInfo dir, ref IList<FileInfo> fileMatches, ref IList<DirectoryInfo> dirMatches)
+        private void MatchAllImpl(Directory dir, ref IList<File> fileMatches, ref IList<Directory> dirMatches)
         {
             if (MatchDir(dir))
             {
@@ -181,11 +180,11 @@ namespace Di
         // appended to the name.
         private static string GlobToRegex(string glob)
         {
-            if (glob[0] == Path.DirectorySeparatorChar)
+            if (glob[0] == Directory.SeparatorChar)
             {
                 throw new ArgumentException("A glob may not start with a path separator.");
             }
-            string pathSeparator = Escape(Path.DirectorySeparatorChar);
+            string pathSeparator = Escape(Directory.SeparatorChar);
             string notPathSeparator = "[^" + pathSeparator + "]";
             var pat = new StringBuilder();
             // The match must begin at the beginning of the string or at a path separator.
@@ -210,7 +209,7 @@ namespace Di
                             {
                                 pat.Append('|');
                             }
-                            if (m == Path.DirectorySeparatorChar)
+                            if (m == Directory.SeparatorChar)
                             {
                                 throw new ArgumentException("A glob may not have a character class containing the path separator.");
                             }

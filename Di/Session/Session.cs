@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using Karl;
 
 namespace Di.Session
 {
@@ -127,6 +128,7 @@ namespace Di.Session
 
         private void Save()
         {
+            buffers.ForEach(b => b.Poll());
             using (var output = file.OpenWrite())
             {
                 new BinaryFormatter().Serialize(output, this);

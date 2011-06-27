@@ -30,7 +30,7 @@ namespace Di.Session
             {
                 throw new CannotRestore();
             }
-            var cWin = ctl.FindOrCreateWindow(Model.Fs.File.Get(model, new FileInfo(model.Root.FullName.AppendFsPath(buf.projectRelativeFileName))));
+            var cWin = ctl.FindOrCreateWindow(Model.Fs.File.Get(model, Karl.Fs.File.Get(model.Root.FullName.AppendFsPath(buf.projectRelativeFileName))));
             win = cWin;
             // TODO set visible offset
             AddHandlers();

@@ -53,26 +53,14 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="Bind.cs" />
-    <Compile Include="BindList.cs" />
-    <Compile Include="BindListPointer.cs" />
-    <Compile Include="BindListWithCurrent.cs" />
-    <Compile Include="BindSet.cs" />
-    <Compile Include="CharIter.cs" />
-    <Compile Include="CompareComparable.cs" />
-    <Compile Include="Either.cs" />
-    <Compile Include="EqUtils.cs" />
-    <Compile Include="Event.cs" />
+    <Compile Include="Gtk\CharIter.cs" />
     <Compile Include="Exception.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="FileMatcher.cs" />
-    <Compile Include="Font.cs" />
-    <Compile Include="MultiStatusbar.cs" />
+    <Compile Include="Gtk\Font.cs" />
+    <Compile Include="Gtk\MultiStatusbar.cs" />
     <Compile Include="Platform.cs" />
-    <Compile Include="PriorityQueue.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Range.cs" />
-    <Compile Include="Tokenizer.cs" />
+    <Compile Include="Gtk\Range.cs" />
     <Compile Include="Controller\Chooser.cs" />
     <Compile Include="Controller\Command.cs" />
     <Compile Include="Controller\CommandParser.cs" />
@@ -107,12 +95,10 @@
     <Compile Include="View\Main.cs" />
     <Compile Include="View\Sidebar.cs" />
     <Compile Include="View\WindowView.cs" />
-    <Compile Include="FsWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Configuration.txt" />
     <None Include="Conventions.txt" />
-    <None Include="Di.pidb" />
     <None Include="TODO.txt" />
     <None Include="Examples\di-config.ini.txt" />
   </ItemGroup>
@@ -149,6 +135,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Karl\Karl.csproj">
+      <Project>{3F226BC4-9141-4629-9E4E-F7C64708986A}</Project>
+      <Name>Karl</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ini\Ini.csproj">
       <Project>{991CECAB-3C3B-4345-9D4D-C989BAB88BA2}</Project>
       <Name>Ini</Name>
