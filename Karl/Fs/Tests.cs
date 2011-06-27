@@ -19,8 +19,8 @@ namespace Karl.Fs
         [SetUp]
         public void SetUp()
         {
-            Entry.CacheHits = 0;
-            Entry.CacheMisses = 0;
+            EqCache<string, Entry>.Hits = 0;
+            EqCache<string, Entry>.Misses = 0;
             rootDir = ConcatPaths(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName());
             dirA = ConcatPaths(rootDir, "a");
             dirB = ConcatPaths(rootDir, "b");
@@ -33,8 +33,8 @@ namespace Karl.Fs
         {
             var a1 = File.Get(fileA);
             var a2 = File.Get(fileA);
-            Assert.AreEqual(Entry.CacheHits, 1);
-            Assert.AreEqual(Entry.CacheMisses, 1);
+            Assert.AreEqual(EqCache<string, Entry>.Hits, 1);
+            Assert.AreEqual(EqCache<string, Entry>.Misses, 1);
             Assert.AreEqual(a1, a2);
             Assert.AreSame(a1, a2);
         }
@@ -44,8 +44,8 @@ namespace Karl.Fs
         {
             var a = File.Get(fileA);
             var b = File.Get(fileB);
-            Assert.AreEqual(Entry.CacheHits, 0);
-            Assert.AreEqual(Entry.CacheMisses, 2);
+            Assert.AreEqual(EqCache<string, Entry>.Hits, 0);
+            Assert.AreEqual(EqCache<string, Entry>.Misses, 2);
             Assert.AreNotEqual(a, b);
             Assert.AreNotSame(a, b);
         }
@@ -55,8 +55,8 @@ namespace Karl.Fs
         {
             var a1 = Directory.Get(dirA);
             var a2 = Directory.Get(dirA);
-            Assert.AreEqual(Entry.CacheHits, 1);
-            Assert.AreEqual(Entry.CacheMisses, 1);
+            Assert.AreEqual(EqCache<string, Entry>.Hits, 1);
+            Assert.AreEqual(EqCache<string, Entry>.Misses, 1);
             Assert.AreEqual(a1, a2);
             Assert.AreSame(a1, a2);
         }
@@ -66,8 +66,8 @@ namespace Karl.Fs
         {
             var a = Directory.Get(dirA);
             var b = Directory.Get(dirB);
-            Assert.AreEqual(Entry.CacheHits, 0);
-            Assert.AreEqual(Entry.CacheMisses, 2);
+            Assert.AreEqual(EqCache<string, Entry>.Hits, 0);
+            Assert.AreEqual(EqCache<string, Entry>.Misses, 2);
             Assert.AreNotEqual(a, b);
             Assert.AreNotSame(a, b);
         }

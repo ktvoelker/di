@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Karl.Fs
 {
-    public class Entry
+    public abstract class Entry
     {
         private Directory parent = null;
 
@@ -59,15 +59,7 @@ namespace Karl.Fs
             }
         }
 
-        private static IDictionary<string, WeakReference> cache = new Dictionary<string, WeakReference>();
-
-        private static object cacheLock = new object();
-
-        internal static int CacheHits = 0;
-
-        internal static int CacheMisses = 0;
-
-        protected Entry(string absolutePath)
+        public Entry(string absolutePath)
         {
             AbsolutePath = absolutePath;
             var info = new System.IO.FileInfo(absolutePath);
@@ -84,31 +76,7 @@ namespace Karl.Fs
 
         protected static T Get<T>(string path, Func<string, T> maker) where T : Entry
         {
-            string absolutePath = Canonicalize(path);
-            T result = null;
-            lock (cacheLock)
-            {
-                if (cache.ContainsKey(absolutePath))
-                {
-                    var thing = cache[absolutePath].Target;
-                    if (thing != null)
-                    {
-                        result = thing as T;
-                        if (result == null)
-                        {
-                            throw new ArgumentException("File/directory mismatch");
-                        }
-                        ++CacheHits;
-                    }
-                }
-                if (result == null)
-                {
-                    ++CacheMisses;
-                    result = maker(absolutePath);
-                    cache[absolutePath] = new WeakReference(result);
-                }
-            }
-            return result;
+            return EqCache<string, Entry>.Get<T>(Canonicalize(path), maker);
         }
     }
 }
