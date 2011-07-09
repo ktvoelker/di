@@ -4,17 +4,22 @@ using System.Threading;
 
 namespace Karl
 {
-    public static class EqCache<K, T> where T : class
+    public interface IEqCache<K, T> where T : class
     {
-        private static IDictionary<K, WeakReference<T>> cache = new Dictionary<K, WeakReference<T>>();
+        U Get<U>(K key, Func<K, U> maker) where U : class, T;
+    }
 
-        private static object cacheLock = new object();
+    public class EqCache<K, T> : IEqCache<K, T> where T : class
+    {
+        private IDictionary<K, WeakReference<T>> cache = new Dictionary<K, WeakReference<T>>();
 
-        internal static int Hits = 0;
+        private object cacheLock = new object();
 
-        internal static int Misses = 0;
+        internal int Hits = 0;
 
-        public static U Get<U>(K key, Func<K, U> maker) where U : class, T
+        internal int Misses = 0;
+
+        public U Get<U>(K key, Func<K, U> maker) where U : class, T
         {
             U result = null;
             lock (cacheLock)
@@ -40,6 +45,38 @@ namespace Karl
                 }
             }
             return result;
+        }
+
+        public class AbstractView<L, U> : IEqCache<L, U>
+            where L : K
+            where U : class, T
+        {
+            private readonly EqCache<K, T> parent;
+
+            public AbstractView(EqCache<K, T> _parent)
+            {
+                parent = _parent;
+            }
+
+            public new V Get<V>(K key, Func<K, V> maker) where V : class, U
+            {
+                return parent.Get<V>(key, maker);
+            }
+        }
+
+        public class ConcreteView<L, U> : AbstractView<L, U> where U : class
+        {
+            private readonly Func<K, U> maker;
+
+            public ConcreteView(EqCache<K, T> _parent, Func<K, U> _maker) : base(_parent)
+            {
+                maker = _maker;
+            }
+
+            public U Get(K key)
+            {
+                return Get<U>(key, maker);
+            }
         }
     }
 }
