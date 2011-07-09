@@ -24,10 +24,10 @@ namespace Di.Controller
 {
     public class NewFileChooser : Chooser<string>
     {
-        private Model.Directory dir;
+        private Model.Meta.Directory dir;
         private string name = "";
 
-        public Event1<Model.File> ChooseFile = new Event1<Model.File>();
+        public Event1<Model.Meta.File> ChooseFile = new Event1<Model.Meta.File>();
 
         public override string Query
         {
@@ -47,7 +47,7 @@ namespace Di.Controller
             }
         }
 
-        public NewFileChooser(Main ctl, Model.Directory _dir) : base(ctl, "Name the new file", true)
+        public NewFileChooser(Main ctl, Model.Meta.Directory _dir) : base(ctl, "Name the new file", true)
         {
             dir = _dir;
             Choose.Add(EventPriority.ControllerHigh, ignore =>
@@ -61,7 +61,7 @@ namespace Di.Controller
                 info.CreateText().Close();
                 try
                 {
-					ChooseFile.Handler(Model.Fs.File.Get(dir.Root, info));
+					ChooseFile.Handler(ctl.Model.Files.Get(info));
                 }
                 catch (FileNotIncluded)
                 {

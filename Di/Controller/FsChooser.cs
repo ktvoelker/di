@@ -23,11 +23,11 @@ using System.Collections.Generic;
 using Karl;
 namespace Di.Controller
 {
-    public class FsChooser<T> : Chooser<T> where T : Model.IFsQueryable
+    public class FsChooser<T> : Chooser<T> where T : Model.Meta.IEntry
     {
         private Func<IEnumerable<T>> getCandidates;
 
-        private Di.Model.FsQuery<T> query;
+        private Di.Model.Meta.Query<T> query;
 
         private string queryString;
 
@@ -41,7 +41,7 @@ namespace Di.Controller
             set
             {
                 queryString = value;
-                query = new Di.Model.FsQuery<T>(value);
+                query = new Di.Model.Meta.Query<T>(value);
                 Candidates.Clear();
                 Update();
             }
@@ -50,7 +50,7 @@ namespace Di.Controller
         public FsChooser(Main ctl, Func<IEnumerable<T>> _getCandidates, string message, bool allowEscape) : base(ctl, message, allowEscape)
         {
             getCandidates = _getCandidates;
-            query = new Di.Model.FsQuery<T>("");
+            query = new Di.Model.Meta.Query<T>("");
             queryString = "";
             Update();
         }

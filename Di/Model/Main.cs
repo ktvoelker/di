@@ -21,9 +21,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using Karl;
+using Karl.Fs;
 namespace Di.Model
 {
     public class Main
@@ -36,9 +36,13 @@ namespace Di.Model
         /// RootInfo is used by Directory to know where the root is before the Directory
         /// object tree has been created.
         /// </summary>
-        public readonly Karl.Fs.Directory RootInfo;
+        public readonly Directory RootInfo;
 
-        public readonly Directory Root;
+        public readonly Meta.Directory Root;
+
+        public readonly StrongEqCache<File, Meta.File> Files;
+
+        public readonly StrongEqCache<Directory, Meta.Directory> Directories;
 
         public readonly Ini.IIniFile Config;
 
@@ -49,33 +53,20 @@ namespace Di.Model
             get { return meta[""].GetWithDefault("name", "Unnamed Project"); }
         }
 
-        public FileInfo SessionFile
+        public System.IO.FileInfo SessionFile
         {
-            get { return new FileInfo(RootInfo.FullName.AppendFsPath(Platform.HiddenFilePrefix + SessionFileName)); }
-        }
-
-        private IList<File> files;
-
-        public ReadOnlyCollection<File> Files
-        {
-            get;
-            private set;
-        }
-
-        private IList<Directory> directories;
-
-        public ReadOnlyCollection<Directory> Directories
-        {
-            get;
-            private set;
+            get { return new System.IO.FileInfo(RootInfo.FullName.AppendFsPath(Platform.HiddenFilePrefix + SessionFileName)); }
         }
 
         public readonly Karl.Fs.Matcher Matcher;
 
         public readonly BindList<Buffer> Buffers;
 
-        public Main(Karl.Fs.Directory _dir)
+        public Main(Directory _dir)
         {
+            Files = new StrongEqCache<File,Meta.File>(f => new Meta.File(this, f));
+            Directories = new StrongEqCache<Directory, Meta.Directory>(d => new Meta.Directory(this, d));
+
             Config = LoadConfig();
             while (!DirIsProjectRoot(_dir))
             {
@@ -90,7 +81,7 @@ namespace Di.Model
                 }
             }
             RootInfo = _dir;
-            Ini.IniParser.Parse(Path.Combine(RootInfo.FullName, ProjectMetaFileName), ref meta);
+            Ini.IniParser.Parse(System.IO.Path.Combine(RootInfo.FullName, ProjectMetaFileName), ref meta);
             Matcher = new Karl.Fs.Matcher();
             if (meta.ContainsKey("include"))
             {
@@ -109,32 +100,30 @@ namespace Di.Model
             IList<Karl.Fs.File> fileInfos;
             IList<Karl.Fs.Directory> dirInfos;
             Matcher.MatchAll(RootInfo, out fileInfos, out dirInfos);
-            File.MatchCheckEnabled = false;
-            Directory.MatchCheckEnabled = false;
-            files = fileInfos.Select(f => Fs.File.Get(this, f)).ToList();
-            directories = dirInfos.Select(d => Fs.Directory.Get(this, d)).ToList();
-            Root = Fs.Directory.Get(this, RootInfo);
-            File.MatchCheckEnabled = true;
-            Directory.MatchCheckEnabled = true;
-            Files = new ReadOnlyCollection<File>(files);
-            Directories = new ReadOnlyCollection<Directory>(directories);
+            Meta.File.MatchCheckEnabled = false;
+            Meta.Directory.MatchCheckEnabled = false;
+            fileInfos.Select(f => Files.Get(f)).ToList();
+            dirInfos.Select(d => Directories.Get(d)).ToList();
+            Root = Directories.Get(RootInfo);
+            Meta.File.MatchCheckEnabled = true;
+            Meta.Directory.MatchCheckEnabled = true;
 
             Buffers = new BindList<Buffer>();
         }
 
-        private Buffer CreateBuffer(File file, TextStack<UndoElem, Buffer> undo, TextStack<UndoElem, Buffer> redo)
+        private Buffer CreateBuffer(Meta.File file, TextStack<UndoElem, Buffer> undo, TextStack<UndoElem, Buffer> redo)
         {
             var buffer = new Buffer(file, undo, redo);
             Buffers.Add(buffer);
             return buffer;
         }
 
-        public Buffer FindOrCreateBuffer(File file)
+        public Buffer FindOrCreateBuffer(Meta.File file)
         {
             return FindOrCreateBuffer(file, new TextStack<UndoElem, Buffer>(), new TextStack<UndoElem, Buffer>());
         }
 
-        public Buffer FindOrCreateBuffer(File file, TextStack<UndoElem, Buffer> undo, TextStack<UndoElem, Buffer> redo)
+        public Buffer FindOrCreateBuffer(Meta.File file, TextStack<UndoElem, Buffer> undo, TextStack<UndoElem, Buffer> redo)
         {
             foreach (var buffer in Buffers)
             {
@@ -146,7 +135,7 @@ namespace Di.Model
             return CreateBuffer(file, undo, redo);
         }
 
-        public static bool DirIsProjectRoot(Karl.Fs.Directory dir)
+        public static bool DirIsProjectRoot(Directory dir)
         {
             return dir.GetFiles().Where(file => file.Name == ProjectMetaFileName).HasAny();
         }
@@ -161,7 +150,7 @@ namespace Di.Model
             Ini.IIniFile ini = Ini.IniParser.CreateEmptyIniFile();
             foreach (var file in files)
             {
-                if (new FileInfo(file).Exists)
+                if (new System.IO.FileInfo(file).Exists)
                 {
                     Ini.IniParser.Parse(file, ref ini);
                 }

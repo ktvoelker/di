@@ -58,6 +58,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Gtk\Font.cs" />
     <Compile Include="Gtk\MultiStatusbar.cs" />
+    <Compile Include="Model\Meta\Entry.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Gtk\Range.cs" />
@@ -76,9 +77,9 @@
     <Compile Include="Controller\Window.cs" />
     <Compile Include="Controller\WindowMode.cs" />
     <Compile Include="Model\Buffer.cs" />
-    <Compile Include="Model\Directory.cs" />
-    <Compile Include="Model\File.cs" />
-    <Compile Include="Model\FsQuery.cs" />
+    <Compile Include="Model\Meta\Directory.cs" />
+    <Compile Include="Model\Meta\File.cs" />
+    <Compile Include="Model\Meta\Query.cs" />
     <Compile Include="Model\Main.cs" />
     <Compile Include="Model\TextStack.cs" />
     <Compile Include="Model\TextStackView.cs" />

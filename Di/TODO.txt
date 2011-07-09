@@ -5,7 +5,7 @@ TODO
 Completeness of Basic Functionality
 -----------------------------------
 
-Try to apply EqCache to: Di.Model.File, Di.Model.Buffer, Di.Controller.Window, something about keymaps, windows in the view
+Try to apply EqCache to: Di.Model.Buffer, Di.Controller.Window, something about keymaps, windows in the view
 
 Add support for "undo"
 

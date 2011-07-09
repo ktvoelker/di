@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
+
+using Karl;
+using Karl.Fs;
 
 namespace Di.Session
 {
@@ -30,7 +32,7 @@ namespace Di.Session
             {
                 throw new CannotRestore();
             }
-            var cWin = ctl.FindOrCreateWindow(Model.Fs.File.Get(model, Karl.Fs.File.Get(model.Root.FullName.AppendFsPath(buf.projectRelativeFileName))));
+            var cWin = ctl.FindOrCreateWindow(model.Files.Get(File.Get(model.Root.FullName.AppendFsPath(buf.projectRelativeFileName))));
             win = cWin;
             // TODO set visible offset
             AddHandlers();

@@ -46,7 +46,7 @@ namespace Di
             return new Gdk.Size() { Width = width, Height = height };
         }
 
-        public static string ProjectRelativeFullName(this Model.IFsQueryable node)
+        public static string ProjectRelativeFullName(this Model.Meta.IEntry node)
         {
             if (node == node.Root.Root)
             {

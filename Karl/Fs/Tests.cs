@@ -9,7 +9,9 @@ namespace Karl.Fs
     [TestFixture]
     class Tests
     {
-        private string rootDir = null, dirA = null, dirB = null, fileA = null, fileB = null;
+        private WeakEqCache<string, Entry> cache;
+
+        private string rootDir, dirA, dirB, fileA, fileB;
 
         private string ConcatPaths(string a, string b)
         {
@@ -19,8 +21,8 @@ namespace Karl.Fs
         [SetUp]
         public void SetUp()
         {
-            EqCache<string, Entry>.Hits = 0;
-            EqCache<string, Entry>.Misses = 0;
+            cache = Entry.Cache;
+            cache.Clear();
             rootDir = ConcatPaths(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName());
             dirA = ConcatPaths(rootDir, "a");
             dirB = ConcatPaths(rootDir, "b");
@@ -33,8 +35,8 @@ namespace Karl.Fs
         {
             var a1 = File.Get(fileA);
             var a2 = File.Get(fileA);
-            Assert.AreEqual(EqCache<string, Entry>.Hits, 1);
-            Assert.AreEqual(EqCache<string, Entry>.Misses, 1);
+            Assert.AreEqual(cache.Hits, 1);
+            Assert.AreEqual(cache.Misses, 1);
             Assert.AreEqual(a1, a2);
             Assert.AreSame(a1, a2);
         }
@@ -44,8 +46,8 @@ namespace Karl.Fs
         {
             var a = File.Get(fileA);
             var b = File.Get(fileB);
-            Assert.AreEqual(EqCache<string, Entry>.Hits, 0);
-            Assert.AreEqual(EqCache<string, Entry>.Misses, 2);
+            Assert.AreEqual(cache.Hits, 0);
+            Assert.AreEqual(cache.Misses, 2);
             Assert.AreNotEqual(a, b);
             Assert.AreNotSame(a, b);
         }
@@ -55,8 +57,8 @@ namespace Karl.Fs
         {
             var a1 = Directory.Get(dirA);
             var a2 = Directory.Get(dirA);
-            Assert.AreEqual(EqCache<string, Entry>.Hits, 1);
-            Assert.AreEqual(EqCache<string, Entry>.Misses, 1);
+            Assert.AreEqual(cache.Hits, 1);
+            Assert.AreEqual(cache.Misses, 1);
             Assert.AreEqual(a1, a2);
             Assert.AreSame(a1, a2);
         }
@@ -66,8 +68,8 @@ namespace Karl.Fs
         {
             var a = Directory.Get(dirA);
             var b = Directory.Get(dirB);
-            Assert.AreEqual(EqCache<string, Entry>.Hits, 0);
-            Assert.AreEqual(EqCache<string, Entry>.Misses, 2);
+            Assert.AreEqual(cache.Hits, 0);
+            Assert.AreEqual(cache.Misses, 2);
             Assert.AreNotEqual(a, b);
             Assert.AreNotSame(a, b);
         }

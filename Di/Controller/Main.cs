@@ -262,14 +262,14 @@ namespace Di.Controller
             return text.Split(';').Select(ParseCommandOrMacro).Flatten();
         }
 
-        private Window CreateWindow(Model.File file)
+        private Window CreateWindow(Model.Meta.File file)
         {
             var window = new Window(this, Model.FindOrCreateBuffer(file));
             Windows.Add(window);
             return window;
         }
 
-        public Window FindWindow(Model.File file)
+        public Window FindWindow(Model.Meta.File file)
         {
             foreach (var window in Windows)
             {
@@ -281,7 +281,7 @@ namespace Di.Controller
             return null;
         }
 
-        public Window FindOrCreateWindow(Model.File file)
+        public Window FindOrCreateWindow(Model.Meta.File file)
         {
             var window = FindWindow(file);
             return window == null ? CreateWindow(file) : window;

@@ -31,8 +31,8 @@ namespace Di.View
         static Sidebar()
         {
             Sidebars = new Dictionary<Type, SidebarCreator>();
-            Register<Controller.FsChooser<Model.File>>(task => new ChooserView<Model.File>(task));
-            Register<Controller.FsChooser<Model.Directory>>(task => new ChooserView<Model.Directory>(task));
+            Register<Controller.FsChooser<Model.Meta.File>>(task => new ChooserView<Model.Meta.File>(task));
+            Register<Controller.FsChooser<Model.Meta.Directory>>(task => new ChooserView<Model.Meta.Directory>(task));
             Register<Controller.NewFileChooser>(task => new ChooserView<string>(task));
         }
 

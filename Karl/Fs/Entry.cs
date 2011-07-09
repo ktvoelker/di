@@ -8,6 +8,8 @@ namespace Karl.Fs
 {
     public abstract class Entry
     {
+        internal static WeakEqCache<string, Entry> Cache = new WeakEqCache<string, Entry>(x => { throw new ArgumentException(); });
+
         private Directory parent = null;
 
         public Directory Parent
@@ -76,7 +78,7 @@ namespace Karl.Fs
 
         protected static T Get<T>(string path, Func<string, T> maker) where T : Entry
         {
-            return EqCache<string, Entry>.Get<T>(Canonicalize(path), maker);
+            return Cache.Get<T>(Canonicalize(path), maker);
         }
     }
 }

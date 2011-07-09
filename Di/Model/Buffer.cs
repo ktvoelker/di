@@ -31,7 +31,7 @@ namespace Di.Model
 
         public readonly Bind<bool> HasUnsavedChanges = new Bind<bool>(false);
 
-        public File File
+        public Meta.File File
         {
             get;
             private set;
@@ -45,7 +45,7 @@ namespace Di.Model
 
         private bool ignoreChanges = false;
 
-        public Buffer(File _file, UndoStack _undo, UndoStack _redo) : base(tags)
+        public Buffer(Meta.File _file, UndoStack _undo, UndoStack _redo) : base(tags)
         {
             /**
              * Prepare for undo/redo.

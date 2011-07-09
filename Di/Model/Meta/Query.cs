@@ -1,5 +1,5 @@
 //  
-//  ProjectFile.cs
+//  FsQuery.cs
 //  
 //  Author:
 //       Karl Voelker <ktvoelker@gmail.com>
@@ -20,25 +20,22 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.IO;
-namespace Di.Model
-{
-    public class File : FsQueryable<Karl.Fs.File>
-    {
-        public static bool MatchCheckEnabled = true;
+using System.Linq;
 
-        public File(int safetyCheck, Main root, Karl.Fs.File file) : base(root, file)
+namespace Di.Model.Meta
+{
+	public class Query<T> where T : IEntry
+    {
+        private string query;
+
+        public Query(string _query)
         {
-			if (safetyCheck != 42)
-			{
-				throw new InvalidOperationException();
-			}
-            if (MatchCheckEnabled && !root.Matcher.MatchFile(file))
-            {
-                throw new FileNotIncluded(file);
-            }
-            Parent = Fs.Directory.Get(root, file.Directory);
-            Lang = new Language.Plain();
+            query = _query;
+        }
+
+        public IQueryable<T> Evaluate(IEnumerable<T> files)
+        {
+            return files.AsQueryable().Where(f => f.Name == query);
         }
     }
 }

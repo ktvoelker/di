@@ -208,7 +208,7 @@ namespace Di.Controller.Command
 
     public abstract class FileCommand : LoneCommand
     {
-        public static Action<Model.File> InNewWindow(Main ctl)
+        public static Action<Model.Meta.File> InNewWindow(Main ctl)
         {
             return file =>
             {
@@ -216,7 +216,7 @@ namespace Di.Controller.Command
             };
         }
 
-        public static Action<Model.File> InFocusedWindow(Main ctl)
+        public static Action<Model.Meta.File> InFocusedWindow(Main ctl)
         {
             return file =>
             {
@@ -232,14 +232,14 @@ namespace Di.Controller.Command
             };
         }
 
-        public static void OpenFile(Main ctl, Func<Main, Action<Model.File>> handler, bool allowEscape)
+        public static void OpenFile(Main ctl, Func<Main, Action<Model.Meta.File>> handler, bool allowEscape)
         {
-            var chooser = new FsChooser<Model.File>(ctl, () => ctl.Model.Files, "Choose a file", allowEscape);
+            var chooser = new FsChooser<Model.Meta.File>(ctl, () => ctl.Model.Files.GetAll(), "Choose a file", allowEscape);
             chooser.Choose.Add(handler(ctl));
             ctl.BeginTask.Handler(chooser);
         }
 
-        public static void NewFileInDirectory(Main ctl, Func<Main, Action<Model.File>> fileHandler, Model.Directory dir, string initDirQuery)
+        public static void NewFileInDirectory(Main ctl, Func<Main, Action<Model.Meta.File>> fileHandler, Model.Meta.Directory dir, string initDirQuery)
         {
             var fileChooser = new NewFileChooser(ctl, dir);
             fileChooser.ChooseFile.Add(fileHandler(ctl));
@@ -250,9 +250,9 @@ namespace Di.Controller.Command
             ctl.BeginTask.Handler(fileChooser);
         }
 
-        public static void NewFile(Main ctl, Func<Main, Action<Model.File>> fileHandler, string initDirQuery)
+        public static void NewFile(Main ctl, Func<Main, Action<Model.Meta.File>> fileHandler, string initDirQuery)
         {
-            var dirChooser = new FsChooser<Model.Directory>(ctl, () => ctl.Model.Directories, "Choose a directory", true);
+            var dirChooser = new FsChooser<Model.Meta.Directory>(ctl, () => ctl.Model.Directories.GetAll(), "Choose a directory", true);
             dirChooser.Choose.Add(EventPriority.ControllerHigh, dir => NewFileInDirectory(ctl, fileHandler, dir, dirChooser.Query));
             dirChooser.Query = initDirQuery;
             ctl.BeginTask.Handler(dirChooser);

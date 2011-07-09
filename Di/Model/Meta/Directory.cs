@@ -21,24 +21,20 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-namespace Di.Model
+namespace Di.Model.Meta
 {
-    public class Directory : FsQueryable<Karl.Fs.Directory>
+    public class Directory : Entry<Karl.Fs.Directory>
     {
         public static bool MatchCheckEnabled = true;
         private static readonly Language.Base LangInstance = new Language.Directory();
 
-        public Directory(int safetyCheck, Main root, Karl.Fs.Directory info) : base(root, info)
+        public Directory(Main root, Karl.Fs.Directory info) : base(root, info)
         {
-			if (safetyCheck != 42)
-			{
-				throw new InvalidOperationException();
-			}
-            if (MatchCheckEnabled && !root.Matcher.MatchDir(info))
+			if (MatchCheckEnabled && !root.Matcher.MatchDir(info))
             {
                 throw new DirectoryNotIncluded(info);
             }
-            Parent = info.FullName == root.RootInfo.FullName ? null : Fs.Directory.Get(root, info.Parent);
+            Parent = info.FullName == root.RootInfo.FullName ? null : root.Directories.Get(info.Parent);
 			Lang = LangInstance;
         }
     }

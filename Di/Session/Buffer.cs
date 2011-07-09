@@ -29,7 +29,7 @@ namespace Di.Session
 
         public void Restore(Model.Main model)
         {
-            var file = model.Files.Where(f => f.ProjectRelativeFullName() == projectRelativeFileName).FirstOrDefault();
+            var file = model.Files.GetAll().Where(f => f.ProjectRelativeFullName() == projectRelativeFileName).FirstOrDefault();
             if (file == null)
             {
                 throw new CannotRestore();

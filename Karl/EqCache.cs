@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace Karl
@@ -9,15 +10,42 @@ namespace Karl
         U Get<U>(K key, Func<K, U> maker) where U : class, T;
     }
 
-    public class EqCache<K, T> : IEqCache<K, T> where T : class
+    public abstract class AbstractEqCache<K, T, R> : IEqCache<K, T>
+        where T : class
+        where R : IReference<T>
     {
-        private IDictionary<K, WeakReference<T>> cache = new Dictionary<K, WeakReference<T>>();
+        protected internal IDictionary<K, R> cache = new Dictionary<K, R>();
 
         private object cacheLock = new object();
 
         internal int Hits = 0;
 
         internal int Misses = 0;
+
+        private Func<T, R> refMaker;
+
+        private Func<K, T> maker;
+
+        public AbstractEqCache(Func<T, R> _refMaker, Func<K, T> _maker)
+        {
+            refMaker = _refMaker;
+            maker = _maker;
+        }
+
+        public void Clear()
+        {
+            lock (cacheLock)
+            {
+                cache.Clear();
+                Hits = 0;
+                Misses = 0;
+            }
+        }
+
+        public T Get(K key)
+        {
+            return Get<T>(key, maker);
+        }
 
         public U Get<U>(K key, Func<K, U> maker) where U : class, T
         {
@@ -41,42 +69,33 @@ namespace Karl
                 {
                     ++Misses;
                     result = maker(key);
-                    cache[key] = new WeakReference<T>(result);
+                    cache[key] = refMaker(result);
                 }
             }
             return result;
         }
+    }
 
-        public class AbstractView<L, U> : IEqCache<L, U>
-            where L : K
-            where U : class, T
+    public class WeakEqCache<K, T> : AbstractEqCache<K, T, WeakReference<T>> where T : class
+    {
+        public WeakEqCache(Func<K, T> maker)
+            : base(obj => new WeakReference<T>(obj), maker)
         {
-            private readonly EqCache<K, T> parent;
+            // empty
+        }
+    }
 
-            public AbstractView(EqCache<K, T> _parent)
-            {
-                parent = _parent;
-            }
-
-            public new V Get<V>(K key, Func<K, V> maker) where V : class, U
-            {
-                return parent.Get<V>(key, maker);
-            }
+    public class StrongEqCache<K, T> : AbstractEqCache<K, T, StrongReference<T>> where T : class
+    {
+        public StrongEqCache(Func<K, T> maker)
+            : base(obj => new StrongReference<T>(obj), maker)
+        {
+            // empty
         }
 
-        public class ConcreteView<L, U> : AbstractView<L, U> where U : class
+        public IEnumerable<T> GetAll()
         {
-            private readonly Func<K, U> maker;
-
-            public ConcreteView(EqCache<K, T> _parent, Func<K, U> _maker) : base(_parent)
-            {
-                maker = _maker;
-            }
-
-            public U Get(K key)
-            {
-                return Get<U>(key, maker);
-            }
+            return cache.Values.Select(r => r.Target);
         }
     }
 }
